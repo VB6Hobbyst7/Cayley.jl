@@ -1,0 +1,246 @@
+Version	Date	Time	Author	Comment
+245	14-Apr-2022	18:41	Philip Swannell	Changes for LiborTransition: JSON file written by SaveDataFromMarketWorkbookToFile contains new elements:<LF>1) SwapRates_CCY has new element FloatingLegType which is a vector whose elements are either "RFR" or "IBOR".<LF>2) XccyBasisSpreads_CCY similarly has two new elements FloatingLegType1 and FloatingLegType2.
+244	14-Apr-2022	16:37	Philip Swannell	Reinstated VBProject password.
+243	14-Apr-2022	15:10	Philip Swannell	Work around for the "All macros may be disabled" errors. See module modDisabledMacrosWorkAround.
+242	14-Apr-2022	13:02	Philip Swannell	Reconstructed again - same"all macros may be disabled" error.
+241	12-Apr-2022	13:56	Philip Swannell	Each sheet now has section "Libor Transition" containing one datum, namely FloatingLegType with allowed values of RFR and IBOR.
+240	12-Apr-2022	11:44	Philip Swannell	Strange - had to copy all worksheets and modules to a fresh workbook to fix "all macros may be disabled" error. This is the second time I've had to do thisn and I haven't been able to figure out the cause.
+239	06-Apr-2022	15:49	Philip Swannell	Improved method FeedRatesFromTextFile.
+238	23-Mar-2022	18:01	Philip Swannell	Improved method ReleaseCleanup.
+237	23-Mar-2022	17:17	Philip Swannell	Imported data from 20220228_solum.out.
+236	23-Mar-2022	17:12	Philip Swannell	Files shown on Config can now have relative addresses.
+235	23-Mar-2022	13:27	Philip Swannell	Changes to method BloombergTickerSwaptionVol to match the data received from Airbus.
+234	21-Mar-2022	16:16	Philip Swannell	Tweak to Config sheet.
+233	21-Mar-2022	13:17	Philip Swannell	Bug fix in FeedRatesFromTextFile - Fx data was not being fed.
+232	21-Mar-2022	13:08	Philip Swannell	Method FeedRatesFromTextFile now allows list of currencies to feed.
+231	21-Mar-2022	09:05	Philip Swannell	Tweak to previous release.
+230	21-Mar-2022	08:58	Philip Swannell	Method FeedRatesFromTextFile converted from Sub to Function so that it can be called from Cayley via Application.Run and with robust error handling.
+229	16-Mar-2022	10:19	Philip Swannell	Changes to ensure that the .Saved property of the workbook is not flipped to False unnecessarily.
+228	10-Mar-2022	11:17	Philip Swannell	Reduced instrumentation in method SaveDataFromMarketWorkbookToFile.
+227	08-Mar-2022	19:50	Philip Swannell	MZTools.
+226	21-Feb-2022	10:57	Philip Swannell	Added extra instrumentation to SaveDataFromMarketWorkbookToFile.
+225	31-Jan-2022	17:35	Philip Swannell	Subroutines of SaveDataFromMarketWorkbookToFile amended to cope with HistoricFxVols now having term structure.
+224	31-Jan-2022	16:46	Philip Swannell	Amended methods FormatFxVolSheet and SyncHistoricVols to cope with HistoricFxVols now having term structure.
+223	24-Jan-2022	20:13	Philip Swannell	Corrected sheet visibility.
+222	24-Jan-2022	18:24	Philip Swannell	Fixes to bit-rotted method FeedSheetFromTextFile. Note that Airbus's data file has no valid swaption data...
+221	24-Jan-2022	16:42	Philip Swannell	Test release.
+220	24-Jan-2022	16:27	Philip Swannell	Added more code to ThisWorkbook class module that was lost in release 216.
+219	24-Jan-2022	16:19	Philip Swannell	Added call to GetFromRegistry to workbook open event. Not sure why that was not present. Maybe deleted in release 216?
+218	18-Jan-2022	17:10	Philip Swannell	Bug fix to SaveFxDataToDictionary.
+217	18-Jan-2022	16:27	Philip Swannell	Reinstated password for viewing VBA.
+216	18-Jan-2022	16:22	Philip Swannell	Strange - had to copy all worksheets and modules to a fresh workbook to fix "all macros may be disabled" error.
+215	18-Jan-2022	14:39	Philip Swannell	More work on SaveDataFromMarketWorkbookToFile. For the time being maintaining compatibility so that this workbook will work with both R code and Julia code - that will make comparing results easier.
+214	17-Jan-2022	15:45	Philip Swannell	Forked SCRiPT_MarketData to CayleyMarketData, since we may need to make non-backwards-compatible changes.
+213	07-Oct-2020	17:15	Philip Swannell	Used Bloomberg from PC at home (tricky with Citrix etc) to update rates to 10-Feb-2020, useful to compare with Xplain.
+212	05-Mar-2020	14:49	Philip Swannell	Inflation seasonal adjustments now calculated from last 5 years of data, via formula in range "SeasonalAdjustments" on sheets such as UKRPI.
+211	04-Mar-2020	15:18	Philip Swannell	Re-release to check in to source control.
+210	04-Mar-2020	15:02	Philip Swannell	Fix to method IsBloombergInstalled. Released containing rates for 7-Feb-2020.
+209	08-Nov-2019	16:02	Philip Swannell	Bug fix to method SaveCorrelationsToDictionary. Was not working when >1 inflation index in the market.
+208	14-May-2019	11:18	Philip Swannell	Ran AmendVBA.
+207	01-Feb-2019	17:39	Philip Swannell	Tweaks to FeedRatesFromBloomberg
+206	01-Feb-2019	16:46	Philip Swannell	Released with rates updated to CoB 31 Dec 2018 - missed some currencies last time.
+205	01-Feb-2019	11:35	Philip Swannell	Change to method PasteAndFormat so that when we feed rates from Bloomberg or text file then the target sheets are unhidden.
+204	31-Jan-2019	14:52	Philip Swannell	Released with rates updated to CoB 31 Dec 2018.
+203	31-Jan-2019	09:32	Philip Swannell	Added rows on the Fx sheet for OMR set vols same as QAR and set the spot rates against the majors via OMRQAR = 9.5.
+202	31-Jan-2019	09:23	Philip Swannell	Added sheets for PLN and OMR.
+201	19-Mar-2018	15:33	Philip Swannell	Fix to method FormatFxVolSheet to run if application list seperator is not a comma. Note that code to feed from Bloomberg will certainly still fail however.
+200	16-Mar-2018	18:06	Hermione Glyn	Tweak to FormatCurrencySheet
+199	16-Mar-2018	17:27	Philip Swannell	Fixed bugs caused by change 197.
+198	16-Mar-2018	14:57	Philip Swannell	RandomAdjust now applies the random adjustment then rounds to 5 significant figures.
+197	16-Mar-2018	14:28	Philip Swannell	No longer display any Bloomberg codes on the currency sheets.
+196	16-Mar-2018	12:55	Philip Swannell	When feeding rates from Bloomberg, can now apply random adjustment to every data point fed (currently +/- 2.5%). Need to do this so we are not sending Bloomberg numbers off the PC on which we have rights to use the Bloomberg data.
+195	05-Mar-2018	15:14	Philip Swannell	Change to behaviour of SaveDataFromMarketWorkbookToFile when there are no Credits to be saved: Write null rather than [null]
+194	23-Feb-2018	17:50	Philip Swannell	Fixed compile error.
+193	23-Feb-2018	16:19	Philip Swannell	Re-release after fix to release scripts.
+192	23-Feb-2018	15:03	Philip Swannell	No longer save fundingspreads to credit curves, since we need funding spreads even for counterparties for which we don?t require a credit curve.
+191	21-Feb-2018	16:26	Philip Swannell	Tweaks to previous.
+190	21-Feb-2018	16:02	Philip Swannell	Save _all_ funding spreads to the market, not just those for the "chosen banks". Allows FVA calculation for banks other than the chosen banks.
+189	21-Feb-2018	09:57	Philip Swannell	Access gSELF constant.
+188	08-Feb-2018	09:27	Philip Swannell	Removed function To1D - it's been ported to SolumAddin.
+187	07-Feb-2018	10:25	Philip Swannell	Released work done at home.
+186	06-Feb-2018	14:22	Philip Swannell	Removed module modSaveToR, it's remaining code is now in modSaveToJSON
+185	06-Feb-2018	14:08	Philip Swannell	Removed the following methods: TestSaveDataFromMarketWorkbookToR, SaveDataFromMarketWorkbookToR, RemoveExistingMarketDataFromR, SaveInflationSheetToR, SaveCurrencySheetToR, SaveCorrelationsToR, SaveFundingSpreadsToR, SaveFxDataToR, SaveToRIRVol, SaveCDSDataToR
+184	05-Feb-2018	11:51	Philip Swannell	Change to SaveDataFromMarketWorkbookToFile - Credits saved as array with one dimension, not two.
+183	02-Feb-2018	13:58	Philip Swannell	Change to method SaveCurrencySheetToDictionary: irvol_ -> SwaptionVols_
+182	31-Jan-2018	16:32	Philip Swannell	Bug fix to SaveDataFromMarketWorkbookToFile - not all credit curves which should have been written were written.
+181	30-Jan-2018	14:15	Philip Swannell	Changes in SaveDataFromMarketWorkbookToFile.
+180	29-Jan-2018	16:26	Philip Swannell	Changes to code that generates json file.
+179	26-Jan-2018	15:33	Philip Swannell	First cut of method SaveDataFromMarketWorkbookToFile
+178	25-Jan-2018	17:59	Philip Swannell	Added module modSaveToJSON. Code not yet called.
+177	17-Jan-2018	11:34	Philip Swannell	Release with data for CoB 16 Jan 2018. Need a flat file format to stop this workbook being a data store.
+176	12-Dec-2017	14:24	Philip Swannell	ThrowIfErrorFromR -> ThrowIfError
+175	04-Dec-2017	09:02	Philip Swannell	Ran Ribbon Commander Code Cleaner.
+174	30-Nov-2017	13:06	Philip Swannell	Deactivating the workbook no longer protects the Fx sheet.
+173	27-Nov-2017	15:26	Philip Swannell	More changes for SCRiPTUtils.xlam having become SolumSCRiPTUtils.xlam
+172	27-Nov-2017	11:47	Philip Swannell	Changes for SCRiPTUtils.xlam having become SolumSCRiPTUtils.xlam
+171	14-Nov-2017	14:05	Philip Swannell	Fix to sort buttons on sheet Credit.
+170	05-Oct-2017	15:22	Philip Swannell	Menu item "Rates from Bloomberg?" is greyed out on a PC without the Bloomberg Addin.
+169	04-Oct-2017	12:16	Philip Swannell	Bug fix to SaveLabelledDataToRList which broke with the switch to BERT.
+168	28-Sep-2017	15:29	Philip Swannell	Inflation sets now feed from Bloomberg.
+167	28-Sep-2017	11:07	Philip Swannell	Updated historic sets for UKRPI and USCPI.
+166	25-Sep-2017	11:44	Philip Swannell	Removed reference to SolumSCRiPT
+165	22-Sep-2017	16:23	Philip Swannell	Changes for switch away from Paul's C# addin and to using BERT instead. (http://bert-toolkit.com).
+164	21-Sep-2017	14:28	Philip Swannell	Changes for c:\Program Files\Solum --> c:\ProgramData\Solum
+163	20-Sep-2017	17:16	Philip Swannell	Removed direct reference to SolumSCRiPTExcel, the C# layer. Instead call sExecuteRCode that (for the time being) still calls the C# layer.
+162	19-Sep-2017	17:44	Philip Swannell	Fixes in double-click handling for Config sheet.
+161	19-Sep-2017	17:04	Philip Swannell	Code refactoring.
+160	19-Sep-2017	16:23	Philip Swannell	Changes to code to feed from Bloomberg so that we can now feed for ALL currencies "in a oner".
+159	19-Sep-2017	14:31	Philip Swannell	Corrected bugs introduced in release 156 which had broken code to feed from Bloomberg.
+158	14-Sep-2017	12:50	Philip Swannell	Added Recovery rates for each credit rather than having a single recovery rate for all credits held on the Config sheet of SCRiPT.
+157	07-Sep-2017	14:11	Philip Swannell	Shuffled the columns in the ranges containg data for swaps to be in a more sensible order.
+156	07-Sep-2017	11:41	Philip Swannell	Removed discount factor arrays from all the currency sheets and removed code to feed discount factors to R.
+155	23-Jun-2017	16:02	Philip Swannell	Improvements to method HideUnhideSheets.
+154	23-Jun-2017	14:49	Philip Swannell	Added inflation vols to the four inflation sheets with code to save the data to R as dataframes with names such as input_InflationVol_UKRPI
+153	22-Jun-2017	15:05	Philip Swannell	Re-imported correlation data from workbooks created by Correlation Matrix Generator'. No longer call sNearestCorrelationMatrix on "big" matrix, but will use r function nearPD to correct the correlation matrix passed to R.
+152	13-Jun-2017	15:47	Philip Swannell	Fixes to Bloomberg tickers displayed on the currency sheets. Was showing #NAME?
+151	13-Jun-2017	14:08	Philip Swannell	Inflation sheets now include estimates of historical vol of the index
+150	12-Jun-2017	11:54	Philip Swannell	Now calling sNearestCorrelationMatrix on all three correlation sheets.
+149	09-Jun-2017	17:00	Philip Swannell	On sheet HistoricalCorrUSD, experimenting with call to sNearestCorrelationMatrix to address non-positive definite problem.
+148	24-May-2017	16:27	Philip Swannell	Change to the data that we save as seasonal adjustments. Now save a vector of 12 elements summing to zero and no longer "cycle and subtract first element".
+147	24-May-2017	13:23	Philip Swannell	Temporary change to corrlations on HistoricCorrUSD sheet. Otherwise matrix not positive definite (for USD, GBP, UKRPI subselection). Is our approach to correlation estimation correct get very high GBPFX vs UKRPIFX of 0.995371
+146	23-May-2017	13:22	Philip Swannell	Improvements to how AnchorDate is saved to R.
+145	23-May-2017	11:26	Philip Swannell	Now save historic inflation to R as two columns of data - first column is first of month in Excel convention, second column is index.
+144	23-May-2017	10:30	Philip Swannell	Lag -> LagMethod, cont.
+143	23-May-2017	10:24	Philip Swannell	Lag -> LagMethod
+142	22-May-2017	13:42	Philip Swannell	Tweaks to method CheckHistoricInflation.
+141	22-May-2017	12:43	Philip Swannell	Added April UKRPI - need to automate adding settings...
+140	22-May-2017	11:52	Philip Swannell	Bug fix to method SaveDataFromMarketWorkbookToR. Was bugged when there were zero inflation trades...
+139	19-May-2017	17:14	Philip Swannell	Imported updated correlations yo all three correlation sheets. Includes correlations for inflation indices.
+138	18-May-2017	12:58	Philip Swannell	Fix to method FormatInflationSheet.
+137	18-May-2017	12:43	Philip Swannell	Tweaks to Herione's code for inflation. Updated all rates (using Live feed).
+136	18-May-2017	11:05	Hermione Glyn	PGS: Imported modules modFeed, modBloomberg and modWizard from a "branch" of this workbook that Hermione nas been working on. Extends "Feed from Bloomgberg" functionality to include inflation swap rates.
+135	12-May-2017	16:16	Philip Swannell	Calling new function InflationIndexInfo on the inflation sheets.
+134	11-May-2017	17:19	Philip Swannell	Cleaned up VBA code via MZTools.
+133	11-May-2017	15:20	Philip Swannell	Save Inflation Parameters to R as a list rather than as a character vector.
+132	11-May-2017	11:21	Philip Swannell	Now check inflation historic sets are not missing any resets (or have too many). Have a tolerance i.e. expect data to be published by 23rd of month. Also, before saving to R, we transform the seasonal adjustments so that we "cycle" to put the month of the latest historic set at the top of the list and subtract that adjustment from all of the adjustments. Finally flipped the sign convention for SeasonalAdjustments to be in line with AJR's R code.
+131	03-May-2017	15:10	Philip Swannell	Changes to method CheckZCInflationSwapsData so that data saved to R is compatible with R method AddCurve.inflation.
+130	03-May-2017	11:56	Philip Swannell	Method SaveDataFromMarketWorkbookToR now creates input_inflations a vector of the inflation indices required or a zero-length vector if no inflations "in the market".
+129	03-May-2017	11:28	Philip Swannell	Correction to method CheckSeasonalAdjustments.
+128	03-May-2017	11:11	Philip Swannell	Method SaveDataFromMarketWorkbookToR no longer calculates ALL sheets of this workbook, but only the relevant ones.
+127	03-May-2017	11:00	Philip Swannell	Changed seasonal adjustments to show the log of the multiplicative adjustment, so that the 12 should sum to 0 rather than multiply to one, as previously. This is in line with Andrew's approach (though not yet sure if I've adopted the same sign convention).
+126	03-May-2017	09:09	Philip Swannell	Added Add-hoc method ForceAllCorrelationsToBeSymmetric and used it to correct the array formulas on the Correlations sheets.
+125	03-May-2017	08:46	Philip Swannell	Enhanced method SaveCorrelationsToR to save correlations for inflation indices.
+124	02-May-2017	17:05	Philip Swannell	Added dummy data for the inflation indices to the Historical correlation sheets.
+123	02-May-2017	16:37	Philip Swannell	Added debug code to SaveDataframe to pop data in Notepad++.
+122	02-May-2017	16:28	Philip Swannell	Switched from Paul's C# sFns.scSaveDataFrameWithTypeNameHeader to VBA SaveDataframe.
+121	02-May-2017	16:20	Philip Swannell	Deleted extraneous name "RatesRange".
+120	02-May-2017	16:00	Philip Swannell	Bug fix to SaveDataFromMarketWorkbookToR - inflation data was being deleted from R just after it was saved to R :-(.
+119	02-May-2017	12:01	Philip Swannell	Removed Excel link to file "Inflation_ZC". Also fix in method SaveDataFromMarketWorkbookToR for when no inflation indices are required.
+118	27-Apr-2017	14:24	Philip Swannell	More work in modSaveToR.
+117	26-Apr-2017	18:28	Philip Swannell	Work on method SaveInflationSheetToR
+116	26-Apr-2017	15:50	Philip Swannell	Changes to EstimateSeasonalAdjustment (to be in line with approach described in paper from OpenGamma: Inflation:Instruments and curve construction) and added function ApplySeasonalAdjustment.
+115	25-Apr-2017	17:35	Philip Swannell	More work on inflation sheets, including utility function EstimateSeasonalAdjustment.
+114	25-Apr-2017	11:41	Philip Swannell	Added three more inflation sheets.
+113	24-Apr-2017	14:06	Philip Swannell	Added sheet UK RPI as prototype.
+112	30-Mar-2017	17:21	Philip Swannell	Imported rates after fixing bug in feed of cross currency swap rates (bug introduced in 104 and fixed in 109).
+111	30-Mar-2017	16:45	Philip Swannell	Added method to align cross rates - can be called from menu button on Fx sheet, and we could call it from feeding code...
+110	30-Mar-2017	15:15	Philip Swannell	Bug fix to method BloombergTickerFxSpot - was doing the wrong thing is ever the currency pair was in the non-standard order.
+109	30-Mar-2017	12:19	Philip Swannell	Tweaks to adding and deleting currency pairs from Fx sheet. Fixed bug in feed basis swaps. Bug introduced in release 104.
+108	30-Mar-2017	09:36	Philip Swannell	Tweaks to ReleaseCleanup.
+107	30-Mar-2017	09:20	Philip Swannell	Added filtering to Fx sheet - need to tweak other functionality, such as adding and deleting currency pairs.
+106	30-Mar-2017	08:59	Hermione Glyn	Imported correlation data for EUR, USD and GBP correlation sheets. Updated market data to 29 March.
+105	28-Mar-2017	13:42	Philip Swannell	Changes to support numeraire being either EUR or USD or GBP.
+104	28-Mar-2017	11:36	Philip Swannell	Config sheet now has range Numeraire rather than BaseCCY.
+103	09-Feb-2017	13:57	Philip Swannell	Improved error handling in a number of methods following trouble on Jorg Weber's PC at Airbus.
+102	06-Feb-2017	15:24	Philip Swannell	Released with data for 30 Dec 2016. Also tweak to method GetCOBDate.
+101	23-Jan-2017	11:24	Philip Swannell	Final release before trip to Munich.
+100	20-Jan-2017	09:53	Hermione Glyn	Fixes to method FeedSheetFromTextFile following testing of file received from Boris Le Bris.
+99	16-Jan-2017	17:48	Philip Swannell	Tweaks to previous release.
+98	16-Jan-2017	14:50	Hermione Glyn	Added functions FormatCreditSheet, DeleteCreditCounterparty, AddCreditCounterparty - can now modify the list of banks on the Credit sheet.
+97	12-Jan-2017	11:44	Philip Swannell	Ran Rob Bovey's CodeCleaner.
+96	12-Jan-2017	11:43	Philip Swannell	Application.Statusbar -> StatusBarWrap
+95	10-Jan-2017	16:53	Hermione Glyn	Can now feed all rates from text file from any sheet.
+94	10-Jan-2017	16:32	Hermione Glyn	Credit sheet now feeds from COB data and is incorporated into the "wizard".
+93	09-Jan-2017	12:27	Hermione Glyn	Tweaks to feed code.
+92	09-Jan-2017	11:55	Hermione Glyn	Added table of tickers to Credit sheet. Can now feed Credit spreads from Bloomberg or a text file.
+91	03-Jan-2017	10:47	Philip Swannell	Formatting changes on Credit sheet.
+90	03-Jan-2017	10:28	Philip Swannell	Release from Solum's offices for Git update.
+89	02-Jan-2017	21:03	Philip Swannell	Added rows to Credit sheet for all banks in the Cayley portfolio.
+88	29-Dec-2016	09:34	Philip Swannell	Reform of sheet Credit: Funding spreads and CDS levels now displayed in the same array and transposed so that each credit curve occupies a row rather than a column - better for displaying a large number of credit curces as needed for the Airbus project.
+87	16-Dec-2016	07:10	Philip Swannell	Removed FX data for CHFCAD, CHFGBP, CHFNOK, GBPAUD, GBPCAD, GBPCHF, GBPDKK, GBPJPY, GBPNOK, GBPSAR, GBPSEK, USDAED, USDAUD, USDBRL, USDCAD, USDCHF, USDCZK, USDDKK, USDGBP, USDHUF, USDJPY, USDMXN, USDNOK, USDPLN, USDQAR, USDRON, USDRUB, USDSAR, USDSEK, USDSGD, USDZAR
+86	16-Dec-2016	07:07	Philip Swannell	Debugs to code to feed rates from text file.
+85	15-Dec-2016	22:20	Philip Swannell	Feed rates from text file now leaves the collapse state of the columns of the sheet as was.
+84	15-Dec-2016	20:25	Philip Swannell	Change to method FeedRatesFromTextFile so that it reads the 'RUNDATE' from the file and sets the AnchorDate ion the Config sheet to that date.
+83	15-Dec-2016	10:05	Philip Swannell	Avoid emptying clipboard on deactivating the workbook.
+82	15-Dec-2016	10:00	Philip Swannell	Fix to method ShowMenu - was not displaying the correct options when called from the FX sheet.
+81	14-Dec-2016	12:24	Philip Swannell	Amended release comments.
+80	13-Dec-2016	14:43	Philip Swannell	Added reference to c:\program files\solum\Addins\SCRiPTUtils.xlam.
+79	12-Dec-2016	13:18	Hermione Glyn	For JPY, NOK had to revert to feeding swaps against 6M Libor since swaps against 3M don't seem to be available on Bloomberg.
+78	12-Dec-2016	12:55	Philip Swannell	Also feed swaps against 3M Libor for CAD, DKK, HUF, JPY, NOK.
+77	12-Dec-2016	12:34	Philip Swannell	For EUR, GBP, CHF now feed swaps against 3M Libor so as to be consistent with index used for cross currency.
+76	09-Dec-2016	15:50	Philip Swannell	More tweaks to dialogs in method FeedRatesFromBloomberg.
+75	09-Dec-2016	13:30	Philip Swannell	Removed Stop statement. MZTools to remove declared-but-unused variables. 
+74	09-Dec-2016	13:22	Philip Swannell	More tweaks to dialogs in method FeedRatesFromBloomberg.
+73	09-Dec-2016	09:20	Philip Swannell	Tweaks to dialogs in method FeedRatesFromBloomberg.
+72	02-Dec-2016	14:34	Philip Swannell	Realised that the attempt to fix the "too much data to feed from Bloomberg" problem was doomed, so still have to manually choose about 5 currencies at a time.
+71	02-Dec-2016	11:58	Philip Swannell	The menu is now much simpler. Instead of many menu options the user interface to feeding rates from Bloomberg is like a wizard. Also (hopefully) fixed problem with Bloomberg feed that doing too many currencies did not work.
+70	01-Dec-2016	18:39	Philip Swannell	Some simplification of the menu structure.
+69	01-Dec-2016	17:54	Philip Swannell	Added method ChooseCurrencies. To Do - make the menus simpler!
+68	01-Dec-2016	17:28	Philip Swannell	Removed credits from Credit sheet, updated rates to 30 Nov 2016.
+67	23-Nov-2016	16:10	Philip Swannell	Added "click to show\hide" hint.
+66	14-Nov-2016	12:50	Philip Swannell	Better validation for SpreadIsOn, cont.
+65	14-Nov-2016	10:46	Philip Swannell	Currency pairs on the FxVol sheet that don't involve the numeraire are now greyed out.
+64	14-Nov-2016	10:05	Philip Swannell	Better validation for SpreadIsOn.
+63	09-Nov-2016	17:04	Philip Swannell	Released with COB rates for 31-Oct-2016.
+62	08-Nov-2016	18:20	Philip Swannell	Reversed change 61. RCode now assumes that xccybasis data for the numeraire currency is fixed versus OIS.
+61	08-Nov-2016	13:40	Philip Swannell	Bug fix to cross-currency swap pricing - when we save down cross currency swap data (input_XccyBasisSpreads_XXX) have added an extra column IsFixed1 so that we know if leg 1 of the swap is fixed or floating. Requires changes in the R code. Also changed GetCOBDate so that the dialog remembers the last date you typed in.
+60	08-Nov-2016	12:36	Philip Swannell	Change to HideUnhideCurrencySheets to reduce screen flicker.
+59	05-Nov-2016	14:13	Philip Swannell	Improved error handling in method SaveCurrencySheetToR.
+58	04-Nov-2016	14:36	Philip Swannell	Changes to references following move of CSharp addins.
+57	04-Nov-2016	13:15	Philip Swannell	Changed links to new location for SolumAddin
+56	01-Nov-2016	12:53	Philip Swannell	Ran CodeCleaner.
+55	01-Nov-2016	11:06	Hermione Glyn	Fixed bugs to feeding discount factors, and improved functions BBBasisSwapCode and BBSwapCode.
+54	01-Nov-2016	10:06	Philip Swannell	Release with Guy's corrections to swap conventions in a number of currencies.
+53	31-Oct-2016	15:47	Philip Swannell	Added method HideUnhideCurrencySheets, called from ReleaseCleanup (all currency sheets shown), SaveDataFromMarketWorkbookToR (only relevant currency sheets shown).
+52	31-Oct-2016	15:31	Hermione Glyn	PasteFromHiddenSheet fix - transposing array fed into InterpolateSwaptions
+51	13-Oct-2016	15:39	Hermione Glyn	Imported new versions of methods FeedAllRatesFromTextFile, FeedSheetFromTextFile, FormatPastedCells
+50	13-Oct-2016	15:12	Philip Swannell	Ran release cleanup -  there seems to be a problem with not calling code to autofit columns, presumably when we feed rates from BBG. HG to look at.
+49	11-Oct-2016	18:56	Philip Swannell	Added more historic vols with the levels taken from the Cayley workbook
+48	10-Oct-2016	16:49	Philip Swannell	Added new argument WithHistoricalFxVol to method SaveDataFromMarketWorkbookToR.
+47	10-Oct-2016	15:49	Philip Swannell	Can now add multiple fxvol pairs by entering a comma-separated list.
+46	10-Oct-2016	14:21	Philip Swannell	Added historical vols to sheet FX. Not feeding to R environment yet. Also added menu items for adding and deleting historical fx vols and for deleting market fxvols (adding market fx vols was already on the menu).
+45	10-Oct-2016	11:49	Philip Swannell	No longer the case that SCRiPT workbook must be open before adding a new pair of currencies on the FX sheet.
+44	10-Oct-2016	10:18	Philip Swannell	Used LocaliseGlobalNames to localise names created by Hermione in her last release.
+43	04-Oct-2016	17:39	Hermione Glyn	Added ParseBBGFile, FeedAllRatesFromTextFile and FeedSheetFromTextFile to get rates from a |-delimited text file, in menu under "Rates from text file". PasteFromHiddenSheet now shares FormatPastedCells with said functions to avoid duplication of formatting code.
+42	31-Aug-2016	13:58	Philip Swannell	Change in method BloombergFormulaFxVol so that vols against EUR for currencies pegged to USD are fed from EURUSD vol.
+41	31-Aug-2016	10:55	Hermione Glyn	Added sheets for AED, CZK, HUF, QAR, RON, SAR, ZAR
+40	28-Jul-2016	12:22	Philip Swannell	Now call sParseFrequencyString, sParseDCT and sSupportedDCTs from SolumAddin. Reduces code duplication.
+39	26-Jul-2016	15:55	Philip Swannell	Changes to Config sheet.
+38	26-Jul-2016	15:28	Philip Swannell	Code to save data to R now saves SigmaStep and TStar
+37	26-Jul-2016	13:26	Philip Swannell	Code to save market data to R now lives in this workbook.
+36	21-Jul-2016	11:43	Philip Swannell	Fix to HistoricalCorr sheet (which had formulas where it should have had values).
+35	20-Jul-2016	11:52	Hermione Glyn	Corrected HistoricalCorrelation sheet to use EUR as base currency for all FX values. Added more currencies to FX sheet.
+34	13-Jul-2016	13:37	Philip Swannell	Bug fixes to feed code.
+33	13-Jul-2016	12:31	Philip Swannell	Release cleanup now sorts the sheets.
+32	13-Jul-2016	11:10	Hermione Glyn	Changed use of divisor in feeds from Bloomberg.
+31	11-Jul-2016	17:55	Hermione Glyn	Tidy up to sheet Credit. We may abandon feeding of credit spread data since so little good data seems to be available via the BDP interface.
+30	11-Jul-2016	16:26	Hermione Glyn	Restructured Bloomberg feed code to help us provide a spec to Airbus for feeding from Reuters
+29	08-Jul-2016	12:36	Hermione Glyn	More work on Bloomberg feeds, mainly in methods BBBasisSwapCode and BBSwapCode.
+28	07-Jul-2016	15:37	Philip Swannell	Feed from Bloomberg now has interpolation/extrapolation logic, not yet tested.
+27	07-Jul-2016	15:37	Hermione Glyn	Added sheets for 10 more currencies, work in module BBCodes. This work not yet finished.
+26	06-Jul-2016	18:45	Philip Swannell	Work in module BBCodes to get feeds correct for SEK and DKK. Fed rates from Bloomberg and did manual extrapolation for bad data in all currencies except CNH.
+25	06-Jul-2016	15:26	Philip Swannell	Added data on sheet Credit. Added sheets for SEK and CHF. Changed ReleaseCleanup to correct the codeNames of the currency sheets.
+24	06-Jul-2016	12:49	Philip Swannell	Changes to how we specify the Xccy basis swaps
+23	05-Jul-2016	17:45	Philip Swannell	Bug fixes to cross currency basis feeds.
+22	05-Jul-2016	17:26	Philip Swannell	Double-clicking shows alternatives grabbed from that cells validation settings, can change many cells at once...
+21	05-Jul-2016	15:53	Philip Swannell	More work on cross currency swap pricing.
+20	05-Jul-2016	12:43	Philip Swannell	Pricing of cross currency swaps now working (but needs more testing)
+19	04-Jul-2016	12:08	Philip Swannell	Changed definition of cross currency basis swaps.
+18	30-Jun-2016	10:39	Philip Swannell	Extra menu item to go to SCRiPT. Headings above discount factor ranges do a lookup on BloombergCurveIDs
+17	29-Jun-2016	17:35	Philip Swannell	More work on feed from Bloomberg.
+16	29-Jun-2016	15:11	Philip Swannell	Work on feed from Bloomberg.
+15	29-Jun-2016	12:54	Philip Swannell	Improved structure of the menus
+14	29-Jun-2016	11:06	Philip Swannell	Bug fix to AddFxVol
+13	29-Jun-2016	10:40	Philip Swannell	Code cleanups.
+12	28-Jun-2016	18:59	Philip Swannell	Work on feeding discount factors from Bloomberg. Not yet fully debugged.
+11	22-Jun-2016	14:35	Philip Swannell	Minor fixes to method ImportHistoricalCorr.
+10	21-Jun-2016	18:55	Philip Swannell	Added ability to import data from the Correlation Matrix Generator.
+9	20-Jun-2016	16:41	Philip Swannell	1) Feeding rates now updates the Anchor date on the config sheet, to "Today" for live rates and to the "As of date" for  historical dates.<LF>2) Change to method GetCOBDate to alert the user to the fact that the AnchorDate is set to the date they choose.<LF>3) Change to method ReleaseCleanup to clear out the hidden sheet.
+8	16-Jun-2016	15:04	Philip Swannell	Hook through to common code for the menu on this Audit sheet.
+7	15-Jun-2016	15:24	Philip Swannell	New version of FX sheet now working and used by SCRiPT. Removed the no-longer used sheet Correls. The code of SCRiPT looks at the sheet HistoricalCorr.
+6	14-Jun-2016	17:21	Philip Swannell	Re-write of FX sheet - temporarily we have two sheets: FX and FX NEW.
+5	14-Jun-2016	08:50	Philip Swannell	Improved version control for this workbook - check in to GIT etc.
+4	10-Jun-2016	16:28	Philip Swannell	Work on adding Bloomberg feed.
+3	04-Jan-2016	13:42	Philip Swannell	Added three new settings on the Config sheet to determine the term structure of the HW sigma.
+2	09-Dec-2015	17:24	Philip Swannell	Cell formatting only
+1	03-Dec-2015	10:45	Philip Swannell	First version. Moved sheets carrying market data from SCRiPT workbook to this separate workbook.

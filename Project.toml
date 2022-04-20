@@ -1,0 +1,27 @@
+name = "Cayley"
+uuid = "dfe06b6c-082e-4ea4-85a2-94ad0eb4921c"
+authors = ["Philip Swannell"]
+version = "0.2.0"
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+JuliaExcel = "661490ff-676f-49f7-9f60-bdb0e4e6656a"
+LRUCache = "8ac3fa9e-de4c-5943-b1dc-09c6b5f20637"
+Memoize = "c03570c3-d221-55d1-a50c-7939bbd78826"
+OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+XVA = "e5ba3454-335b-4c39-8c17-35d64a53d77e"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

@@ -1,0 +1,782 @@
+Version	Date	Time	Author	Comment
+789	24-Mar-2022	11:05	Philip Swannell	Tweaks to Workbook_BeforeClose.
+788	24-Mar-2022	10:58	Philip Swannell	Tweaks to Workbook_BeforeClose.
+787	24-Mar-2022	10:43	Philip Swannell	Tweaks to Workbook_BeforeClose.
+786	23-Mar-2022	17:47	Philip Swannell	When closing workbook and if Cayley2022.xlsm is not open then Julia is shut down.
+785	23-Mar-2022	16:39	Philip Swannell	Tweak to filtering on Portfolio sheet.
+784	23-Mar-2022	16:35	Philip Swannell	Moved a copy of JuliaCreateSystemImage to this workbook.
+783	23-Mar-2022	16:10	Philip Swannell	Like Cayley, the files on the Config sheet are now given relative to the location of this workbook.
+782	23-Mar-2022	15:20	Philip Swannell	Stubbed-out calls to JuliaCreateSystemImage. Released as SCRiPT2022.xlsm
+781	21-Feb-2022	09:22	Philip Swannell	Fixed type mismatch error that could occur when only one trade on the Portfolio sheet.
+780	20-Dec-2021	12:19	Philip Swannell	Moved a few methods to SolumSCRiPTUtils so that they can be used from Cayley.
+779	19-Dec-2021	17:00	Philip Swannell	More changes in method CreateSystemImage.
+778	19-Dec-2021	09:51	Philip Swannell	Changes to method CreateSystemImage.
+777	19-Dec-2021	09:44	Philip Swannell	Replaced global constant gUseLinux with a setting on the Config sheet.
+776	10-Dec-2021	12:44	Philip Swannell	Fixed bug that was causing the model to be rebuild more frequently than necessary.
+775	09-Dec-2021	09:31	Philip Swannell	Added FaceID to menu.
+774	08-Dec-2021	18:39	Philip Swannell	Added to ToDo list.
+773	08-Dec-2021	18:36	Philip Swannell	Changes for changes arg list to JuliaLaunch.
+772	08-Dec-2021	10:49	Philip Swannell	Added menu items "Create System Image" and "Launch Julia without System Image. Both under "Develop Tools".
+771	07-Dec-2021	17:55	Philip Swannell	Now use Julia running on WSL. System image creation works - need to hook it through to the menus.
+770	03-Dec-2021	14:24	Philip Swannell	Started work on creating system image file, but work interrupted by the fact that xva_main segfaults. :(
+769	02-Dec-2021	14:50	Philip Swannell	xVADashboard now updated when running in PVOnly mode, though column for number of trades not populated thanks to deficiency in Julia code.
+768	02-Dec-2021	14:19	Philip Swannell	Updated ToDo list.
+767	02-Dec-2021	14:17	Philip Swannell	Ran AmendVBA code to clean up declarations.
+766	02-Dec-2021	13:56	Philip Swannell	AP_Results renamed to GetResultsFromJulia.
+765	02-Dec-2021	11:56	Philip Swannell	Re-wrote method AP_Results, old version not yet deleted.
+764	01-Dec-2021	18:00	Philip Swannell	Updated ToDo list
+763	01-Dec-2021	17:52	Philip Swannell	Method ConstructDashboardVBA now reads gResults2.
+762	01-Dec-2021	11:01	Philip Swannell	Formatting change on Config sheet.
+761	01-Dec-2021	07:11	Philip Swannell	Added to ToDo list of this sheet.
+760	30-Nov-2021	20:20	Philip Swannell	Improved some variable names.
+759	30-Nov-2021	20:14	Philip Swannell	Corrected assignments of macros to buttons.
+758	30-Nov-2021	19:31	Philip Swannell	Reduced use of global variable gResults by using its replacement gResults2.
+757	30-Nov-2021	09:04	Philip Swannell	Now getting data back from Julia via JuliaEvalVBA's ability to serialise Julia dictionaries rather than by parsing a json file. My tests showed that this unserialisation is approx 5 times faster than the code I use for unserialising a json file.  But currently have two global variables. gResults contains the unserialisation of the json file and gResults2 contains the unserialisation via JuliaEvalVBA. Contents are not identical since the latter contains arrays where the former contains collections. So need to re-write the accessor functions. Have so far re-written method DataForPortfolioSheetVBA.
+756	23-Nov-2021	10:40	Philip Swannell	Formatting only
+755	23-Nov-2021	10:22	Philip Swannell	Attempted to run against compiled Julia code. Ran into problem with packages (LoopVectorization) not having all their dependencies present. Decided not to try to resolve for the time being, and reverted changes made to the VBA code.
+754	22-Nov-2021	15:35	Philip Swannell	Bug fix to method CallViaJuliaExcel.
+753	22-Nov-2021	15:11	Philip Swannell	Simplification: Now have only one way of calling Julia, via the JuliaExcel addin.
+752	19-Nov-2021	18:56	Philip Swannell	Not sure if there are outstanding changes, release just in case.
+751	19-Nov-2021	16:44	Philip Swannell	Fix to method GetFromRegistry.
+750	19-Nov-2021	15:35	Philip Swannell	Started on changes to use JuliaExcel.
+749	07-Oct-2021	15:38	Philip Swannell	Changed release cleanup to default AnalyticsProvider to "Julia scripted in running instance (Windows)".
+748	07-Oct-2021	15:07	Philip Swannell	Bug fix necessary because sCSVRead does not replicate (bad) behaviour of sFileShow when reading csv file with field that is a date-like string surrounded by quote characters.
+747	08-Feb-2021	15:27	Philip Swannell	Bug fix to method ChooseBanks. Mystery is that code as was should not have compiled.
+746	04-Feb-2021	18:19	Philip Swannell	Config sheet now allows control of whether Threads are used. Trying to chase down causes of non thread-safety...
+745	07-Dec-2020	15:49	Philip Swannell	Create test set now available from the menu.
+744	07-Dec-2020	15:32	Philip Swannell	readme.txt --> Readme.md. Works better on GitHub.
+743	02-Dec-2020	17:32	Philip Swannell	Updated some module names.
+742	02-Dec-2020	17:27	Philip Swannell	Changed location of WindowsExe and LinuxExe
+741	01-Dec-2020	19:29	Philip Swannell	Can now use AnalyticsProvider = ''Julia scripted in running instance (Linux)'.
+740	01-Dec-2020	11:00	Philip Swannell	Change to formula on Config sheet.
+739	30-Nov-2020	17:24	Philip Swannell	MZTools to remove declared but unused variables.
+738	30-Nov-2020	17:22	Philip Swannell	There were still parts of the code attempting to support calypso trade format. Got rid of.
+737	30-Nov-2020	16:30	Philip Swannell	Fixes to method CreateTestSet.
+736	27-Nov-2020	15:13	Philip Swannell	Can now open trades in the file format that they are sent to Julia and convert to the format for the Portfolio sheet.
+735	26-Nov-2020	16:52	Philip Swannell	Tweak to method CreateTestSet.
+734	25-Nov-2020	16:21	Philip Swannell	New module modGenerateTestTrades
+733	23-Nov-2020	20:08	Philip Swannell	Can now generate market data files containg discount factors and survival probabilities, rather than swap rates and credit spreads (via Julia code that converts the former to the latter).
+732	23-Nov-2020	20:00	Philip Swannell	Order of columns in files saved for Julia is more sensible.
+731	20-Nov-2020	15:53	Philip Swannell	ControlFile no longer has 'UseSobol' key.
+730	19-Nov-2020	16:52	Philip Swannell	Much improved handling of errors in the Julia code.
+729	19-Nov-2020	10:55	Philip Swannell	Updated ToDo list of this sheet.
+728	19-Nov-2020	10:50	Philip Swannell	Tweak to ReleaseCleanup.
+727	19-Nov-2020	10:47	Philip Swannell	Bug fix to OpenTradesFile. Morphing was incorrectly coded causing an error when trades did not need to be morphed.
+726	19-Nov-2020	10:36	Philip Swannell	MZTools to remove declared but unused variables.
+725	19-Nov-2020	10:25	Philip Swannell	Removed settings SaveSnapshot and NameSnapshot on Config sheet.
+724	19-Nov-2020	10:11	Philip Swannell	Removed function ColumnNumber - now use global constants. Tweaks on sheet HiddenSheet.
+723	19-Nov-2020	09:40	Philip Swannell	Methods PortfolioTradesToJuliaTrades, JuliaTradesToPortfolioTrades, FormatTradesRange, ValidateTrades all now use the same global constants for column positions.
+722	18-Nov-2020	23:58	Philip Swannell	Fix to error handling in AP_Results.
+721	18-Nov-2020	23:39	Philip Swannell	Control data no longer includes item IsShortfall.
+720	18-Nov-2020	23:36	Philip Swannell	Added to ToDo list of this sheet.
+719	18-Nov-2020	23:02	Philip Swannell	Mostly comments changed from mentioning R to mentioning Julia.
+718	18-Nov-2020	22:50	Philip Swannell	JuliaTradeToPortfolioTrades and PortfolioTradesToJuliaTradees now seem to round-trip nicely. Also improvements to method CallJuliaViaSendKeys.
+717	18-Nov-2020	19:56	Philip Swannell	WIP: JuliaTradeesToPortfolioTrades.
+716	18-Nov-2020	19:09	Philip Swannell	Had to partially reverse changes for release 711. Turns out we still need the lines workbook?
+715	18-Nov-2020	18:33	Philip Swannell	Reduced use of word "SCRiPT" in variable names etc.
+714	18-Nov-2020	18:06	Philip Swannell	Bugfix to CounterpartiesOnPortfolioSheet
+713	18-Nov-2020	17:42	Philip Swannell	Added necessary morphing code so that can open trade files saved by SCRiPT.xlsm.
+712	18-Nov-2020	17:20	Philip Swannell	Have now eliminated all code that calls R.
+711	18-Nov-2020	17:11	Philip Swannell	No longer use separate Lines book. Not necessary as we have dropped calculation of capital.
+710	18-Nov-2020	15:23	Philip Swannell	Method ModelExists no longer calls R.
+709	18-Nov-2020	15:12	Philip Swannell	Removed module modRegression and hidden sheet Regression.
+708	18-Nov-2020	13:23	Philip Swannell	Bug fix to previous release.
+707	18-Nov-2020	13:18	Philip Swannell	Removed method GenerateReports and associated menu item.
+706	18-Nov-2020	13:00	Philip Swannell	Ran MZTools --> Clean Project. Hopefully fix multiple crashes I'm seeing while editing the VBA.
+705	18-Nov-2020	12:55	Philip Swannell	Removed module modCalibrationReport and menu items that relate.
+704	18-Nov-2020	12:51	Philip Swannell	Removed KVA item from main menu.
+703	18-Nov-2020	12:38	Philip Swannell	Simplified Workbook_Open
+702	18-Nov-2020	10:25	Philip Swannell	Removed declared but unused variables.
+701	17-Nov-2020	17:05	Philip Swannell	Tweaks to shameful bodge method for calling Julia.
+700	17-Nov-2020	16:18	Philip Swannell	ControlFile no longer contains key InterpolateCovariance.
+699	17-Nov-2020	16:07	Philip Swannell	Bug fixes to method PortfolioTradesToJuliaTrades.
+698	17-Nov-2020	11:38	Philip Swannell	Removed "AutoCalc" functionality. Too hard to implement given that the clunkiness of the current way of communicating between Julia and Excel?
+697	16-Nov-2020	15:46	Philip Swannell	Now write control file etc to c:\Temp\XVA rather than c:\Temp\SCRiPT.
+696	16-Nov-2020	15:03	Philip Swannell	Method ValidateTrades now works again.
+695	16-Nov-2020	14:33	Philip Swannell	Method PortfolioTradesToJuliaTrades now works again.
+694	13-Nov-2020	21:47	Philip Swannell	Changes on HiddenSheet.
+693	13-Nov-2020	21:45	Philip Swannell	Method name changes.
+692	13-Nov-2020	21:41	Philip Swannell	Changes for OIS: Changed double-click handler.
+691	13-Nov-2020	21:36	Philip Swannell	Changes for OIS: Changed double-click handler and method FormatTradesRange.
+690	13-Nov-2020	20:18	Philip Swannell	No longer clear portfolio sheet when releasing 
+689	13-Nov-2020	20:13	Philip Swannell	Added sheet to show state of IRS and CCS when saved to R.
+688	13-Nov-2020	10:21	Philip Swannell	Added a plan to hidden sheet 'Notes' for work to support OIS.
+687	12-Nov-2020	16:03	Philip Swannell	Can now call Julia in a running instance, to avoid compilation overhead. It's a shameful bodge via sendkeys, but sort of works?
+686	12-Nov-2020	11:12	Philip Swannell	Removed sheets Capital, CVAVar and SACCRTesting.
+685	12-Nov-2020	10:50	Philip Swannell	Changes on the Config sheet.
+684	12-Nov-2020	09:57	Philip Swannell	Fork this workbook from SCRiPT.xlsm to XVAFrontEnd.xlsm. Want to use it as a "front end" for the Julia code, and keeping it compatible with the R code would be difficult and a waste of time.
+683	26-Oct-2020	16:46	Philip Swannell	Added another analytics provider - the Linux executable?
+682	16-Oct-2020	16:12	Philip Swannell	Change to method SaveControlFile so that files written are compatible with both Julia code and R code, rather than being targeted at one or the other.
+681	14-Oct-2020	10:11	Philip Swannell	Bug fix to SCRiPT_ResultsFromDictionary. Was not correctly handling case when the number of WHATIF trades is zero (in which case WHATIF results are absent to save memory).
+680	13-Oct-2020	16:42	Philip Swannell	Control file now contains key AllowScalarsInResults
+679	08-Oct-2020	17:00	Philip Swannell	Changed location of files (executables etc) held on the Config sheet.
+678	22-Sep-2020	17:20	Philip Swannell	Can now calculate PFE without calculating KVA. KVA only "works" when AP is BERT and in any event KVA calculations are surely out of date?
+677	18-Sep-2020	17:37	Philip Swannell	Fix to double-click handler on TradeViewer - was not working for AP = Julia.
+676	18-Sep-2020	16:20	Philip Swannell	Rewrote method ApplySolumFormatting for better speed - was annoyingly slow when displaying Paths on CounterpartyViewer sheet.
+675	17-Sep-2020	14:27	Philip Swannell	Simplification to the code that gets results from the "Analytics Provider" (AP). Interrogating the Dictionary gSCRiPTResults works whatever the Analytics Provider, so increasingly do that - but more work to do?
+674	03-Sep-2020	17:16	Philip Swannell	Can now hook through to Julia executable.
+673	27-Aug-2020	17:51	Philip Swannell	New setting on Config sheet: DoLogging.
+672	27-Aug-2020	17:10	Philip Swannell	Work to reduce number of calles into BERT - aim for zero when not using BERT as AnalyticsProvider?
+671	27-Aug-2020	15:53	Philip Swannell	TradeViewer sheet now works when AnalyticProvider is not BERT, but does not display cashflows in non-BERT mode.
+670	27-Aug-2020	12:42	Philip Swannell	CounterpartyViewer sheet now shows trade data when AnalyticProvider is not BERT. Working on TradeViewer sheet.
+669	26-Aug-2020	15:41	Philip Swannell	CounterpartyViewer sheet now mostly works with executable - no trade data though?
+668	24-Aug-2020	20:02	Philip Swannell	First cut of method SCRiPT_ResultsVBA, a port from R of method SCRiPT_Results. Gets data from the Dictionary gSCRiPTResults rather than from the R list SCRiPTResults. Needs more testing and "plumbing in".
+667	20-Aug-2020	20:14	Philip Swannell	Method RunRCode (will soon be a misnomer) now updates PVs shown on Portfolio sheet when calling into executable, not yet working for inflation trades.
+666	20-Aug-2020	13:07	Philip Swannell	Can now use Rscript.exe (preparation for Julia executable). xVADashboard updating works, mostly, but not in PVOnly mode and not for KVAs?
+665	17-Aug-2020	17:49	Philip Swannell	Status bar changes.
+664	17-Aug-2020	17:19	Philip Swannell	New use new VBA method ConfigRange to access data from the Config sheet of this workbook.
+663	17-Aug-2020	16:53	Philip Swannell	Changes so that we can call R code via Rscript.exe rather than via BERT. This makes call into R more similar to how R code is called under Linux by Xplain. Next step will be to allow calling of the Julia code?
+662	04-Mar-2020	12:10	Philip Swannell	Fixed more bugs in method RunRCode that were introduced by release 659.
+661	03-Mar-2020	09:52	Philip Swannell	Corrected call to SaveDataFromMarketWorkbookToFile, which had been broken by release 659.
+660	07-Feb-2020	14:49	Philip Swannell	Change to method ValidateFxStrip. Old code was insisting that signs of Notional1 and Notional2 had to be different, but in fact they have to be the same. Rather perplexing...
+659	07-Feb-2020	14:09	Philip Swannell	File locations in SCRiPTControl.json can be given with addresses relative to the location of SCRiPTControl.json. Makes it easier to set up regression tests etc.
+658	22-Jan-2020	11:04	Philip Swannell	Fixed size of menu button on Portfolio sheet.
+657	22-Jan-2020	10:57	Philip Swannell	Fixed compile error caused by recent changes in SolumAddin.
+656	14-Nov-2019	13:12	Philip Swannell	Changed error handling in method UpdatePortfolioSheet.
+655	14-Nov-2019	11:12	Philip Swannell	Fix to CalculateRequiredMarketData. Code was making assumption about trade data that is violated by InflationYoYSwap.
+654	14-Nov-2019	10:25	Philip Swannell	Changes to method ValidateTrades to better handle InflationYoYSwap.
+653	04-Nov-2019	18:21	Philip Swannell	Re-release.
+652	04-Nov-2019	11:54	Philip Swannell	Config sheet now has setting UseCachedModel - useful for project to port the R code to Julia (which is so much faster than R that model caching is not necessary).
+651	18-Oct-2019	13:18	Philip Swannell	Bug fix to method ValidateFxStrip.
+650	18-Oct-2019	11:22	Philip Swannell	Tweak to method UpdateTradeTemplates.
+649	16-Jul-2019	09:09	Philip Swannell	Bug fix to method ValidateInflationIndex
+648	14-May-2019	10:52	Philip Swannell	Ran AmendVBA again - this time processing the class modules of the sheets.
+647	10-May-2019	15:52	Philip Swannell	Ran AmendVBA again - this time sorting of Dim statements is case-insensitive.
+646	10-May-2019	14:02	Philip Swannell	Ran AmendVBA.
+645	13-Feb-2019	09:17	Philip Swannell	Force2DArray bug fix to method CleanUpBackUps.
+644	07-Feb-2019	14:57	Philip Swannell	Sheets TradeViewer and CounterpartyViewer now show survival probabilities.
+643	07-Feb-2019	12:08	Philip Swannell	Tweak to GetTradesSummary.
+642	07-Feb-2019	11:49	Philip Swannell	Function TradeFileInfo replaces old functions CheckSumFromTradesFile and GetTradesSummaryFromFile.
+641	06-Feb-2019	13:44	Philip Swannell	Tweaks to method CheckSumFromTradesFile.
+640	06-Feb-2019	13:02	Philip Swannell	Improved method CleanUpBackUps. Was never deleting backups. Now delete older bbackups that duplicate younger backups and also allow no more than 40 backups.
+639	05-Feb-2019	17:34	Philip Swannell	Changes in method CloseTrades.
+638	05-Feb-2019	13:03	Philip Swannell	CloseTrades now available from menu.
+637	04-Feb-2019	17:45	Philip Swannell	Added method CloseTrades, but still work in progress.
+636	01-Feb-2019	15:44	Philip Swannell	Speedup to ValidateInflationIndex.
+635	31-Jan-2019	12:15	Philip Swannell	Re-wrote method ValidateCurrency to longer require editing each time we add a supported currency, but still be fast.
+634	31-Jan-2019	11:30	Philip Swannell	Amended function ValidateCurrency
+633	30-Jan-2019	16:30	Philip Swannell	Changed default Trade ID format from "Trade 001" to "T00001"
+632	30-Jan-2019	16:17	Philip Swannell	Improved error messages in method ValidateTrades.
+631	30-Jan-2019	15:29	Philip Swannell	Upped maximum number of trades that can be added in a oner from 1,000 to 10,000.
+630	18-Jan-2019	11:07	Philip Swannell	Now show FCA and FBA on xVADashboard and on CounterpartyViewer sheet.
+629	17-Jan-2019	18:09	Philip Swannell	Menu changes.
+628	17-Jan-2019	17:38	Philip Swannell	Changes to GetDataForDashboard to cope with changes in R code.
+627	17-Jan-2019	15:58	Philip Swannell	Fixed double-click bug on sheet xVADashboard.
+626	17-Jan-2019	14:20	Philip Swannell	Formatting changes on Config sheet.
+625	16-Jan-2019	18:20	Philip Swannell	Fixed bug if all trades for a counterparty have matured.
+624	15-Jan-2019	17:06	Philip Swannell	Formatting on Config sheet.
+623	15-Jan-2019	17:03	Philip Swannell	Correction to previous release.
+622	15-Jan-2019	16:15	Philip Swannell	Tweak to method ShowMenu running in "AddOneTrade" mode.
+621	15-Jan-2019	12:35	Philip Swannell	First version with FVA replaced by FCA and FBA. Further work needed to calculate in the same manner as we calculate CVA (for speed)
+620	11-Jan-2019	15:51	Philip Swannell	Test release.
+619	10-Jan-2019	15:06	Philip Swannell	Fixed compile errors caused by recent changes in SolumAddin.
+618	10-Jan-2019	10:55	Philip Swannell	Changed calls to GetCopiedRange.
+617	03-Jan-2019	15:41	Philip Swannell	Tweak to method LocalTemp.
+616	03-Jan-2019	15:06	Philip Swannell	Changed error handling in method GetCurrenciesFromR.
+615	03-Jan-2019	12:39	Philip Swannell	Calibration Report now more prominent in menu.
+614	03-Jan-2019	11:18	Philip Swannell	Work on Calibration Report.
+613	20-Dec-2018	15:01	Philip Swannell	Work on Calibration Report.
+612	20-Dec-2018	13:16	Philip Swannell	Work on Calibration Report.
+611	20-Dec-2018	08:47	Philip Swannell	Tweak to method GetTradesSummaryFromFile.
+610	19-Dec-2018	17:38	Philip Swannell	Work on Calibration Report.
+609	19-Dec-2018	16:05	Philip Swannell	Menu changes.
+608	19-Dec-2018	12:08	Philip Swannell	New module modCheckCalibration and new menu item "Calibration Report"
+607	14-Dec-2018	15:30	Philip Swannell	Improved Snapshot Name dialog.
+606	13-Dec-2018	17:21	Philip Swannell	Formatting on Config sheet.
+605	13-Dec-2018	17:08	Philip Swannell	Code indenting (previous edits on PC without MZTools).
+604	13-Dec-2018	16:52	Philip Swannell	Fewer errors when trying to run on a PC without the necessary R packages.
+603	13-Dec-2018	10:12	Philip Swannell	Work on saving Snapshots for better regression testing.
+602	12-Dec-2018	18:34	Philip Swannell	When Logging is one we save a time-stamped copy of the Results file for use in Regression testing.
+601	12-Dec-2018	16:52	Philip Swannell	Improved ReleaseCleanup.
+600	12-Dec-2018	16:48	Philip Swannell	Tweak in class module of Config sheet.
+599	12-Dec-2018	16:14	Philip Swannell	Config sheet now has RSourcePath.
+598	11-Dec-2018	18:01	Philip Swannell	Fixes to GetCalibratedVols and GetCalibratedFxVols.
+597	10-Dec-2018	09:11	Philip Swannell	Improved error handling in RangeFromMarketDataBook. Tweak to SetValidationForNotional.
+596	04-Dec-2018	14:30	Philip Swannell	throw > Throw
+595	03-Dec-2018	15:53	Philip Swannell	Method ShowInputAndOutputFiles no longer shows Model file since it's binary.
+594	30-Nov-2018	14:25	Philip Swannell	Added menu item to "Build Hull-White Model from discount factors" to test R code as MetaSite would call it.
+593	29-Nov-2018	14:26	Philip Swannell	Added menu item to view log files in NotePad++
+592	15-Oct-2018	15:51	Philip Swannell	Changes for Metasite.
+591	15-Oct-2018	14:48	Philip Swannell	More ControlFile changes.
+590	15-Oct-2018	14:30	Philip Swannell	ControlFile can now contain instruction "LogFile".
+589	05-Oct-2018	10:50	Philip Swannell	Changes to menu.
+588	05-Oct-2018	09:56	Philip Swannell	Bug fix to handling of sheet protection in method UpdateCounterpartyViewerSheet
+587	04-Oct-2018	13:55	Philip Swannell	Ready for delivery to MetaSite.
+586	04-Oct-2018	12:19	Philip Swannell	Work in progress on cached model.
+585	04-Oct-2018	12:07	Philip Swannell	Work in progress on cached model.
+584	07-Sep-2018	09:28	Philip Swannell	Fixed type mismatch in ShowMenu that could happen if the range TradesFileName on the Portfolio sheet was empty. Not sure how that gets to be empty though.
+583	13-Jul-2018	12:49	Philip Swannell	Fix bug in FixedCashflowsDoubleClickHandler - bug manifested when TransitionNavigationKeys was FALSE.
+582	22-Jun-2018	13:49	Philip Swannell	Fixed compile errors caused by recent changes in SolumAddin.
+581	15-May-2018	13:49	Philip Swannell	Removed Stop statements in a couple of error handlers.
+580	15-May-2018	13:45	Philip Swannell	Fix to MyFxPerBaseCcy. Was broken because of changed behaviour of BERT which now returns an extra column when an R matrix has non-NULL dimnames
+579	11-May-2018	13:22	Philip Swannell	Fix to OpenBackups. Was showing no backup as a consequence of non-backwards change to sDirList's treatment of FileFilter argument.
+578	04-May-2018	16:51	Philip Swannell	Small change on Hidden sheet - fixes small problem with viewing trade cashflows.
+577	03-May-2018	16:43	Philip Swannell	Fix to type mismatch that is caused by changes to the berhaviour of BERT when "singletons" are returned.
+576	20-Mar-2018	16:02	Philip Swannell	We now save two market files: SCRiPTMarketRates.json and SCRiPTMarketDiscountFactors.json.
+575	19-Mar-2018	16:53	Philip Swannell	Further changes to remove calls to EnhanceTradeData.
+574	19-Mar-2018	16:26	Philip Swannell	Bug fix to method ViewTradeCashflows, broken since we removed the R function EnhanceTradeData.
+573	16-Mar-2018	17:53	Philip Swannell	When adding a new trade of type FxForward, suggested trade will now have zero PV.
+572	16-Mar-2018	09:41	Philip Swannell	Added menu item 'Show Input and Output files'.
+571	08-Mar-2018	14:37	Philip Swannell	Tweak to menu item Save Trades
+570	08-Mar-2018	10:01	Philip Swannell	Released work done at home.
+569	07-Mar-2018	14:00	Philip Swannell	Removed Boolean flag BuildCurvesOnly - it was logically redundant.
+568	07-Mar-2018	11:52	Philip Swannell	Bug fix to method ChooseBanks. Bug could result in mal-formed data being saved to SCRiPTControl.json.
+567	05-Mar-2018	13:26	Philip Swannell	Code comments only.
+566	05-Mar-2018	09:26	Philip Swannell	Released work done at home.
+565	02-Mar-2018	18:28	Philip Swannell	Bug fixes to problems caused by R refactoring.
+564	02-Mar-2018	15:13	Philip Swannell	Changes to work with refactored R code.
+563	02-Mar-2018	11:40	Philip Swannell	Improved explanations on Config sheet.
+562	02-Mar-2018	10:32	Philip Swannell	Work on displaying results when OnValuationErrors = 'Continue' and there were indeed errors.
+561	01-Mar-2018	14:24	Philip Swannell	Tweaks to menu for solving.
+560	01-Mar-2018	11:34	Philip Swannell	PartyID > PartyName
+559	01-Mar-2018	08:30	Philip Swannell	Added global constant gDoValidation, which can be used to switch off much of the Excel and VBA-level validation of trade data and thus allows better testing of the R code's handling of bad data - necessary as we plan to use the R code with a different front-end.
+558	01-Mar-2018	07:38	Philip Swannell	New Config sheet setting OnValuationErrors, with allowed values "Continue" and "Stop".
+557	28-Feb-2018	15:33	Philip Swannell	Changes to reflect simplification of R code - all results are help in a single list SCRiPTResults
+556	28-Feb-2018	11:23	Philip Swannell	Change in R code: uniqueident > PartyID
+555	27-Feb-2018	14:26	Philip Swannell	No longer access SCRiPTControl object in R
+554	27-Feb-2018	12:30	Philip Swannell	Reforms to error handling. For trade PVs, no longer "give up" on encountering first trade that fails to value - plan to do similar for netset pvs and XVAs. Also removed method TradePVsFromR.
+553	26-Feb-2018	17:12	Philip Swannell	Bug fix to method ParseLazyDate.
+552	26-Feb-2018	16:42	Philip Swannell	Changes to handling of trades that give errors when valued.
+551	26-Feb-2018	14:54	Philip Swannell	Tweak to method LocalTemp.
+550	26-Feb-2018	11:21	Philip Swannell	We now call an R function RunSCRiPT instead of simply sourcing SCRiPTMain.R
+549	21-Feb-2018	15:44	Philip Swannell	MZTools to remove declared but unused variables.
+548	21-Feb-2018	13:59	Philip Swannell	Changes to Alignment on sheet CVAVaR
+547	21-Feb-2018	13:22	Philip Swannell	Pass gWHATIF to functions in SCRiPTInterface.R
+546	21-Feb-2018	11:26	Philip Swannell	Now save SelfPartyName and WhatIfPartyName to the ControlFile.
+545	21-Feb-2018	10:58	Philip Swannell	Reverted to 542 since workbook got corrupted.
+542	20-Feb-2018	15:59	Philip Swannell	ControlFile now has element BuildCurvesFromRates.
+541	20-Feb-2018	12:22	Philip Swannell	Changes in method RunRCode
+540	19-Feb-2018	10:39	Philip Swannell	Released work done at home on 9 Feb. Communicating trade data to R via flat file seems to be working now.
+539	08-Feb-2018	17:28	Philip Swannell	Saving control data via json seems to be working. Started work to save trade data as csv. Needs work on the R side however?
+538	07-Feb-2018	18:59	Philip Swannell	Started work on saving "ControlData" to a json file
+537	07-Feb-2018	16:21	Philip Swannell	Removed internal variable DoTradeLevelCalc
+536	07-Feb-2018	10:22	Philip Swannell	Released work done at home.
+535	06-Feb-2018	19:52	Philip Swannell	Changes to accommodate sending market data to R via json file - can no longer grab data from R's input_... Variables instead we must look into R's model.
+534	06-Feb-2018	14:27	Philip Swannell	No longer call SaveDataFromMarketWorkbookToR, but SaveDataFromMarketWorkbookToJSON instead.
+533	02-Feb-2018	15:30	Philip Swannell	Added ad-hoc method SaveTradesForMetasite.
+532	02-Feb-2018	15:02	Philip Swannell	Bug fix to code that annotates recent trades file list with summary of trade file contents.
+531	30-Jan-2018	08:32	Philip Swannell	Removed call to ShowFileInTextEditor that was left in in error.
+530	29-Jan-2018	17:03	Philip Swannell	Method RunRCode now calls SaveDataFromMarketWorkbookToFile in addition to SaveDataFromMarketWorkbookToR.
+529	18-Jan-2018	14:49	Philip Swannell	Tweaks to FormatTradesRange.
+528	18-Jan-2018	14:37	Philip Swannell	Tweaks to FormatTradesRange.
+527	17-Jan-2018	15:14	Philip Swannell	Tweaks to FormatTradesRange.
+526	12-Dec-2017	14:31	Philip Swannell	Removed call to funciton CleanErrorFromR.
+525	11-Dec-2017	11:13	Philip Swannell	Method GetTradesSummaryFromFile now copes with both trade file formats.
+524	11-Dec-2017	10:40	Philip Swannell	Change in ShowMenu to grey-out "Save Trades" when currently-open trades file is not an stf file.
+523	11-Dec-2017	10:10	Philip Swannell	Changes in Workbook_Open event.
+522	07-Dec-2017	21:30	Philip Swannell	Bug fixes to method AmendMRU
+521	07-Dec-2017	08:56	Philip Swannell	Changes in SaveTradesFile and GetTradesSummaryFromFile
+520	06-Dec-2017	17:08	Philip Swannell	Fix to method IsPFEDataAvailable.
+519	06-Dec-2017	16:31	Philip Swannell	Memory-saving change to how R code saves data for WhatIf trades
+518	06-Dec-2017	14:03	Philip Swannell	More work on switching to using SCRiPT_Results
+517	06-Dec-2017	13:48	Philip Swannell	Switch to using new method SCRiPT_Results in place of DataForViewerSheet, PathsForViewerSheet and NetsetResults.
+516	05-Dec-2017	18:28	Philip Swannell	Bug fix to GetTradesSummary
+515	05-Dec-2017	18:24	Philip Swannell	Bug fix to method AmendMRU
+514	05-Dec-2017	16:05	Philip Swannell	Changes to the R code called to update TradeViewer and CounterpartyViewer sheets.
+513	05-Dec-2017	13:12	Philip Swannell	Speedups via caching (memoising) to trade summary changes.
+512	05-Dec-2017	12:16	Philip Swannell	Recently-used files list now shows brief summary of the file's contents (2).
+511	05-Dec-2017	12:11	Philip Swannell	Recently-used files list now shows brief summary of the file's contents.
+510	05-Dec-2017	10:40	Philip Swannell	Changes in Workbook_BeforeSave.
+509	05-Dec-2017	10:37	Philip Swannell	Work on trade backups.
+508	04-Dec-2017	18:48	Philip Swannell	New setting on Config sheet: SaveCubes, and changes to code that refreshes the TradeViewer sheet and the Counterparty viewer sheet.
+507	04-Dec-2017	08:56	Philip Swannell	Ran Ribbon Commander Code Cleaner.
+506	01-Dec-2017	17:55	Philip Swannell	Method PasteTradesToPortfolioSheet now calls ResetSortButtons and RepositionSortButtons.
+505	01-Dec-2017	15:58	Philip Swannell	Bug fix to previous release - used .Value instead of .Value2 which broke trade validation.
+504	01-Dec-2017	13:54	Philip Swannell	Changes in method SaveTradesFile
+503	01-Dec-2017	13:40	Philip Swannell	Tweak to method OpenMostRecentBackup.
+502	01-Dec-2017	13:39	Philip Swannell	Formatting change on Audit sheet.
+501	01-Dec-2017	12:33	Philip Swannell	User now discouraged from saving this workbook, and prompted to save the trades instead.
+500	01-Dec-2017	12:06	Philip Swannell	New setting on Config sheet, RestoreTradesAtStartup.
+499	01-Dec-2017	10:45	Philip Swannell	Fix to get trades menu after user has hiot "Clear Recent Files List"
+498	01-Dec-2017	10:24	Philip Swannell	Removed complicated function TrimZeros - changes to the R code mean that sSuppressNAs now does the job much more simply.
+497	28-Nov-2017	10:32	Philip Swannell	Changing function names: sDiscountFactor > SCRiPT_DF, sSurvivalProbability > SCRiPT_SurvProb
+496	27-Nov-2017	11:43	Philip Swannell	Changes for SCRiPTUtils.xlam having become SolumSCRiPTUtils.xlam
+495	24-Nov-2017	15:58	Philip Swannell	Deleted function GetDiscountFactors - we now have sDiscountFactor in SCRiPTUtils
+494	24-Nov-2017	14:09	Philip Swannell	Deleted no-longer-used method SaveToRNumericMatrix.
+493	24-Nov-2017	11:38	Philip Swannell	Replaced calls to SurvivalProbability (VBA method of this workbook) with sSurvivalProbability - function in SCRiPTUtils.
+492	23-Nov-2017	16:14	Philip Swannell	Fixed bug in method SourceRCode. Was not working correctly since switch to BERT.
+491	17-Nov-2017	17:33	Philip Swannell	Changes since no longer necessary to code around bugs in Bert 1.62
+490	17-Nov-2017	17:27	Philip Swannell	Cell formatting on CounterpartyViewer and TradeViewer sheets.
+489	30-Oct-2017	13:22	Philip Swannell	Fix to method EADSACCRForNettingSet relating to switch from C# to BERT (bug was spotted by Hermione).
+488	30-Oct-2017	09:56	Philip Swannell	Tweak to method ShowMenu needed for recent changes to method GetMRUList
+487	09-Oct-2017	11:29	Philip Swannell	Changes to sort buttons.
+486	05-Oct-2017	17:22	Philip Swannell	Compatibility with BERT 1.62.2 - no longer have to code around crash bug.
+485	03-Oct-2017	16:31	Philip Swannell	Compatibility with BERT 1.62.1
+484	28-Sep-2017	10:01	Philip Swannell	Tweak to method SurvivalProbability.
+483	27-Sep-2017	18:14	Philip Swannell	Improvements to release 480 strings such as "5.5b" now correctly interpreted
+482	27-Sep-2017	16:53	Philip Swannell	Code comments only.
+481	27-Sep-2017	13:51	Philip Swannell	Tweaks to double-click handling on Portfolio sheet.
+480	27-Sep-2017	11:28	Philip Swannell	Change to method FormatTradesRange so that "k", "m" and "b" can be used as abbreviations for thousand, million and billion (for columns Notional1 and Notional2)
+479	26-Sep-2017	16:57	Philip Swannell	Bug fix to UpdateCounterpartyViewer sheet - type mismatch was happening if there was only one counterparty thanks to differences in behaviour between BERT and old C# code.
+478	26-Sep-2017	12:03	Philip Swannell	Bug fix to UpdatePortfolioSheet.
+477	26-Sep-2017	11:48	Philip Swannell	Bug fix to code that handles the user typing simply 5 as the maturity date of a five year swap.
+476	26-Sep-2017	11:28	Philip Swannell	Can now calculate PVs even when the Counterparty field has not been populated.
+475	25-Sep-2017	12:03	Philip Swannell	Fixed type mismatch resulting from differences between calling R via BERT and via PB's C#.
+474	25-Sep-2017	10:03	Philip Swannell	Changes to calls to method TestInstallation
+473	22-Sep-2017	15:10	Philip Swannell	Changes to switch away from using Paul's C# addin, instead we use BERT (http://bert-toolkit.com)
+472	21-Sep-2017	14:06	Philip Swannell	Changed links for new location of SolumAddin.
+471	21-Sep-2017	09:17	Philip Swannell	Rebased Regression sheet.
+470	21-Sep-2017	09:10	Philip Swannell	All calls to R now routed via sExecuteRCode in SCRiPTUtils
+469	20-Sep-2017	17:38	Philip Swannell	Work (not finished) to eliminate method CallRFunction, want to replace with sExecuteRCode.
+468	20-Sep-2017	17:11	Philip Swannell	Now call single wrapper to C# layer, which we wish to replace.
+467	19-Sep-2017	12:09	Philip Swannell	Noticed and fixed bugs to handling of globals gBlockCalculateEvent and gBlockChangeEvent.
+466	19-Sep-2017	10:31	Philip Swannell	Hooked in to new functionality in BackUpRange (2).
+465	18-Sep-2017	19:18	Philip Swannell	Hooked in to new functionality in BackUpRange.
+464	14-Sep-2017	17:29	Philip Swannell	Improvements to trade double-click handling.
+463	14-Sep-2017	13:24	Philip Swannell	Removed RecoveryRate from Config sheet - we now set recovery rates by counterparty on the Credit sheet of the market data workbook.
+462	12-Sep-2017	15:11	Philip Swannell	Changes necessary because of variable-name reform in the R code.
+461	11-Sep-2017	14:47	Philip Swannell	Fix to method EffectiveMaturityForTradesWithCP wrt amortising trades.
+460	11-Sep-2017	11:47	Philip Swannell	Fixed double-click error on Config sheet.
+459	07-Sep-2017	12:01	Philip Swannell	Cope with MarketData workbooks that do not have a "BuildCurvesFromRates setting on their Config sheet.
+458	06-Sep-2017	17:07	Philip Swannell	Config sheet no longer has TimeEnd, use TStar instead.
+457	06-Sep-2017	16:58	Philip Swannell	Change to associated R code - no longer call TimeAdjust.
+456	26-Jun-2017	11:45	Philip Swannell	Main.R -> SCRiPTMain.R
+455	23-Jun-2017	17:51	Philip Swannell	No longer use merged cells in the header rows of the Portfolio sheet.
+454	23-Jun-2017	13:38	Philip Swannell	Activate Portfolio sheet after opening a trades file.
+453	21-Jun-2017	13:02	Philip Swannell	Tweaks to calls to DatePicker.
+452	20-Jun-2017	15:54	Philip Swannell	Changes in FormatTradesRange to allow entering of start and end dates as just integers meaning number of years from AnchorDate and trade start date respectively.
+451	19-Jun-2017	16:58	Philip Swannell	Tweak to trade double-clicking.
+450	19-Jun-2017	12:17	Philip Swannell	Hooked in to new method DatePicker.
+449	13-Jun-2017	15:14	Philip Swannell	Release with first defensible calibration for inflation trades.
+448	13-Jun-2017	13:10	Philip Swannell	Change to SetTradesRangeColumnWidths to make columns on the Portfolio sheet narrower.
+447	13-Jun-2017	10:53	Philip Swannell	Changed registry key at which we store lists of recently-used files. Was CVAFromRTradeFiles. Now SCRiPTTradeFiles.
+446	13-Jun-2017	10:18	Philip Swannell	Fix to method PasteTradesToPortfolioSheet - in some circumstances the message <Doubleclick to add trade> could appear more than once.
+445	12-Jun-2017	11:37	Philip Swannell	Change to method CalculateRequiredMarketData. No need to add an additional currency (to ensure model has more than one) if there is an inflation index since at the lower level an inflation index is a currency.
+444	12-Jun-2017	10:16	Philip Swannell	Figured out what was causing the link to SCRiPTUtils and got rid of it.
+443	09-Jun-2017	14:34	Philip Swannell	Change so that links are updated on opening this workbook with no prompt (Data > Edit links > Startup Prompt > Don't display the alert and update links.
+442	25-May-2017	15:33	Philip Swannell	Reintroduced whole-number check in method ValidateTrades since almost finished debugging inflation trades
+441	24-May-2017	14:58	Philip Swannell	Tweaks to TradeDoubleClickHandler.
+440	22-May-2017	12:04	Philip Swannell	Bug fixes to handling of "<Doubleclick to add trade>" message.
+439	18-May-2017	11:32	Philip Swannell	Tweak to error handling in ReleaseCleanup.
+438	17-May-2017	16:53	Philip Swannell	FormatTradeRange now updates currency of non-index leg of InflationYoY swaps.
+437	17-May-2017	16:31	Philip Swannell	Can now double-click just below last trade to add another.
+436	17-May-2017	14:34	Philip Swannell	Upgraded method CheckModelHasCurves to cope with inflation indices.
+435	16-May-2017	16:24	Philip Swannell	InflationYoY swaps now have more reasonable-looking PV, can generate cashflows and work for CVA calculation (i.e. give numbers, not errors...)
+434	15-May-2017	18:08	Philip Swannell	InflationYoYSwaps now solvable. PV's clearly bugged...
+433	15-May-2017	18:01	Philip Swannell	InflationYoYSwap now returning numbers as opposed to errors.
+432	15-May-2017	12:27	Philip Swannell	Tweak to ShowTradesForR.
+431	12-May-2017	15:53	Philip Swannell	Work on InflationYoYSwap.
+430	10-May-2017	13:56	Philip Swannell	Can now view cashflows for InflationZCSwap.
+429	10-May-2017	11:26	Philip Swannell	Tweak to ReleaseCleanup.
+428	10-May-2017	11:08	Philip Swannell	Changes to method UpdateReturnOnRWAsByCounterparty that was causing Excel to crash(!). Problem related to relying on change event of Capital sheet to ensure correct order of sheet calculation. Instead disabled the change event and coded correct order explicitly.
+427	09-May-2017	17:35	Philip Swannell	Bug fix to TradeSolver for FxForwards, solving on Notional2
+426	09-May-2017	11:03	Philip Swannell	Tweaks to EvaluatePlus.
+425	09-May-2017	08:24	Philip Swannell	Added method EvaluatePlus.
+424	05-May-2017	18:28	Philip Swannell	Fix to TradeSolver - broken in release 421.
+423	04-May-2017	16:43	Philip Swannell	Tweak to change event of Config sheet.
+422	04-May-2017	16:35	Philip Swannell	Fixed bugs that the previous change revealed.
+421	04-May-2017	15:47	Philip Swannell	Soft-coded the name of the model in R, want to switch from "model" to SCRiPTModel to avoid possibility of bugs caused by methods accessing model from the global environment when intention was to use variable in the function's own environment.
+420	04-May-2017	15:33	Philip Swannell	No longer check dates on the Portfolio sheet are whole numbers - reintroduce that check when inflation trades are working again.
+419	04-May-2017	13:35	Philip Swannell	Now see numbers (clearly wrong numbers) for the value of InflationZCSwap trades. Changes to TradeSolver to cope with such trades.
+418	04-May-2017	09:30	Philip Swannell	Tweak to method RunRCode  to clear out status bar at start of method.
+417	24-Apr-2017	17:17	Philip Swannell	Removed method AutofitColumns as it's been moved to SolumAddin for calling from other workbooks.
+416	21-Apr-2017	16:37	Philip Swannell	Methods FormatTradesRange, TradeDoubleClickHandler, ValidateTrades, PortfolioTradesToRTrades, RTradesToPortfolioTrades all updated to handle new trade types InflationZCSwap and InflationYoYSwap.
+415	20-Apr-2017	17:27	Philip Swannell	Started work on UI for inflation swaps.
+414	18-Apr-2017	16:05	Hermione Glyn	Bug fix in modCapital!EADCEMForNettingSet (handle case of one trade in netting set correctly). Also SACCR bug fixes.
+413	30-Mar-2017	09:56	Philip Swannell	Call SetCalculationToManual in Workbook_Open. Ensure that market always contains the CollateralCcy curve.
+412	29-Mar-2017	17:19	Philip Swannell	Tweaks to trade solving.
+411	29-Mar-2017	15:51	Philip Swannell	Handle case in which Numeraire currency and "Collateral Currency" are different.
+410	28-Mar-2017	09:59	Philip Swannell	Beta version of code with SACCR. Sheet SACCRTesting is hidden by default.
+409	27-Mar-2017	16:15	Philip Swannell	More work on SACCR.
+408	23-Mar-2017	16:49	Philip Swannell	More work on SACCR.
+407	23-Mar-2017	09:55	Philip Swannell	Bug fix to validation of CapFloor trades.
+406	22-Mar-2017	15:20	Philip Swannell	Bug fix to showing display of cashflows - was broken by changes made for SACCR.
+405	21-Mar-2017	12:11	Philip Swannell	Added sheet SACCRTesting with wrappers to R functions for SACCR calculation.
+404	10-Mar-2017	12:50	Philip Swannell	Bug fix to call to OpenLinesWorkbook - we were checking for data columns required for Cayley, but shouldn't have.
+403	23-Feb-2017	14:10	Philip Swannell	Further fix to KVA calculation. Was getting "'#Error!" in the case of banks using CEM/STD. Also when calculating the RiskWeight under IRB, now use CappedEffectiveMaturity rather than EffectiveMaturity.
+402	23-Feb-2017	12:23	Philip Swannell	KVA calculation was not working for banks when EaD method was CEM thanks to formula error on sheet CVAVaR. Fixed this.
+401	23-Feb-2017	11:22	Philip Swannell	Introduced more calls to method TestInstallation, for consistency with Cayley.
+400	25-Jan-2017	09:53	Philip Swannell	Tweak to error description generated by method IsPFEDataAvailable.
+399	25-Jan-2017	09:39	Philip Swannell	Tweak to trade double click handler to improve counterparty selection.
+398	23-Jan-2017	11:20	Philip Swannell	Final release before trip to Munich.
+397	20-Jan-2017	13:23	Philip Swannell	Change to method SaveTradeFiles to avoid getting a "Do you want to overwrite" dialog twice.
+396	20-Jan-2017	11:37	Philip Swannell	Now store the EaD method and the CVA capital charge method in a single column in the Lines workbook.
+395	19-Jan-2017	21:47	Philip Swannell	"Generate Reports" menu option failed to copy charts into the report workbook. Corrected that.
+394	19-Jan-2017	20:10	Philip Swannell	Removed "Format Cells" as an option in the menu.
+393	19-Jan-2017	19:14	Philip Swannell	Correction to xaxis minimum on CounterpartyViewer sheet and TradeViewer sheets.
+392	18-Jan-2017	15:29	Philip Swannell	Tweak to calls to ShowMultipleChoiceDialog.
+391	18-Jan-2017	10:33	Philip Swannell	Changes to sheet visibility - Guy request.
+390	17-Jan-2017	16:59	Philip Swannell	Method GetDataForDashboard now takes account of the 'DVA benefit %' and 'FVA charge %' held in the lines workbook, with associated changes on the xVADashboard.
+389	17-Jan-2017	16:18	Philip Swannell	Tweak to method AddTrades.
+388	17-Jan-2017	11:34	Philip Swannell	Call BackupTrades after opening a trades file.
+387	16-Jan-2017	14:14	Philip Swannell	Tweak to method ChooseBanks to better cope with trades for which we have no lines data.
+386	16-Jan-2017	13:10	Philip Swannell	Added method ValidateCapitalInputs, does basic validation on the input data on the lines workbook, including ensuring that when the EaD method is CEM then the CVA Capital Charge method is STD rather than ADV.
+385	16-Jan-2017	10:52	Philip Swannell	Tweak to method UpdateReturnOnRWAsByCounterparty.
+384	16-Jan-2017	10:43	Philip Swannell	Changed title of chart on Capital sheet - Guy request.
+383	15-Jan-2017	16:35	Philip Swannell	More changes relating to DoTradeLevelAnalysis
+382	15-Jan-2017	13:16	Philip Swannell	Changes relating to DoTradeLevelAnalysis
+381	15-Jan-2017	13:13	Philip Swannell	Tweaks to Worksheet_BeforeDoubleClick.
+380	15-Jan-2017	11:24	Philip Swannell	Changed method BackupTrades so that if trades have not changed since the previous time they were backed up we simply rename the previous backup to reflect the current time.
+379	13-Jan-2017	16:27	Philip Swannell	Removed declared but unused variables.
+378	13-Jan-2017	16:05	Philip Swannell	Always backup trades before deleting any.
+377	13-Jan-2017	15:47	Philip Swannell	Implemented automatic backing up of trades on the Portfolio sheet. Happens when the user clicks on the menu button, and trades have not been backed up in the last 5 minutes and trades have changed since the last backup. Back ups can be restored via 
+376	13-Jan-2017	13:06	Philip Swannell	Changed x axis in charts on TradeViewer and CounterpartyViewer to display time in years rather than dates.
+375	13-Jan-2017	12:04	Philip Swannell	The formula in the "Rating weight" cell on the CVAVaR sheet got corrupted. Fixed this and checked for other formula corruptions using "Compare Workbook Fiormulas" utility against a version of SCRiPT from 10 Jan. Found none.
+374	13-Jan-2017	11:04	Philip Swannell	Changes to method LookupBankInfo to support more than one bank in a single call.
+373	12-Jan-2017	17:04	Philip Swannell	Fix to method IsPFEDataAvailable, which I broke recently.
+372	12-Jan-2017	15:39	Philip Swannell	Ran Rob Bovey's CodeCleaner.
+371	12-Jan-2017	15:22	Philip Swannell	AnnotateBankNames2 > AnnotateBankNames
+370	12-Jan-2017	11:41	Philip Swannell	Application.Statusbar -> StatusBarWrap
+369	11-Jan-2017	17:46	Philip Swannell	Fixes in both VBA code and R code for the case when none of the chosen banks have trades on the PortfolioSheet.
+368	11-Jan-2017	16:52	Philip Swannell	Removed method CompareWorkbookFormulas - it's moved to SolumAddin.
+367	11-Jan-2017	16:01	Philip Swannell	Changed how menu option "Cashflows" works. Rather than appearing in a new workbook whose look and feel emulates a dialog box, we simply display in a sheet of this workbook - CashflowsDrilldown. This is similar behaviour to the SpeedGridDrilldown in the Cayley workbook. The code to "make a workbook emulate a modal dialog" was much more trouble than it was worth.
+366	11-Jan-2017	15:17	Philip Swannell	Bug fix to method SaveToRConfigSheet
+365	11-Jan-2017	14:05	Philip Swannell	Removed sheet CapInputs.
+364	11-Jan-2017	13:59	Philip Swannell	Work on moving Capital Inputs data from this workbook to the Lines workbook.
+363	11-Jan-2017	13:09	Philip Swannell	Work on moving Capital Inputs data from this workbook to the Lines workbook.
+362	11-Jan-2017	11:41	Philip Swannell	Added LinesWorkbook to Config sheet.
+361	10-Jan-2017	18:10	Philip Swannell	Tweaks to ReleaseCleanup.
+360	10-Jan-2017	17:13	Philip Swannell	Removed column "Spread" from the CapInputs sheet since we now use credit curves from R.
+359	10-Jan-2017	14:45	Philip Swannell	Added method RiskWeightStandard, work on Capital and CVAVaR sheets
+358	10-Jan-2017	12:30	Philip Swannell	Set "Exemption" flag on many of the banks on the CapInputs sheet.
+357	10-Jan-2017	12:09	Philip Swannell	Removed column "Reg scaling" from CapInputs sheet. Was set to 106% for all banks and we now have the 1.06 in the code of function RiskWeightIRB
+356	10-Jan-2017	11:10	Philip Swannell	Tweaks to method ChooseBanks.
+355	10-Jan-2017	09:26	Philip Swannell	Tweaks to Compress\Uncompress.
+354	09-Jan-2017	18:33	Philip Swannell	New menu items Compression > Compress/Uncompress
+353	09-Jan-2017	17:37	Philip Swannell + Hermione Glyn	Work on Capital and CVAVaR sheets.
+352	09-Jan-2017	10:06	Philip Swannell	Formatting changes on CapInputs sheet.
+351	09-Jan-2017	10:01	Philip Swannell	Bug fix in column "Effective EE" on sheet CVAVaR. Old formula was not correct if EPE (as a function of time) hits zero and then becomes positive.
+350	09-Jan-2017	09:35	Philip Swannell	Method EADCEMForNettingSet now calls UncompressTrades and so can cope with FxOptionStrip and FxForwardStrip.
+349	03-Jan-2017	16:59	Philip Swannell	Change ReleaseCleanup to set NumSimsCVA to 2047 and NumSims to 255.
+348	03-Jan-2017	16:25	Philip Swannell	Work on method UpdateReturnOnRWAsByCounterparty to better handle counterparties with no trades.
+347	03-Jan-2017	13:04	Philip Swannell	Improved double-click handler on worksheet Capital.
+346	03-Jan-2017	12:54	Philip Swannell	Tweak to method ChooseBanks.
+345	03-Jan-2017	12:49	Philip Swannell	Fixes to UpdateTradeViewerSheet and UpdateCounterpartyViewerSheet to cope with the fact that we now run CVA\PFE for only a subset of trades in the AllPortfolio dataframe
+344	03-Jan-2017	10:02	Philip Swannell	Release from Solum to get Git up to date.
+343	02-Jan-2017	20:08	Philip Swannell	Fix to EffectiveMaturityForTradesWithCP to cope with amortising swaps.
+342	02-Jan-2017	19:38	Philip Swannell	Bug fix to method ChooseBanks.
+341	02-Jan-2017	19:33	Philip Swannell	Added 41 rows to the CapInputs sheet. Data shown in red since no attempt to make it accurate yet, simply want to get numbers for trades in the Cayley portfolio.
+340	02-Jan-2017	18:28	Philip Swannell	Method EffectiveMaturityForTradesWithCP rewritten to cope with trade types FxForwardStrip and FxOptionStrip.
+339	01-Jan-2017	09:33	Philip Swannell	Reform to menu for adding trades - put Fixed Cashflows, Fx Forward Strip and Fx Option Strip one level deeper in the menu.
+338	01-Jan-2017	09:13	Philip Swannell	FxForwardStrip R code now works
+337	31-Dec-2016	18:53	Philip Swannell	VBA coding for FxForwardStrip completed. Have to do R coding?
+336	31-Dec-2016	17:55	Philip Swannell	Compressing trades makes Airbus's trades about 2.5 times faster to process for PFE. However compressing to FixedCashflows makes Capital calculations difficult since we lose track of trade notionals. So started work on new VF FxForwardStrip.
+335	31-Dec-2016	17:40	Philip Swannell	As long as trades not compressed, Capital sheet now yields numbers rather than errors.
+334	30-Dec-2016	12:46	Philip Swannell	VFs FxOptionStrip and FixedCashflows not handled by code of Capital sheet. Work started on fixing that.
+333	26-Dec-2016	20:21	Philip Swannell	FxOptionStrip works, though not fully tested yet.
+332	26-Dec-2016	10:24	Philip Swannell	More work on FxOptionStrip.
+331	24-Dec-2016	19:26	Philip Swannell	Started work on trade compression for FxOptions using new valuation function FxOptionStrip.
+330	24-Dec-2016	14:56	Philip Swannell	Bug fix to method UpdateTradeViewerSheet.
+329	23-Dec-2016	15:22	Philip Swannell	Test harness under Menu > R environment > Test trade conversion. I believe that methods PortfolioTradesToRTrades and RTradesToPortfolioTrades are now correct inverses of one another for all valid trades.
+328	23-Dec-2016	13:21	Philip Swannell	Added test harness TestTradeConversion that checks whether PortfolioTradesToRTrades and RTradesToPortfolio trades correctly invert one another for the trades on the Portfolio sheet.
+327	23-Dec-2016	11:27	Philip Swannell	Improvements to method OpenTradesFile.
+326	23-Dec-2016	10:16	Philip Swannell	Method RTradesToPortfolioTrades fixed for CrossCurrencySwaps (not yet amortising ones though).
+325	22-Dec-2016	20:29	Philip Swannell	Method RTradesToPortfolioTrades corrected to handle amortising InterestRateSwaps.
+324	22-Dec-2016	18:05	Philip Swannell	Change to code that updates PVs on the Portfolio sheet so that trades with a PV greater than 2^31 now correctly display. Previously PV would show as empty thanks to a shortcoming of the C# code when reading the contents of a dataframe in R to an array in Excel. This change has associated changes in R!
+323	22-Dec-2016	13:36	Philip Swannell	Method RTradesToPortfolioTrades re-written for FxOptions.
+322	22-Dec-2016	12:15	Philip Swannell	Improvements to code for deleting trades from the Portfolio sheet.
+321	22-Dec-2016	11:56	Philip Swannell	Ensure we don't overwrite a Calypso export file when using Menu > Save
+320	22-Dec-2016	11:19	Philip Swannell	Corrected error handling in method SaveTradesFile - errors were being masked as "type mismatch"
+319	21-Dec-2016	18:34	Philip Swannell	Hooked in to method ShowSelectTrades when opening an Airbus (Calypso Export) file.
+318	19-Dec-2016	12:18	Philip Swannell	Minor cleanups via MZTools
+317	18-Dec-2016	19:30	Philip Swannell	Can now open trades in Calypso export format. Needs debugging for all trade types except FxForward.
+316	16-Dec-2016	20:13	Philip Swannell	Work on code to translate trades in R format to Portfolio sheet format.
+315	15-Dec-2016	08:06	Philip Swannell	Imported Hermione's code to take trades in R format and flip back to Portfolio-sheet format. Removed code duplicating existing methods in this project and one or two changes to make the code compile. Code not yet in use.
+314	13-Dec-2016	16:05	Philip Swannell	Removed 12 functions that have been moved to SCRiPTUtils.xlam: ArePackagesMissing, CleanOutREnvironment, FirstElementOf, InstallPackages, LoggingIsOn, LoggingSwitchOn, SaveDataframe, SaveREnvironment, ShowLogFiles, SourceRCode, stopImplicitCluster, To1Based2D
+313	13-Dec-2016	14:45	Philip Swannell	Added reference to c:\Program Files\Solum\AddIns\SCRiPTUtils.xlam.
+312	12-Dec-2016	16:42	Philip Swannell	Sheets Capital, CapInputs and CVAVaR hidden for now.
+311	09-Dec-2016	13:39	Philip Swannell	Removed Stop statement.
+310	08-Dec-2016	10:18	Philip Swannell	Change to method GetCalibratedVols to take ModelName argument.
+309	02-Dec-2016	15:51	Philip Swannell	Work in progress on EADCEM - can now do forward projection of future EaD under CEM.
+308	02-Dec-2016	14:12	Philip Swannell	Work in progress on EADCEM
+307	02-Dec-2016	12:31	Philip Swannell	Bug fix to SaveDataframe.
+306	01-Dec-2016	09:48	Philip Swannell	Change to CheckModelHasCurves to use sColumnFromTable.
+305	30-Nov-2016	18:04	Philip Swannell	Started work on Exposure at Default CMM method
+304	30-Nov-2016	12:48	Philip Swannell	Changes to CVAVaR sheet to make clear which inputs are used for which of the two calculations Advanced or Standard.
+303	30-Nov-2016	10:01	Philip Swannell	Top item in menu now reads Build Hull-White Model or Rebuild Hull-White Model according to whether the model exists. This is the same behaviour as Cayley.
+302	29-Nov-2016	16:18	Philip Swannell	Removed the LoanPortfolio sheet and Banking RWAs from the Capital sheet.
+301	29-Nov-2016	10:39	Philip Swannell	Work in progress on CVAVaR sheet.
+300	28-Nov-2016	15:59	Philip Swannell	Fix to GetCalibratedFxVols
+299	28-Nov-2016	15:12	Philip Swannell	Simplified the formulas on the CVAVaR sheet in column "Advanced Capital", using Teimuraz's formula K = 3 * (CVAVaR current + CVAVaR stressed). Nicolas' formulas should have collapsed down to this since index and single name hedges are ignored but mistakes in the formulas meant that they did not correctly collapse down. :-(
+298	28-Nov-2016	11:07	Philip Swannell	Simplified calls to ShowRegularExpressionDialog.
+297	25-Nov-2016	17:12	Philip Swannell	Changes on CVAVaR sheet. BUT may be double counting the 99% confidence - need to look at this on Monday.
+296	25-Nov-2016	12:10	Philip Swannell	Simplified some formulas on the CVAVaR sheet.
+295	15-Nov-2016	11:53	Philip Swannell	Fix in method SaveToRConfigSheet. Fixes "#Unrecognised value (OurName)on the Config sheet!" error seen by Guy.
+294	15-Nov-2016	11:47	Philip Swannell	Bug fix to method shConfig.ConfigRange.
+293	10-Nov-2016	13:28	Philip Swannell	Put AnchorDate and BaseCCY back on the Config sheet, but outside the range that's written to the Registry.
+292	09-Nov-2016	10:12	Philip Swannell	Removed four settings from the Config sheet: AnchorDate (lives in MDWb), BaseCCY (lives in MDWb), UseSobol (hard-wired to TRUE), InterpolateCovariance (hard-wired to TRUE). For PFE we now enter 95% as 95% rather than the confusing "Enter 95% as 5%" which we had until now.
+291	08-Nov-2016	12:08	Philip Swannell	A number of changes to the R environment menu - to bring into line with equivalent menu in Cayley.
+290	08-Nov-2016	11:19	Philip Swannell	Small changes to formatting of trades - negative rates show in red.
+289	08-Nov-2016	10:30	Philip Swannell	Settings on Config sheet now persisted in the Registry, cont.
+288	08-Nov-2016	10:00	Philip Swannell	Settings on Config sheet now persisted in the Registry
+287	04-Nov-2016	14:34	Philip Swannell	More changes relating to moving file locations to c:\Program Files\Solum\...
+286	04-Nov-2016	13:47	Philip Swannell	Changes relating to moving file locations to c:\Program Files\Solum\...
+285	01-Nov-2016	13:15	Philip Swannell	Fomatting change on Config sheet.
+284	10-Oct-2016	11:46	Philip Swannell	Removed hidden sheet Currencies - data has been moved to SolumAddin for better sharing with Cayley.
+283	07-Oct-2016	12:26	Philip Swannell	Removed method TestInstallation since that's been moved to SolumAddin.
+282	19-Sep-2016	13:45	Philip Swannell	Change to method CurrenciesRequired to promote the major currencies to alleviate the "add a currency and PFEs of existing trades changes" problem.
+281	15-Sep-2016	16:12	Philip Swannell	Replaced use of Application.InputBox with InputBoxPlus.
+280	15-Sep-2016	15:59	Philip Swannell	Tweak to method TradeSolver so that can solve for cells that are currently empty.
+279	14-Sep-2016	08:59	Philip Swannell	Amended calls to method sJustifyArrayOfStrings.
+278	09-Sep-2016	11:57	Philip Swannell	all calls to SFns.Providers.Default.EvaluateExpression now wrapped by ThrowIfErrorFromR so that error messages are cleaner.
+277	28-Jul-2016	18:16	Philip Swannell	DayCount dialog noe has Help explaining meaning of DCTs.
+276	28-Jul-2016	12:40	Philip Swannell	Now call sParseFrequencyString, sParseDCT and sSupportedDCTs from SolumAddin. Reduces code duplication.
+275	26-Jul-2016	16:15	Philip Swannell	bug fix related to BuildCurveFromRates.
+274	26-Jul-2016	13:24	Philip Swannell	Moved code for saving data from the market data to R out of this workbook and into the market data workbook, so we can share with Cayley.
+273	22-Jul-2016	13:22	Philip Swannell	Rebased regression test
+272	21-Jul-2016	12:08	Philip Swannell	Bug fix to viewing trade cashflows.
+271	12-Jul-2016	17:13	Philip Swannell	Bug fix to TradeSolver - was not working for FxForward, Notional 2.
+270	11-Jul-2016	15:09	Philip Swannell	Added spreadsheet-callable VBA function GetDiscountFactors (a wrapper to R function of the same name).
+269	11-Jul-2016	10:38	Philip Swannell	Recent changes in the MarketDataWorkbook had broken the Calibration sheet. Fixed this.
+268	06-Jul-2016	18:58	Philip Swannell	Bug fix to method TestInstallation.
+267	06-Jul-2016	16:01	Philip Swannell	Changes to method TestInstallation.
+266	06-Jul-2016	15:14	Philip Swannell	Added more banks to CapInputs sheet.
+265	06-Jul-2016	15:00	Philip Swannell	Changes to how we call method TestInstallation
+264	06-Jul-2016	12:54	Philip Swannell	Changes to how Xccy basis swaps are specified in the market data workbook.
+263	05-Jul-2016	12:48	Philip Swannell	Cross currency swap pricing now works
+262	04-Jul-2016	14:43	Philip Swannell	Change to Workbook_WindowActivate to avoid emptying the clipboard on workbook activation.
+261	30-Jun-2016	11:40	Philip Swannell	Method SaveToRConfigSheet does some basic validation.
+260	30-Jun-2016	11:04	Philip Swannell	Reform of the Config sheet.
+259	30-Jun-2016	10:17	Philip Swannell	Changes in method OpenMarketWorkbook
+258	28-Jun-2016	09:54	Philip Swannell	Improved method TestInstallation to install SolumSCRiPTExcel.xll if it's not installed but is available.
+257	22-Jun-2016	14:07	Philip Swannell	Method CreateSnapshot now calles method ReleaseSolumSoftware in SolumAddin.
+256	16-Jun-2016	15:01	Philip Swannell	Hook through to common code for menu on this Audit sheet.
+255	15-Jun-2016	10:46	Philip Swannell	All calls to MySheet.Range("Foo") morphed to RangeFromSheet(MySheet,"Foo") for more informative errors when things go wrong (e.g. when user has managed to corrupt a range name).
+254	09-Jun-2016	10:16	Philip Swannell	Change to handling of SwaptionVolParameters, so that they can be expanded to include parameters for feeding vols from Bloomberg.
+253	07-Jun-2016	17:26	Philip Swannell	Fixed bug found by Guy - refreshing the CounterpartyViewer sheet gave an error in method ChartMaxMin if there were no trades for the counterparty and no WHATIF trades.
+252	24-May-2016	11:02	Philip Swannell	Made number formatting more consuistent across the sheets of the workbook.
+251	24-May-2016	08:51	Philip Swannell	Fix to method CreditsRequired, which needs to return a full list of credits in the event that there are any WHATIF trades.
+250	23-May-2016	11:54	Philip Swannell	Improved error message when it looks like R is not installed on the PC.
+249	23-May-2016	10:55	Philip Swannell	Bug fix on CounterpartyViewer sheet - double-clicking to drill-down was not working. Also improved display of cashflows on trades.
+248	20-May-2016	14:27	Philip Swannell	Bug fix to release 245. If there was a WHATIF trade on the Portfolio sheet the model would always be rebuilt. :-(.
+247	20-May-2016	13:38	Philip Swannell	Refactored method UpdateCounterpartyViewerSheet.
+246	19-May-2016	18:02	Philip Swannell	Re-wrote code to update the TradeViewer sheet. Newer code is simpler and does not break the Regression sheet's formulas.
+245	19-May-2016	15:59	Philip Swannell	Model is automatically rebuilt in the event that the existing model does not have credit curves that will be required and those credit curves are available in the market data workbook. If the necessary data is not in the market data workbook then an error is thrown.
+244	19-May-2016	11:25	Philip Swannell	Model is automatically rebuilt in the event that the existing model does not have curves in the required currencies and data for those currencies is available in the Market Data workbook.
+243	19-May-2016	09:41	Philip Swannell	Cashflow viewing now works from the Portfolio sheet via right-click.
+242	17-May-2016	17:05	Philip Swannell	Added cashflow viewing on the TradeExposures sheet. So far support InterestRatesSwap, CrossCurrencySwap and CapFloor. Other VFs to follow.
+241	16-May-2016	11:35	Philip Swannell	Code re-organisation. The modules of the VBA project were too few and too large. Re-organised with improved module names.
+240	16-May-2016	10:32	Philip Swannell	Bug fix to method UpdateCptyExposuresSheet.
+239	13-May-2016	16:48	Philip Swannell	Rebased regression test
+238	13-May-2016	15:23	Philip Swannell	Moved a couple of methods to SolumAddin
+237	13-May-2016	14:27	Philip Swannell	Minor improvements of CptyExposures sheet.
+236	13-May-2016	13:22	Philip Swannell	At release 229 we forgot that "old code without daycounts" was still being used when calibrating the Hull-White sigmas. The relevant R code, addVol.xccyHW, has now been re-written as addVol.xccyHW2.
+235	13-May-2016	11:53	Philip Swannell	Improvements to formatting of trade on the TradeExposures sheet - hook into the same code as is used on the Portfolio sheet.
+234	13-May-2016	11:04	Philip Swannell	Fixed bug found by Guy: doing a full run with PFEs resulted in an error if the first trade on the Portfolio sheet was a WHATIF trade.
+233	13-May-2016	10:20	Philip Swannell	Removed parameter VolQuoteLogNormal from Config sheet since in practice working with log-normal vols leads to failure in attempt to convert to Normal vols, since negative forward rates exist.
+232	12-May-2016	19:02	Philip Swannell	Change to method SaveToRIRVol to save down parameters of the swaps whose vols are quoted.
+231	12-May-2016	10:45	Philip Swannell	Bug fix to validate trades, was not working when only one trade was on the portfolio sheet.
+230	11-May-2016	10:56	Philip Swannell	Work on method OpenTradesFile. When encountering an "old" file that contains no BDC or DCT information the code guesses likely values for them, for major currencies only.
+229	10-May-2016	19:33	Philip Swannell	First version where we get numbers returned for a "full run" using the "new, with daycounts" code for both curve building and for trade valuation. More testing and bug fixing required.
+228	10-May-2016	12:28	Philip Swannell	Curves now built from rates including daycounts, though for the time being there is a discrepancy between how we build curves, calibrating to the enhanced functions such as InterestRateSwap2, and how we value trades via the old functions such as InterestRateSwap.
+227	09-May-2016	17:22	Philip Swannell	Work on building curves from rates including fixed and floating daycount types. Work still in progress.
+226	06-May-2016	16:44	Philip Swannell	Rebased regression test after discovering and fixing bug in the R code for calculating Netset PFEs.
+225	06-May-2016	11:26	Philip Swannell	Entering notionals on amortising swaps was no longer fully working  (since trade filtering was introduced). Fixed this.
+224	04-May-2016	17:50	Philip Swannell	Doing a release to include the "Ghost forms" bug fix in SolumAddin, no changes in this workbook since the last release.
+223	04-May-2016	10:57	Guy Seknadje	Changes on sheets Capital, CapInputs and LoanPortfolio.
+222	03-May-2016	15:53	Philip Swannell	Changed number formats of Fx rates shown on Portfolio sheet. Guy request.
+221	03-May-2016	13:22	Philip Swannell	Filters on the Portfolio sheet now hook into ShowRegularExpressionDialog.
+220	29-Apr-2016	18:20	Philip Swannell	Work on sheets CptyExposures and TradeExposures following feedback during client demo.
+219	28-Apr-2016	16:31	Philip Swannell	First release where building curves from swap rates and cross-currency basis swaps works.
+218	27-Apr-2016	11:09	Philip Swannell	Started work on building curves from rates rather than passing in discount factors.
+217	26-Apr-2016	22:23	Philip Swannell	Added filtering on the Portfolio sheet.
+216	26-Apr-2016	13:54	Philip Swannell	Re-wrote method getTradesRange to use .CurrentRegion rather than sExpandDown that can't cope with hidden rows.
+215	26-Apr-2016	12:42	Philip Swannell	Fixed bug in double-clicking on MarketDataSheet cell of Config sheet.
+214	26-Apr-2016	12:36	Philip Swannell	Unable to reproduce bugs seen by Guy, but introduced some defensive programming in method SolveSelectedTrades that may prevent them happening again.
+213	25-Apr-2016	17:01	Philip Swannell	Improved checking of whether R is installed on the PC in method TestInstallation.
+212	25-Apr-2016	13:21	Philip Swannell	No longer the case that the xvaDashboard sheet is empty after doing a PV only run. No longer "suggest" a file name when doing a "Save As".
+211	22-Apr-2016	18:29	Philip Swannell	Small changes made during testing. Ready for Guy to test.
+210	22-Apr-2016	17:08	Philip Swannell	R code associated with this releaseno longer builds a "ModelList" with one model for each Counterparty. instead we use a single model and an additional argument FundingSpread that's passed down the callstack. Small changes seen on the regression sheet of  max about EUR200.
+209	21-Apr-2016	16:21	Philip Swannell	R code associated with this release has funding as a non-defaulting argument to all functions. Previously it was defaulting to TRUE in the argument declarations of many functions.
+208	21-Apr-2016	12:17	Philip Swannell	Switched off old-style "heavy" usage of the C# layer.
+207	21-Apr-2016	10:01	Philip Swannell	New method CounterpartiesFromMarketBook so that double-click handlers for counterparties work even if we have not generated data in R.
+206	20-Apr-2016	19:57	Philip Swannell	Now have control over the manner in which we use the C# layer. gUseCSharpLayer = FALSE means use the C# code only for communication between Excel and R. gUseCSharpLayer = TRUE do it the old way, i.e. for both communuication and to maintain Paul's cache of data at the netset and trade level.
+205	20-Apr-2016	15:49	Philip Swannell	Started work to reduce use of C# functions in the VBA code. I want to stop storing data in the C# layer but use it only as a communication mechanism between Excel\VBA and R.
+204	20-Apr-2016	15:01	Philip Swannell	Removed eight items from the config sheet.
+203	20-Apr-2016	14:19	Philip Swannell	Sheet CVAVaR no longer uses C# functions.
+202	20-Apr-2016	13:31	Philip Swannell	Work on Regression sheet.
+201	20-Apr-2016	11:44	Philip Swannell	HiddenSheet no longer uses C# functions.
+200	20-Apr-2016	11:13	Philip Swannell	Sheet Capital no longer uses C# functions.
+199	19-Apr-2016	16:51	Philip Swannell	Re-wrote CptyExposures sheet to no longer use C# functions.
+198	19-Apr-2016	12:41	Philip Swannell	Re-wrote TradeExposures sheet to no longer use C# functions.
+197	18-Apr-2016	14:58	Philip Swannell	Release before major changes to reduce use of Paul's C# layer.
+196	18-Apr-2016	14:38	Philip Swannell	When invalid TradeIDs are detected, user sees dialog offereing to fix rather than a dialog telling him\her to fix the problem via the menu.
+195	18-Apr-2016	14:15	Philip Swannell	Changed sign conventions for the trades passed to R, with associated changes in the R code.
+194	18-Apr-2016	11:13	Philip Swannell	CVA errors found by Guy have been fixed. Validation of trades now more robust.
+193	15-Apr-2016	10:00	Philip Swannell	Version 185 introduced serious bugs that were only apparent once Excel was rebooted (which I didn't do for 2 days). These are now fixed. BUT Guy has found errors in the CVA and FVA calculations.
+192	14-Apr-2016	13:46	Philip Swannell	Released to new release locations on SOLUMSBS
+191	14-Apr-2016	10:52	Philip Swannell	Calculate event of Portfolio sheet disabled when Portfolio sheet is not the active sheet.
+190	14-Apr-2016	10:45	Philip Swannell	Bug fix to Portfolio worksheet change event. When editing a single trade we were calculating all trades.
+189	14-Apr-2016	10:44	Philip Swannell	New menu item: R environment: Show Trades formatted for R.
+188	13-Apr-2016	18:55	Philip Swannell	Implemented AutoCalc - i.e. PVs shown on the Portfolio sheet change as you edit them. Can be switched on\off via a settting on the sheet.
+187	13-Apr-2016	13:47	Philip Swannell	Calculating PVs only is now faster. We use method UpdatePortfolioSheet rather than the all-purpose method DoCalculations.
+186	12-Apr-2016	18:46	Philip Swannell	Now have ability to solve trades for zero PV - see right-click menu. Guy request.
+185	12-Apr-2016	14:47	Philip Swannell	Code refactoring: No longer pass 7 arrays of trade data to R, pass a single array instead. Method SplitOutTradeData replaced by method ReformatTrades. Hence using fewer functions in Paul's C# layer.
+184	12-Apr-2016	13:05	Philip Swannell	Can save trades to disc even if the trades fail on validation.
+183	12-Apr-2016	10:41	Guy Seknadje	Small formatiing changes and capital input udates.
+182	11-Apr-2016	17:23	Philip Swannell	Small fixes for Guy - new trades now have more sensible dates. after calculating CVA we activate the xvaDashboard sheet.
+181	11-Apr-2016	15:57	Philip Swannell	Tweaks to column fitting - see method AutoFitColumns.
+180	11-Apr-2016	14:15	Philip Swannell	Amortising cross currency swaps now work (though not extensively tested...). At Guy's request CNY changed to CNH (offshore).
+179	11-Apr-2016	10:00	Philip Swannell	Released from work.
+178	10-Apr-2016	12:42	Philip Swannell	Added method TestInstallation to give more friendly error message if R is not installed.
+177	09-Apr-2016	21:53	Philip Swannell	Amortising InterestRateSwap now works.
+176	05-Apr-2016	20:11	Philip Swannell	Noticed and fixed bug that running "Calculate PVs and CVA" was not using a cached model.
+175	05-Apr-2016	15:19	Philip Swannell	Removed some settings on the Config sheet, with associated simplification of the R code.
+174	05-Apr-2016	10:33	Philip Swannell	Change so that the workbook works if File > Options > Formula > Workbook Calculation is Automatic (though not recommended). Previously this would have been very slow.
+173	04-Apr-2016	19:46	Philip Swannell	In the past the sheet xVADashboard contained Excel formulas that called Paul's C# functions to get back the information displayed. It works differently now - VBA code (method UpdatexVDashboard) calls directly to R to get the data calculated by R, augments that data with the results of the KVA calculation (not done in R) and pastes the results as values to the sheet. Also added sort buttons to the sheet.
+172	03-Apr-2016	19:47	Philip Swannell	Improvements to code associated with regression testing - now display a count of the number of differences detected in the regression sheet.
+171	03-Apr-2016	17:21	Philip Swannell	Added column autofitting to calculation event of xVADashboard
+170	02-Apr-2016	12:24	Philip Swannell	Improved comments on the Config sheet.
+169	02-Apr-2016	12:05	Philip Swannell	Work on the Regression sheet - we now include results from the CptyExposures sheet.
+168	02-Apr-2016	11:08	Philip Swannell	Sheets CptyExposures and TradeExposures now do column auto-fitting in their Calculate events.
+167	02-Apr-2016	10:49	Philip Swannell	R code change: Noticed and fixed bug that trade-level CVA\DVA results were not making their way back from the R environment to the C# layer, hence were not appearing on the CptyExposures sheet.
+166	02-Apr-2016	09:21	Philip Swannell	Change so that it's no longer to exit and relaunch Excel following a change to the Counterparties listed on the CFS sheet of the Marker Data workbook. Problem was that the "old" Counterparties were persisted in the C# layer. Fixed by making a call to sFns.scClearCache.
+165	01-Apr-2016	19:36	Philip Swannell	Added method SetTradesRangeColumnWidths. Called in DoCalculations, Double-click event, and when adding, deleting and loading trades. Not called in worksheet Change event, since managing code in such events is tricky.
+164	01-Apr-2016	18:46	Philip Swannell	R Code changes: Methods BuildTaskList, DoOneTask and the DoTask? suite of functions changed to reduce the extent to which much more data than necessary is passed to the parallel processes. More work needed on this, since currently the amount of data that we pass goes up with the square of the number of trades. :-(
+163	01-Apr-2016	16:36	Philip Swannell	R code associated with this release has older versions of DoTaskOneTradePFE and DoTaskOneNetSetPFE removed.
+162	01-Apr-2016	15:02	Philip Swannell	R code associated with this release has two versions of DoTaskOneTradePFE and DoTaskOneNetSetPFE. The newer (_v2) versions are (much) faster so that overall calculation time for "Calculate PVs, CVA and PFE" is better than halved - 40 seconds to 17.9 seconds on the current set of regression trades.
+161	30-Mar-2016	07:58	Philip Swannell	Changed to method RequiredCurrencies so that the return is sorted alphabetically, other than the fact that the numeraire appears first.
+160	29-Mar-2016	12:33	Philip Swannell	Added input_UseExperimentalCode on the Config sheet for testing new PFE algorithm.
+159	29-Mar-2016	12:32	Philip Swannell	Method DoCalculations now switches Application.Calculation to Manual if necessary.
+158	25-Mar-2016	16:16	Philip Swannell	Changes to double-click handler for FixedCashflows trades. Fix to function AddressOfRange.
+157	24-Mar-2016	16:15	Philip Swannell	Incorporated Guy's changes to the CVAVaR sheet.
+156	24-Mar-2016	17:13	Philip Swannell	Changed banks listed on the CapInputs sheet. Guy needs to review and amend the remaining columns.
+155	24-Mar-2016	15:21	Philip Swannell	More code to validate market data, so that we get early and understandable error messages when there is bad market data.
+154	23-Mar-2016	19:06	Philip Swannell	Released a version that no-longer has hard-wired list of currencies for which to build curves, but instead examines the trades and builds cuurves for the required currencies only. However there are regression test differences large enough to be a concern. These need to be understood.
+153	23-Mar-2016	14:02	Philip Swannell	Started work to remove hard-coding of currencies. Guy request.
+152	22-Mar-2016	12:59	Philip Swannell	Changed conditional formatting for Counterparty column of Portfolio sheet to show WHATIF in red.
+151	17-Mar-2016	11:08	Philip Swannell	Added ability to Generate Reports - i.e. create a workbook containing pasted values from selected sheets of this workbook.
+150	17-Mar-2016	09:42	Philip Swannell	The Solum logo had vanished from a few sheets, put it back and added code to ReleaseCleanup to ensure that it's in the same position on each sheet on which it appears.
+149	16-Mar-2016	13:07	Philip Swannell	Ran code cleaner.
+148	16-Mar-2016	11:25	Philip Swannell	Added double-click handler for FixedCashflows trades to make it easier to add such trades (though I don't expect FixedCashflows trades to be much used in the gui, we need them for trade compression of Fx forwards.
+147	16-Mar-2016	09:17	Philip Swannell	Split module modPortfolioUI into two: modPortfolioUI and modValidateTrades.
+146	15-Mar-2016	12:18	Philip Swannell	Fixed some small bugs found by Guy.
+145	14-Mar-2016	16:47	Philip Swannell	Changed representation of payment frequencies from 1,2,4,12 to Annual,Semi annual,Quarterly,Monthly.
+144	14-Mar-2016	15:48	Philip Swannell	Changed XCcySwap to CrossCurrencySwap, FxFwd to FxForward
+143	14-Mar-2016	14:41	Philip Swannell	Changed backups to an area on my C drive that replicates to my (personal) OneDrive so that I won't loose work if my c drive crashes. To Do: Revert once SOLUMNAS is back on line.
+142	14-Mar-2016	11:15	Philip Swannell	Changes to method CreateSnapshot since SOLUMNAS is down.
+141	10-Mar-2016	09:32	Philip Swannell	Release with CapFloor and Swaption VFs both working.
+140	09-Mar-2016	15:41	Philip Swannell	Put back chart on sheet CptyExposures, I think this got lost in a file-corruption, which the rest of the workbook survived (Mmm, I hope).
+139	09-Mar-2016	11:01	Philip Swannell	Changed method SaveTradesFile to ask for confirmation if the file already exists.
+138	08-Mar-2016	11:02	Philip Swannell	Changes to menus to show "recently used files".
+137	03-Mar-2016	11:25	Philip Swannell	Changes on the hidden sheet to ensure that "new" trades are more sensible.
+136	02-Mar-2016	16:43	Philip Swannell	Work on adding CapFloors and Swaptions. Also ran Rob Bovey's code cleaner.
+135	02-Mar-2016	13:47	Philip Swannell	Changes to reflect changes in install script and hence default location of market data workbook. Also started work on Caps, Floors and Swaptions.
+134	02-Mar-2016	11:00	Philip Swannell	Changes to CreateSnapshot to reflect new file structure on SOLUMNAS.
+133	01-Mar-2016	14:54	Philip Swannell	Can now copy to backups directory from the menu.
+132	29-Feb-2016	16:42	Philip Swannell	Removed "Trade Date" from sheet portfolio since no code uses it. Methods OpenTradesFile, SplitOutTradeData, ApplyCellFormattingToTrades required changes.
+131	29-Feb-2016	15:58	Philip Swannell	Change to cell formatting for Fx trades - grey out Start Date since it has no meaning.
+130	26-Feb-2016	14:48	Philip Swannell	Re-based regresion test, since we now include Fx Options in the test.
+129	25-Feb-2016	16:16	Philip Swannell	Changes to method ShowMenu - all menu items now have accelerator keys.
+128	25-Feb-2016	12:14	Paul Bradbury	Force export of FX Options when doing calculations
+127	24-Feb-2016	11:37	Philip Swannell	Started work on adding FxOptions, including making a list of what needs to be done to add a new trade type...
+126	23-Feb-2016	14:28	Philip Swannell	Added method InstallPackages, available from the "R environment" sub-menu. Helps speed up first-time installation on a PC.
+125	22-Feb-2016	18:41	Philip Swannell	Simplified Excel formulas on sheet CptyExposures.
+124	22-Feb-2016	15:48	Philip Swannell	Rebased regression test following Paul's fix so that funding is taken into account on calculation of PFE/EPE/ENE for individual trades.
+123	19-Feb-2016	16:38	Paul Bradbury	Change on config sheet - new parameter input_UseIndividualTradePFE
+122	12-Feb-2016	11:08	Philip Swannell	Reorganised Config sheet. Parameters in more logical order, improved some of the comments.
+121	12-Feb-2016	10:28	Philip Swannell	Fixed problem see by Guy - the XVADashboard was displaying zero as KVA inluding hypotheticals for counterparties with zero existing trades. Bug was in excel formula not VBA or R code.
+120	11-Feb-2016	10:00	Philip Swannell	Changed structure of menus for greater clarity.
+119	11-Feb-2016	09:27	Paul Bradbury	Added input_ShowRawMonte to Config sheet.
+118	09-Feb-2016	16:43	Philip Swannell	Changes to method CreateSnapshot so that it works from home.
+117	08-Feb-2016	14:12	Paul Bradbury	Comment added by Philip for Paul's changes. Switch to using sFns.Providers.Default in place of sFns.Providers.ByIndex(0). Changed Config sheet input_ValDate -> input_AnchorDate.
+116	01-Feb-2016	12:18	Philip Swannell	Renamed method BackupAllFiles to CreateWorkingSnapshot.
+115	01-Feb-2016	12:05	Philip Swannell	Used findlink.xlam to find and a link to an old version of this workbook. Deleted it.
+114	01-Feb-2016	11:30	Paul Bradbury	Use vbscript installer instead of dynamically created batch file
+113	01-Feb-2016	09:18	Philip Swannell	Changes in method BackUpAllFiles - in preparation for Paul's work on an install file written in VBScript, to replace my batch file version.
+112	28-Jan-2016	12:34	Philip Swannell	Copied across Guy's changes to sheet LoanPortfolio. There's plenty more work to do on this sheet?
+111	28-Jan-2016	10:16	Philip Swannell	Changes to BackUpAllFiles to create a simple batch file to install everything.
+110	27-Jan-2016	15:54	Philip Swannell	Removed temporary hack in DoCalculations, as R code now has better error handling and that fact allowed me to debug more effectively.
+109	27-Jan-2016	15:06	Philip Swannell	Added method KillRogueProcesses - kills rogue Rscript.exe processes that may exist if %dopar% R code did not execute properly.
+108	25-Jan-2016	18:52	Philip Swannell	Merged in changes made while Nicolas had control: Hopefully temporary hack in method DoCalculations
+107	25-Jan-2016	18:19	Nicolas Gakwaya	Shipped in a loan portfolio sheet, which lists banking book item by counterparty, calculates the risk weights for those line items, and ties in with the Capital sheet by collecting banking book RWAs side by side with the trading book RWAs
+106	25-Jan-2016	11:48	Philip Swannell	Released as SCRiPT_v70.xlsm
+105	21-Jan-2016	15:58	Philip Swannell	Rebased regression test following change 103
+104	21-Jan-2016	15:48	Philip Swannell	Added method RebaseRegressionTest
+103	21-Jan-2016	15:22	Philip Swannell	Change in PassCurrencySheetToR to use 1 Y = 365.25 days, in line with method datetotime in utilsvalue.R
+102	21-Jan-2016	12:27	Philip Swannell	Changes to method DoCalculations to reflect split of Paul's method scCalculate into three: scCalculateSetup, scCalculate and scCalculateReadResults.
+101	21-Jan-2016	12:01	Philip Swannell	Changes to BackupAllFiles to keep a second copy on the C drive since SOLUMNAS is not backed up
+100	20-Jan-2016	09:57	Philip Swannell	Changes to method BackupAllFiles to give warning if regression test failed and also to save a copy of the trades in an .stf file.
+99	19-Jan-2016	10:21	Philip Swannell	ssReport > scReport - missed one on HiddenSheet, as discovered by Guy.
+98	18-Jan-2016	16:37	Philip Swannell	Fixed error on Hidden sheet that was causing double-click macro to fail (as discovered by Guy).
+97	18-Jan-2016	15:52	Philip Swannell	Method BackUpAllFiles checks for value of IN_DEBUG_MODE
+96	18-Jan-2016	10:29	Philip Swannell	Method BackUpAllFiles (fka BackUpRSource) now saves out the R workspace.
+95	15-Jan-2016	13:44	Philip Swannell	Ensure input_numsimscva and input_numsims are (2^n)-1
+94	15-Jan-2016	09:32	Philip Swannell	ssReport > scReport
+93	14-Jan-2016	09:48	Philip Swannell	Changes to method BackUpRSource
+92	12-Jan-2016	16:57	Philip Swannell	Changes following Paul's latest batch of C# function renaming.
+91	12-Jan-2016	16:09	Philip Swannell	Reform of variable names on config sheet and variable names in R code.
+90	11-Jan-2016	16:15	Philip Swannell	More changes following Paul's reforms to C# function names. Not working yet
+89	08-Jan-2016	16:23	Philip Swannell	Changes following Paul's reforms to C# function names.
+88	06-Jan-2016	16:58	Philip Swannell	Can now Load R Environment from the menus
+87	06-Jan-2016	16:16	Philip Swannell	Can now "Clean out R environment" from the menus.
+86	06-Jan-2016	09:55	Philip Swannell	Work on Fx Vol calibration.
+85	05-Jan-2016	16:47	Philip Swannell	More changes on config sheet re input_... Needs simultanteous change in R code.
+84	05-Jan-2016	10:42	Philip Swannell	Conditional formatting on Calibration sheet.
+83	04-Jan-2016	17:03	Philip Swannell	Formatting changes on Calibration sheet.
+82	04-Jan-2016	13:51	Philip Swannell	Changes on Config sheet.
+81	04-Jan-2016	13:17	Philip Swannell	Added Calibration sheet
+80	17-Dec-2015	14:50	Philip Swannell	Now using features in C# code released only on 17-12-2015
+79	08-Dec-2015	17:30	Philip Swannell	Fix to call to ShowSingleChoiceDialog.
+78	08-Dec-2015	16:06	Philip Swannell	Double-click handler on Config sheet.
+77	08-Dec-2015	10:02	Philip Swannell	Changes to formulas on the sheet Portfolio.
+76	07-Dec-2015	14:13	Philip Swannell	Change in method DoCalculations to set the RSourcePath to earlier in the method.
+75	07-Dec-2015	13:32	Philip Swannell	Change on Config sheet cvainp_ to cva_input_ for consistency of names of variables. Paul will make equivalent change in R code.
+74	04-Dec-2015	15:16	Philip Swannell	Cell formatting only.
+73	04-Dec-2015	11:35	Philip Swannell	Changes to formatting of borders - Guy request. Fixed bug in Fx rate display on portfolio sheet.
+72	04-Dec-2015	10:09	Philip Swannell	Now point to market data sheet on SharePoint.
+71	03-Dec-2015	16:15	Philip Swannell	Moved sheets carrying market data from SCRiPT workbook to a separate workbook.
+70	03-Dec-2015	10:45	Philip Swannell	Removed sheet Status
+69	02-Dec-2015	11:09	Philip Swannell	Added ability to set the RSourcePath on the Control sheet.
+68	02-Dec-2015	10:32	Philip Swannell	Removed sheet PortfolioSummary.
+67	01-Dec-2015	16:37	Paul Bradbury	Rewired sheets to use scReport? functions - part of function name rationalisation. Also fixed bug in CVAInputs sheet. Bank names should be hard-wired in that sheet.
+66	01-Dec-2015	12:46	Paul Bradbury	Add scReport functions, remove legacy ones they replace, PV CVA DVA etc. netset and trade
+65	27-Nov-2015	12:15	Philip Swannell	Corrected link to SolumAddin - was pointing to https://solumfinancial-my.sharepoint.com/SolumAddin/SolumAddin.xlam rather than c:\SolumAddin\SolumAddin.xlam. Still don't understand how this happens - needs investigation.
+64	25-Nov-2015	16:53	Philip Swannell	Realised that the discount curves have been time-shifted by mistake? 
+63	25-Nov-2015	15:22	Philip Swannell	Sheets Ccy_USD and friends now have two column not three column arrays for discount factors.
+62	25-Nov-2015	14:56	Philip Swannell	Method SplitOutTradeData no longer hard-codes column numbers.
+61	25-Nov-2015	10:19	Philip Swannell	Fix to bug discovered by Tu the CDS sheet was not being recalculated in method DoCalculations. Also improvements to double-click handler.
+60	23-Nov-2015	16:43	Philip Swannell	Bug fix to function Negate - was causing sign problems on the sheet TradeExposures. Also changes to calls to SolumCVA? and SolumDVA? to get consistent sign conventions on sheets xVADashboard, CptyExposures and TradeExposures.
+59	23-Nov-2015	14:42	Guy Seknadje	Changes to market data and Bank names.
+58	23-Nov-2015	12:50	Philip Swannell	All PV, CVA, DVA, FVA, EPE, ENE and PFE numbers shown on the sheet are from Bank perspective. Also added double-click handler on sheet Portfolio.
+57	23-Nov-2015	09:33	Philip Swannell	Hooked into MsgBoxPlus.
+56	20-Nov-2015	16:33	Philip Swannell	For Guy: Fixed broken formulas on TradeExposures sheet. Improvements to some of the double-click handlers.
+55	20-Nov-2015	15:31	Nicolas Gakwaya	Added a "number of trades" control in CVA VaR sheet to avoid IMMMaturity=0 and therefore #VALUE when running KVA for counterparties with no existing trades and without the hypotheticals
+54	20-Nov-2015	11:18	Nicolas Gakwaya	Changed CVA VaR to address the cap with the IMM maturity term included in CVA VaR Standardised calculation (used to be capped at 5y until now, but shouldn't be for CVA VaR calc purposes, now caps at longest trade maturity for the netting set
+53	19-Nov-2015	14:50	Philip Swannell	Added ability to save trades to file and open trades from file.
+52	19-Nov-2015	12:33	Philip Swannell	More work on TradeValidation, fixed formula bug spotted by Guy on CapitalInput sheet. Added sort buttons on Portfolio sheet.
+51	18-Nov-2015	17:12	Philip Swannell	Changed how we allocate TradeIDs to trades on the Portfolio sheet - see method AllocateTradeIDs. Existing method was bad - when we deleted a trade then trades lower down the Portfolio sheet reshuffled the IDs making results on the sheets wrong (untill the next re-run).
+50	18-Nov-2015	15:57	Philip Swannell	A number of small but useful changes to the sheets made by Guy.
+49	18-Nov-2015	15:08	Philip Swannell	Improved method ApplyCellFormattingToTrades to fix up formulas in case they've been messed up.
+48	18-Nov-2015	14:08	Philip Swannell	Backed out change 47 below - by reverting to version just prior to changes in cell formulas and then re-implementing VBA changes that achieved "Menu on sheet Portfolio is now a superset of the menu on sheet xVADashboard.".
+47	18-Nov-2015	11:45	Philip Swannell	When saving trades to R (via method SplitOutTradeData) we now flip the direction of the trades so that they are represented from the Banks' perspective. So also changed sheet formulas to call SolumENE?, SolumEPE functions in a more logical manner (as opposed to calling -ENE when we want EPE etc)
+46	18-Nov-2015	11:36	Philip Swannell	Menu on sheet Portfolio is now a superset of the menu on sheet xVADashboard.
+45	17-Nov-2015	17:26	Philip Swannell	Changes to release script - now store correct Visible status of the sheets on the Hidden sheet.
+44	17-Nov-2015	16:59	Philip Swannell	Changing the Counterparty on the Capital sheet refreshes the sheet - Guy request.
+43	17-Nov-2015	16:45	Philip Swannell	Added method for deleting trades on the Portfoliom sheet
+42	17-Nov-2015	15:45	Philip Swannell	Changes on Portfolio sheet:<LF>1) Removed cells needed for calculating weighted average maturity (replaced with VBA method EffectiveMaturityForTradesWithCP)<LF>2) Removed Dummy trades, put them on HiddenSheet instead<LF>3) Added meu with to allow the user to add trades and apply cell formats.
+41	17-Nov-2015	10:30	Philip Swannell	Added "Grouping button" button to CapInputs sheet in place of using Excel's Outline functionality that doesn't work when a sheet is protected :-(.
+40	16-Nov-2015	19:20	Nicolas Gakwaya	Cleaned up Capital display sheets (removed EEPE calc back to CVA VaR sheet, changed table orders, highlighted chart), added RWA figures, linked CapInputs CDS spreads to CDS sheet
+39	16-Nov-2015	16:06	Philip Swannell	Simplified Ccy_ sheets
+38	16-Nov-2015	14:35	Philip Swannell	KVA (aka ReturnOnRWA) now shows on xvaDashboard - for both with and without Hypothetical trades.
+37	16-Nov-2015	10:01	Philip Swannell	Removed sheet EEPE - the sheets Capital and CVAVar calculate the data previously held on the EEPE sheet for themselves for the counterparty in question - see columns of cells headed "Ann Av of Q Max EPE".
+36	13-Nov-2015	17:26	Philip Swannell	Added WHATIF to contents of name ActiveCptyList. Fixes problem seen by Guy.
+35	13-Nov-2015	15:47	Philip Swannell	Fixed bad name ActiveCptyList and various cosmetic changes to sheets
+34	12-Nov-2015	19:04	Philip Swannell	Very few names are now scoped to workbook. Names on Portfolio sheet now refer to cells in the header row rather than in the first row of trade data. That should make for lower chance of error when copying in data for different clients.
+33	12-Nov-2015	13:05	Philip Swannell	Deleted sheets "ENE Pmarginal", "Loan Portfolio", "EEParty", "ENEParty". Reduced the number of names scoped to workbook.
+32	12-Nov-2015	11:38	Nicolas Gakwaya	KVA (now renamed EEPE) and Capital sheet cleanup
+31	11-Nov-2015	17:25	Philip Swannell	Incorporated latest versions of Nicolas' sheets.
+30	11-Nov-2015	14:18	Philip Swannell	Changes to trades on Portfolio sheet at Paul's request.
+29	11-Nov-2015	11:18	Philip Swannell	Started work on adding different funding spreads for each Counterparty
+28	11-Nov-2015	10:32	Philip Swannell	Can now drill down CptyExposures sheet to TradeExposures sheet.
+27	10-Nov-2015	17:03	Philip Swannell	Changes on sheet CptyExposures: moved graph left, now just one graph. Doubleclicking added to xvaDashboard.
+26	10-Nov-2015	15:54	Philip Swannell	Re-wrote method UpdateCorrelMatrix.
+25	10-Nov-2015	12:43	Philip Swannell	Audit sheet has single Menu button.
+24	10-Nov-2015	12:17	Philip Swannell	Simplified sheet FX, by moving code to reformat the data for R from sheet formulas to VBA code.
+23	09-Nov-2015	15:07	Philip Swannell	Fixed problem seen by Nicolas - xvaDashboards was not reflecting changes to trades
+22	09-Nov-2015	14:34	Philip Swannell	Removing the five sheets broke the formulas on sheet "Portfolio Summary". Fixed them.
+21	09-Nov-2015	11:11	Philip Swannell	Removed five sheets - ClientCDS, CPartyCDS, and the sheets holding Swap, XccySwaps and FXFwds. Data previosly held on these sheets is now generated on-the-fly in methods ReshapeCDSData and SplitOutTradeData.
+20	06-Nov-2015	15:26	Philip Swannell	Fix on sheet Client_CDS - Barclays credit curve was messed up.
+19	06-Nov-2015	14:37	Philip Swannell	Fixed bad bug in VBA code introduced in last release - the work was being done twice!
+18	06-Nov-2015	13:02	Philip Swannell	Shipped in Nicolas' sheets. Got rid of links.
+17	05-Nov-2015	17:27	Philip Swannell	More VBA changes - no longer hard-wire address of Calib range on the currency sheets.
+16	05-Nov-2015	13:10	Philip Swannell	No longer have button on Portfolio sheet. Instead whenever the Portfolio sheet is deactivated, the data is transferred to the sheets SwapTrades, XCCYTrades and FxForwards
+15	05-Nov-2015	12:49	Philip Swannell	Work on TradeExposures sheet.
+14	05-Nov-2015	10:02	Philip Swannell	Changes to sheets - more sheets hidden, no longer use sheet tab colours, shorter sheet names.
+13	04-Nov-2015	14:34	Philip Swannell	Released a version for Paul to work with.
+12	04-Nov-2015	13:14	Philip Swannell	Removed Class module - wasn't necessary. Module modScript is now largely PGS code. Removed Nicolas' sheets since they had circular references and Nicolas is working on new versions.
+11	04-Nov-2015	10:10	Philip Swannell	More VBA cleanups. Added three extra parameters onto sheet Control_Variables
+10	03-Nov-2015	14:11	Philip Swannell	Changes on sheet CPtyExposureViewer - simplified formulas and re-wrote code that amends the graphs.
+9	02-Nov-2015	18:15	Philip Swannell	Corrected VBA code for new structure of CCY_ sheets.
+8	02-Nov-2015	15:44	Philip Swannell	Changing structure of CCY_ sheets - will break Paul's class module for the time being.
+7	02-Nov-2015	17:23	Philip Swannell	Added this Audit sheet.<LF>VBA changes: Ensure OptionExplicit in all modules, bug fixes to bugs revealed by non use of Option Explicit.<LF>Added "ReleaseCleanup" method

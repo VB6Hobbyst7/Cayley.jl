@@ -1,0 +1,31 @@
+Version	Date	Time	Author	Comment
+30	25-Jan-2022	12:26	Philip Swannell	Tweaks to previous release.
+29	25-Jan-2022	12:02	Philip Swannell	Can now make the file ReadWrite via the menu.
+28	25-Jan-2022	11:46	Philip Swannell	Lloyds appeared twice (with identical data). Fixed that.
+27	25-Jan-2022	10:19	Philip Swannell	Imported data sent by Camille Delalande in an email of 1 Dec 2021.
+26	19-Dec-2020	19:17	Philip Swannell	Ran CodeCleaner (MZTools).
+25	24-Feb-2017	12:15	Philip Swannell	Imported data from a copy (Summary Credit Lines Banks_CCRMC73.xlsm) sent to me by Tobias:<LF>For BBVA changed 'Confidence %' from '0.99' to '0.95'<LF>For CIC changed 'Notional Cap' from '4500000000' to '10000000000'<LF>For CIC changed 'Fx Notional Weights' from '{"1Y",0;"2Y",0;"3Y",0;"4Y",0;"5Y",0;"7Y",0}' to '{"1Y",0.225;"2Y",0.225;"3Y",0.225;"4Y",0.225;"5Y",0.225;"7Y",0.225}'<LF>For Westpac changed 'Line Interp.' from 'FlatToRight' to 'Linear'<LF>Also changed Airbus THR 3Y for 48 banks.
+24	23-Jan-2017	11:23	Philip Swannell	Final release before trip to Munich.
+23	21-Jan-2017	15:07	Philip Swannell	Added a "Comments" sheet for maintaining the comments in the header row of the Summary sheet.
+22	20-Jan-2017	11:38	Philip Swannell	Now store the EaD method and CVA capital charge method in a single column - makes for better validation against allowed inputs.
+21	17-Jan-2017	14:50	Philip Swannell	Imported data sent to me by Guy in email on 16 Jan @ 19:13. Log of changes is at \\SOLUMSBS\Philip Shared\SummaryCreditLinesBankChangeLog16Jan2017.xlsm
+20	13-Jan-2017	11:17	Philip Swannell	Fixed typo in previous release.
+19	13-Jan-2017	10:07	Philip Swannell	Added columns "DVA benefit %" and "FVA charge %"
+18	12-Jan-2017	14:27	Philip Swannell	Imported Guy's changes from 12 Jan: CIC notional cap changed from 50 bln to 30 bln, Bank of China limits changed from 455 million to 350 million.
+17	11-Jan-2017	18:59	Philip Swannell	Imported data from "Summary Credit Lines Banks - Jan 17.xlsm" sent by email from Guy. Log of changes is saved at \\SOLUMSBS\Philip Shared\SummaryCreditLinesBankChangeLog11Jan2017.xlsm
+16	11-Jan-2017	12:13	Philip Swannell	Removed column "Options Calculation" as it is not used.
+15	11-Jan-2017	11:47	Philip Swannell	Added columns for Capital calculations by copying data from the (soon-to-be-deleted) sheet CapInputs in SCRiPT.  There are trades with a number of banks for which we have no data in this workbook: BSUI_FR_PAR, DABA_DK_CPH, DNBA_NO_OSL, GIBA_AT_VIE, RVSA_AT_SZG
+14	14-Dec-2016	16:43	Philip Swannell	For banks CIBC_CA_TOR, HSBC_GB_LON, MACQ_AU_SYD, SCGP_GB_LON, TDOM_CA_TOR switched Volatility Input from OTHER to MARKET IMPLIED. Also changed cell validation to allow only HISTORICAL and MARKET IMPLIED.
+13	14-Dec-2016	16:34	Philip Swannell	For banks DBS BANK, LBBW, MIZUHO LONDON, RBC, UBS switched METHODOLOGY from PARAMETRIC to MONTE CARLO. Also changed data validation in the METHODOLOGY column to allow only NOTIONAL BASED and MONTE CARLO.
+12	12-Dec-2016	13:03	Philip Swannell	Validators for Fx notional weights and rates notional weights now allow weights of zero. Also changed Fx and IR weights for CIC to zero rather than the small positive number that Guy used since validators rejected zero. Note that CIC uses a Notional Cap.
+11	12-Dec-2016	10:57	Guy Seknadje	Amended FX & IR weights for CIC
+10	28-Nov-2016	11:23	Philip Swannell	Simplified calls to ShowRegularExpressionDialog.
+9	17-Nov-2016	16:25	Philip Swannell	Added filtering to Summary sheet, moved "Rates Notional Weights" column to be next to "Fx Notional Weights".
+8	17-Nov-2016	15:56	Philip Swannell	Bug fix to method ImportData.
+7	17-Nov-2016	11:37	Philip Swannell	Merged in data from copy of the lines workbook that Guy mailed to me 16 Nov. Changes were: a) Notional Based banks no longer show data for percentile etc that cannot apply, b) column "THR Bank 3Y" updated for 44 banks c) column "Airbus THR 3Y" updated for 46 banks
+6	17-Nov-2016	11:02	Philip Swannell	Added method ImportData to help with merging data from different copies of this workbook.
+5	16-Nov-2016	12:34	Philip Swannell	Notional Weights for Fx now take one column not seven. Can double-click to edit on the Fx Notional Weights cells as well as the Rates Notional Weights cells.
+4	16-Nov-2016	12:00	Philip Swannell	Removed column Options NW as we are not using it. Data was as follows: BPCE_FR_PAR2, 0.15, GENO_DE_FRA, 1, HELA_DE_FRA, 0.01, ICBK_CN_BJS, 0.075, NATA_AU_MEL, 0.05, NBAD_AE_AUH, 0.17, NOLA_DE_HAJ, 0.16, SMBC_JP_TYO, 0.16, SMFG_JP_TYO, 0.16
+3	14-Nov-2016	16:50	Philip Swannell	Changed the name of the workbook to simply "Summary Credit Lines Banks" and incorporate it into release control.
+2	14-Nov-2016	13:35	Philip Swannell	Added column "Rates Notional Weights". Notional Weights are held in compressed form (See SolumAddin functions sMakeArrayString and sParseArrayString) and an editor worksheet makes it easy to edit the data.
+1	09-Nov-2016	14:36	Philip Swannell	1) Added this Audit sheet.<LF>2) Corrected the text of some some headers (including '3Y Notional' -> 'THR Bank 1Y' and '5Y Notional' -> 'THR Bank 3Y' is there a mistake here?).<LF>3) Converted the data to a "Table", and will change the code of the Cayley workbook to look for a table on a sheet called 'Summary'.<LF>4) Added column for 'Shortfall or Quantile'.<LF>5) Deleted column 'Notional Limit' since there existed a column 'Notional Cap' with identical contents.<LF>6) Added column 'Airbus THR 3Y'

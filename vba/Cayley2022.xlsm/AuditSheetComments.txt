@@ -1,0 +1,709 @@
+Version	Date	Time	Author	Comment
+711	14-Apr-2022	19:08	Philip Swannell	Bumped gMinimumMarketDataWorkbookVersion to 245.
+710	08-Apr-2022	16:47	Philip Swannell	Upped minimum versions for the addins (2319 & 260)
+709	07-Apr-2022	18:48	Philip Swannell	Added method CheckAddinVersion. Called (twice) from method RunThisAtTopOfCallStack.
+708	07-Apr-2022	17:41	Philip Swannell	Method JuliaLaunchForCayley now ensures focus remains with Excel.
+707	07-Apr-2022	17:26	Philip Swannell	Re-release.
+706	07-Apr-2022	17:25	Philip Swannell	Fixed chart positioning (cont.).
+705	07-Apr-2022	16:55	Philip Swannell	Fixed chart positioning (broken in release 702).
+704	07-Apr-2022	16:05	Philip Swannell	Added defensive coding to method RunTable.
+703	07-Apr-2022	15:47	Philip Swannell	MZTools etc.
+702	07-Apr-2022	15:32	Philip Swannell	Previously the chart on the CreditUsage sheet could have one of two sizes, which the user could flip between by clicking on a button positioned at the top left of the chart. For reasons I have not investigated, this did not work on an Airbus PC ("Unable to get the Caption property of the Button class"). So to fix I removed the functionality to toggle the chart size
+701	07-Apr-2022	15:03	Philip Swannell	Added method SyncBanksInCayleyWithBanksInLinesBook and call when opening lines book, at start of RunTable and at start of RunScenario. Should fix one of the errors seen by Camille.
+700	07-Apr-2022	12:03	Philip Swannell	New menu item: Developer Tools > Show Version Info
+699	06-Apr-2022	16:11	Philip Swannell	Upped minimum version number for the MarketDataWorkbook to 239.
+698	06-Apr-2022	15:19	Philip Swannell	Bug fix to method ExportMarketData.
+697	06-Apr-2022	12:57	Philip Swannell	Removed UseThreads setting from Config sheet, On windows the overhead of using threads seems to be high, decided not to investigate further.
+696	06-Apr-2022	12:36	Philip Swannell	Fix to method PrintCharts - when pasting 48 charts to new workbook the charts were overlapping one another.
+695	25-Mar-2022	11:03	Philip Swannell	Improvements to text printed to log file.
+694	25-Mar-2022	10:21	Philip Swannell	Changes on (generally hidden) sheet WhoHasLines
+693	24-Mar-2022	18:12	Philip Swannell	Added details to ToDo sheet of errors seen during testing today.
+692	24-Mar-2022	17:31	Philip Swannell	Bug fix to AnchorDateFromMarketDataFile.
+691	24-Mar-2022	17:22	Philip Swannell	When launching Julia, now do so in minimised window.
+690	24-Mar-2022	17:15	Philip Swannell	Fixed possible type-mismatch in chart-export function. Improved formatting of worksheet ExportToTMS.
+689	23-Mar-2022	19:12	Philip Swannell	Fix to method FeedRatesFromTextFile
+688	23-Mar-2022	17:36	Philip Swannell	Change to Workbook_BeforeClose to not shut down Julia if SCRiPT2022.xlsm is open.
+687	23-Mar-2022	16:49	Philip Swannell	Re-release
+686	23-Mar-2022	15:54	Philip Swannell	Now call sRelativePath from SolumAddin.
+685	23-Mar-2022	12:35	Philip Swannell	When opening Lines book and Market book, now add to MRU.
+684	23-Mar-2022	09:41	Philip Swannell	More changes for UseThreads.
+683	23-Mar-2022	09:28	Philip Swannell	Now pass UseThreads (from the Config sheet) to Julia for calculating PFE and for trade solving. Need to test if using threads is stable on Windows and whether a speedup arises.
+682	22-Mar-2022	18:53	Philip Swannell	Fixed bug in Fx Solving for Notional-Based banks. The calculated shock was correct but the "Fx Root" i.e. the level to which EURUSD must fall to exhaust lines was wrong (was equal to spot rather than spot * shock).
+681	22-Mar-2022	15:58	Philip Swannell	Corrected capitalisation changes that were causing many changes to appear in the Git log.
+680	22-Mar-2022	15:46	Philip Swannell	Re-release.
+679	22-Mar-2022	15:28	Philip Swannell	1) Code of ExportToTMS guards against trade files having changed since they were last loaded to the workbook - automatically reloads in that case.<LF>2) Changes to double-click handler for selecting banks. In this case first popping up a short list in a command bar, then popping up a long list in a form was clunky. We now skip straight to the form.
+678	22-Mar-2022	14:40	Philip Swannell	Removed hidden sheet VBACodeCount
+677	22-Mar-2022	14:35	Philip Swannell	Improved method ReleaseCleanup for sheet ExportToTMS.
+676	22-Mar-2022	14:00	Philip Swannell	Removed calls to old methods TestInstallation and InstallPackages. These methods were for testing if R was installed correctly, so obvs. not needed any more.
+675	22-Mar-2022	11:37	Philip Swannell	Updates to cell comments.
+674	21-Mar-2022	18:42	Philip Swannell	Ran releasecleanup code and released again.
+673	21-Mar-2022	18:37	Philip Swannell	Removed Module1. MZTools cleanups.
+672	21-Mar-2022	18:25	Philip Swannell	Updates to ToDo worksheet.
+671	21-Mar-2022	18:19	Philip Swannell	Beta version of code to export to TMS now complete.
+670	21-Mar-2022	12:48	Philip Swannell	WIP: Code to Export to the Airbus Treasury Management System.
+669	21-Mar-2022	09:59	Philip Swannell	Can now feed rates from the "Solum.out" file to the market data workbook from the menu on the CreditUsage sheet. Needed for "ExportToTMS".
+668	18-Mar-2022	16:46	Philip Swannell	WIP: Code to Export to the Airbus Treasury Management System.
+667	18-Mar-2022	15:18	Philip Swannell	Method ExportTable now exports csv file with ISO date formats.
+666	18-Mar-2022	14:55	Philip Swannell	Release from desktop - investigating if "hangs" might be the result of anti-virus on my laptop.
+665	18-Mar-2022	12:16	Philip Swannell	Improved formatting of trades as they are pasted into the Trades workbook.
+664	18-Mar-2022	11:45	Philip Swannell	Accomodate new column Put/Call (aka Put Call) in Fx trade data. Turns out that my guess for how to infer whether trade was put or call was not correct and in fact it was not inferrable.
+663	18-Mar-2022	08:22	Philip Swannell	Improvements to code that assigns F8 and ShiftF9 keystrokes - aim to avoid errors if a ProtectedView window is open.
+662	17-Mar-2022	16:03	Philip Swannell	Better error message if user sets IncludeAssetClasses to Rates for a bank for which ProductCreditLimits is 'Calc and Limit By Product'.
+661	17-Mar-2022	11:49	Philip Swannell	Workbook close event now closes the companion workbooks unless they have unsaved changes.
+660	17-Mar-2022	11:30	Philip Swannell	Added JuliaCreateSystemImage - moved from SolumSCRiTUtils.xlam.
+659	16-Mar-2022	13:35	Philip Swannell	Updates to ToDo worksheet.
+658	16-Mar-2022	11:16	Philip Swannell	Speed up to opening trade files. Most of the time was in setting cell comments, but fixed that with help from StackOverflow.
+657	16-Mar-2022	10:26	Philip Swannell	Avoid setting the Saved property of the companion workbooks to False unnecessarily.
+656	14-Mar-2022	18:02	Philip Swannell	Release prior to transferring ownership of the repo from PGS62 to SolumCayley
+655	14-Mar-2022	16:37	Philip Swannell	We now shut down Julia when this workbook closes.
+654	14-Mar-2022	13:28	Philip Swannell	Updates to ToDo worksheet.
+653	14-Mar-2022	11:35	Philip Swannell	Bug fix to OpenTradesWorkbook.
+652	14-Mar-2022	11:03	Philip Swannell	Bug fix to LoadTradesFromTextFiles - arguments needed to be passed by value.
+651	14-Mar-2022	10:59	Philip Swannell	Mmm. The workbook got corrupted. Saved after "Repair" by Excel.
+650	14-Mar-2022	08:25	Philip Swannell	File locations given on the Config sheet are now relative to the path of this workbook. That makes the software more relocatable, which helps with software installation.
+649	12-Mar-2022	11:05	Philip Swannell	Deleted commented-out code.
+648	11-Mar-2022	17:35	Philip Swannell	Ready to test ScenarioAnalysis with new trade format...
+647	11-Mar-2022	15:01	Philip Swannell	WIP. ExecuteTrades updated to new trade format.
+646	11-Mar-2022	12:48	Philip Swannell	Tweaks to code that generates title of chart.
+645	11-Mar-2022	11:55	Philip Swannell	PortfolioAgeing can now be negative.
+644	11-Mar-2022	10:28	Philip Swannell	Method AnnotateBankames (for friendly display of bank names in dialogs) had stopped working. Fixed.
+643	11-Mar-2022	10:04	Philip Swannell	Refactored code of modLoadTrades, deleted method UnscambleFile. Tidied up worksheet StaticData.
+642	09-Mar-2022	20:01	Philip Swannell	Added tasks on the ToDo sheet of this workbook.
+641	09-Mar-2022	17:59	Philip Swannell	Reformed how I morph the headers in the Airbus trade files.
+640	09-Mar-2022	15:56	Philip Swannell	Set workbook variables to nothing on exit from methods.
+639	09-Mar-2022	10:32	Philip Swannell	Improved error messages when attempting to open files that do not exist.
+638	08-Mar-2022	19:47	Philip Swannell	MZTools etc.
+637	08-Mar-2022	19:37	Philip Swannell	Trade solving for Notional-based banks works again. Tested (using Table worksheet) and trade headroom calculation now works for all banks.
+636	08-Mar-2022	17:47	Philip Swannell	Improved error handling in trade solving for Notional-Based banks. The fact that the code does not handle FxForwardStrips was not burbling back up the call stack.
+635	08-Mar-2022	17:28	Philip Swannell	Method OpenOtherBooks now switches off Excel events.
+634	08-Mar-2022	17:00	Philip Swannell	Changed menus on sheets Table and ScenarioDefinition so that if not all of the Market,Trades and Lines books are open then most menu items are greyed out, but theres is  an item for opening the workbooks which need to be opened.
+633	08-Mar-2022	11:20	Philip Swannell	Changes in Scenario code to ensure that it's not possible to open files generated with Cayley 2017 vintage. Would be too difficult to ensure backward compatibility.
+632	08-Mar-2022	10:34	Philip Swannell	Improvements to formatting of trade data in trades workbook. Changes to menu on the ScenarioDefinition sheet.
+631	07-Mar-2022	18:08	Philip Swannell	Code simplification following dropping support for 2017-style trade files.
+630	07-Mar-2022	15:02	Philip Swannell	Renamed from Cayley3.0.xlsm to Cayley2022.xlsm
+629	07-Mar-2022	14:10	Philip Swannell	Last version before switching off support for the 2017 trade file format.
+628	04-Mar-2022	17:44	Philip Swannell	More work on switching to new trade format.
+627	03-Mar-2022	19:15	Philip Swannell	Added worksheet StaticData to hold the conversion tables for the CSV files - we "massage" the headers to be more consistent with one another.
+626	03-Mar-2022	17:19	Philip Swannell	Changed calls to functions whose signature has changed.
+625	03-Mar-2022	16:35	Philip Swannell	GetColumn(s)FromTradesWorkbook have fewer args now.
+624	03-Mar-2022	14:14	Philip Swannell	Changes on Confiog sheet. Enter locations of trades files there.
+623	03-Mar-2022	12:18	Philip Swannell	WIP work on switching to CSV files for trade data.
+622	03-Mar-2022	09:32	Philip Swannell	WIP work on switching to CSV files for trade data.
+621	02-Mar-2022	14:37	Philip Swannell	Tweaks to TradesViewer sheet, following demo to Airbus team.
+620	02-Mar-2022	13:48	Philip Swannell	Now have button on the CreditUsage sheet to show or hide the PFE data that underlies the chart.
+619	02-Mar-2022	12:46	Philip Swannell	Speedups to CommentEditor.
+618	02-Mar-2022	11:43	Philip Swannell	Changed the mechanism for responding to the user hitting Shift F9.
+617	02-Mar-2022	10:23	Philip Swannell	MZTools etc.
+616	02-Mar-2022	10:17	Philip Swannell	Speedup to method FixCellComments.
+615	01-Mar-2022	11:34	Philip Swannell	Fix to PV calculation in method ShowTrades.
+614	01-Mar-2022	09:41	Philip Swannell	Improvements to Fx solving, objective function now looks at the minimum distance between PFE and Lines, but ignoring where PFE is zero (i.e. all trades matured). Problem was that this section of the PFE graph is obviously insensitive to changes in the FX rate, and in certain circumstances that could cause the solver to fail.
+613	25-Feb-2022	18:59	Philip Swannell	Deleted Module1.
+612	25-Feb-2022	18:53	Philip Swannell	Release within within Cayley project folder.
+611	25-Feb-2022	17:29	Philip Swannell	Release after running Table (though some errors need investigating).
+610	25-Feb-2022	17:04	Philip Swannell	Work on TradeViewer sheet, want to be able to view the ExtraTrades.
+609	25-Feb-2022	15:36	Philip Swannell	Work on CommentEditor sheet.
+608	25-Feb-2022	14:07	Philip Swannell	Cosmetic changes to the CreditUsage sheet - FxHeadroom and FxVolHeadroom now shown in only one row. WIP: Changes to code of Table sheet to code with HedgeHorizon being not 5 years.
+607	24-Feb-2022	10:40	Philip Swannell	ExtraTrades being other than "Fx Airbus sells USD, buys EUR" now works for Notional-Based banks.
+606	22-Feb-2022	13:43	Philip Swannell	ExtraTrades being other than "Fx Airbus sells USD, buys EUR" now works for banks other than Notional-Based. Also the concept is flawed for banks for which "Calculation & Limit by Product" holds. Need to handle this? NB in this release I changed the definition of trading headroom at N years to be "Maximum trade at year N so that max(PFE-CreditLimit) over (time in [0:N]) is zero. Previously (Cayley 2017) (time in [0:N]) was (time in [0:HedgeHorizon]). Need to discuss this with Cedrick and the Airbus team.
+605	21-Feb-2022	13:39	Philip Swannell	More work on allowing the "Extra Trades". Mostly works, but with a few bugs...
+604	18-Feb-2022	18:55	Philip Swannell	MZTools etc.
+603	18-Feb-2022	17:52	Philip Swannell	Started work on allowing the "Extra Trades" (and in due course the trade headroom) to be other than FxForwards, Airbus sells USDEUR.
+602	18-Feb-2022	10:50	Philip Swannell	Removed UseLinux setting from the Config sheet and stubbed out method UseLinux() since Airbus are not planning to install WSL.
+601	16-Feb-2022	18:10	Philip Swannell	Tweaks to method RefreshScanerioCompareSheet.
+600	16-Feb-2022	15:35	Philip Swannell	Re-wrote method PrepareScenarioDefinitionSheetForRelease.
+599	15-Feb-2022	18:26	Philip Swannell	Improved comments on sheets via CommentEditor sheet.
+598	15-Feb-2022	17:43	Philip Swannell	Updated method RefreshScenarioCompareSheet to cope with HedgeHorizon > 5.
+597	15-Feb-2022	12:59	Philip Swannell	Updated method RefreshScenarioResultsSheet to cope with HedgeHorizon > 5.
+596	15-Feb-2022	11:54	Philip Swannell	Fixed the fact that range "TheData" on sheet CreditUsage had too many columns.
+595	15-Feb-2022	11:28	Philip Swannell	Tweak to Worksheet_BeforeDoubleClick for CreditUsage.
+594	15-Feb-2022	11:19	Philip Swannell	Improved method UpdateChartOnCreditUsageSheet to avoid deleting and re-creating the chart when that was not necessary.
+593	14-Feb-2022	18:54	Philip Swannell	Deleted no-longer-used method ShockMarket.
+592	14-Feb-2022	18:45	Philip Swannell	Removed Module1.
+591	14-Feb-2022	18:36	Philip Swannell	Re-release.
+590	14-Feb-2022	18:35	Philip Swannell	Updating Scenario code to cope with HedgeHorizon > 5, work in progress.
+589	14-Feb-2022	16:10	Philip Swannell	Scenario changes to cope with HedgeHorizon > 5.
+588	14-Feb-2022	15:19	Philip Swannell	Updated data on HistoricData sheet to 11-Feb-2022.
+587	14-Feb-2022	14:02	Philip Swannell	Better handling of errors that happen if the user shuts down Julia so that the global-variables such as cayleymodel don't exist when they should (after automatic Julia re-launch).
+586	01-Feb-2022	18:26	Philip Swannell	Can now set the HedgeHorizon on the Config sheet to between 5 and 10. Code for CreditUsage sheet works. Not yet amended scenario code to cope, so currently will likely error.
+585	01-Feb-2022	10:17	Philip Swannell	Simplified method UpdateChartOnCreditUsageSheet. Upped the maximum allowe value for NumObservations from 1000 to 2000.
+584	27-Jan-2022	09:11	Philip Swannell	Deleted some no-longer-used methods.
+583	27-Jan-2022	08:42	Philip Swannell	Updates to ToDo sheet.
+582	26-Jan-2022	21:40	Philip Swannell	Change to method BuildModelsInJulia to less-frequently export data from the market data workbook. Also replace + with & for string concatenation throughout the project.
+581	26-Jan-2022	17:27	Philip Swannell	Now release with WPAC_AU_SYD as the bank displayed.
+580	26-Jan-2022	14:29	Philip Swannell	Code for RunScenario now edited to use Julia. Not tested yet.
+579	26-Jan-2022	12:08	Philip Swannell	Have now eliminated all calls to sExecuteRCode.
+578	26-Jan-2022	11:49	Philip Swannell	Deleted sheet Calibration and module modCalibration. Also started work on upgrading scenario code to use Julia.
+577	26-Jan-2022	10:03	Philip Swannell	Refactored module modCreditUsageSheet.
+576	25-Jan-2022	20:31	Philip Swannell	Change to method UnPackNotionalPercentages to allow zero.
+575	25-Jan-2022	18:35	Philip Swannell	Reduced use of variable ModelType (that is now redundant, given that only one model type is supported).
+574	25-Jan-2022	17:18	Philip Swannell	Method WhoHasLines (at the core of scenario analysis) now works.
+573	25-Jan-2022	16:18	Philip Swannell	Cope with AnchorDate being an explicit argument to various functions to avoid problem that deep in the call stack the AnchorDate was being grabbed from an R environment that no longer exists.
+572	25-Jan-2022	11:02	Philip Swannell	Put line numbers back.
+571	24-Jan-2022	20:10	Philip Swannell	Tweaks to method BuildModelsInJulia.
+570	24-Jan-2022	14:51	Philip Swannell	Updates Config sheet.
+569	24-Jan-2022	14:39	Philip Swannell	Released under new folder c:\Projects\Cayley\workbooks
+568	23-Jan-2022	16:35	Philip Swannell	Re-release.
+567	23-Jan-2022	16:33	Philip Swannell	Started to test FxVol solver - need to experiment with various algorithms available from Roots package.
+566	23-Jan-2022	15:47	Philip Swannell	Removed old code for FxVol solving (method SolveFxVolHeadroom).
+565	23-Jan-2022	15:40	Philip Swannell	FxVol solving can now be done in Julia rather than a roll-my-own solver in VBA that wrapped the CreditUsage sheet.
+564	23-Jan-2022	10:41	Philip Swannell	When solving for trade headroom at each of 1 to 5 years ("1 to 5Y Either or basis") now push all five calculations as one exercise in Julia rather than calling Julia five times. 
+563	22-Jan-2022	17:37	Philip Swannell	More changes in modOtherBooks.
+562	21-Jan-2022	19:45	Philip Swannell	Changes to how we call methods OpenTradesWorkbook, OpenLinesWorkbook and OpenMarketWorkbook. Hopefully have fixed intermitent Excel hanging.
+561	21-Jan-2022	13:39	Philip Swannell	Refactored model building. Now build the four models in a oner, and cache their "bare bones" as VBA dictionaries in global scope.
+560	21-Jan-2022	12:05	Philip Swannell	Before changes to reduce number of calls to Julia by caching the model dictionaries.
+559	21-Jan-2022	11:42	Philip Swannell	Eliminated all unused variables and parameters via MZTools.
+558	21-Jan-2022	10:14	Philip Swannell	Bug fix to method NotionalBasedFromTrades to cope with changes to trade format R -> Julia.
+557	20-Jan-2022	16:57	Philip Swannell	Tweaks to method GetAllocations.
+556	20-Jan-2022	15:04	Philip Swannell	Fx Solving now works for the HW model.
+555	20-Jan-2022	10:33	Philip Swannell	Refactoring - deleted methods no longer used (were used by LnFx model I think).
+554	20-Jan-2022	10:02	Philip Swannell	Refactoring - moved various methods from modCreditUsageSheet to modCharts.
+553	20-Jan-2022	09:29	Philip Swannell	Refactoring - reduced usage of now-redundant variable ModelType. Not yet removed from Scenario code as that code's not yet runnable under Julia.
+552	20-Jan-2022	09:12	Philip Swannell	Refactoring. Except for Notional-Based banks, if CalcByProduct is true, then the splitting of the portfolio into a rates part and an fx part is now done in Julia rather than in VBA.
+551	19-Jan-2022	18:08	Philip Swannell	Started work on FX solving. Also more refactoring. Renamed modUtilities to modCreditUsageSheet.
+550	19-Jan-2022	16:58	Philip Swannell	Code refactoring with MZTools.
+549	18-Jan-2022	17:36	Philip Swannell	Trade headroom solving now works for Notional-Based banks.
+548	17-Jan-2022	20:22	Philip Swannell	Can now calculate "PFE" for notional-based trades, in the sense that the code does not error. Needs more testing and likely to be bugged for interest rate trades following change in how interest rate swaps are represented for the Julia code versus for the R code.
+547	17-Jan-2022	17:01	Philip Swannell	Can now create models from HistoricFxVol. Also can calculate PFE when ProductCreditLimits = "Global Limit & Calc by Product".
+546	14-Jan-2022	19:27	Philip Swannell	Testing releasecleanup
+545	14-Jan-2022	19:25	Philip Swannell	TradeHeadroom solving now working in most cases. Not tested notional-based, and not yet implemented for banks with ProductCreditLimits = "Global Limit & Calc by Product"
+544	23-Dec-2021	17:05	Philip Swannell	Last release before Christmas.
+543	23-Dec-2021	16:58	Philip Swannell	Removed modMemLeak. Renamed modLnFx as modPortfolioValue
+542	23-Dec-2021	16:37	Philip Swannell	Work on VBA method HeadroomSolverFromFilters. Next task: Port R method HeadroomSolverCalcByProduct to Julia.
+541	23-Dec-2021	16:21	Philip Swannell	Now pass "ModelBareBones" down the call stack. This is a dictionary containing data that's needed in the VBA code about the model in use in Julia. This should greatly reduce the number of calls we need to make to JuliaEval.
+540	23-Dec-2021	13:55	Philip Swannell	Start work on headroom calculation.
+539	22-Dec-2021	20:21	Philip Swannell	Work (not finished) on method ShowTrades.
+538	22-Dec-2021	17:20	Philip Swannell	Work on ReleaseCleanup.
+537	22-Dec-2021	16:03	Philip Swannell	First working version of PFEProfileHW.
+536	22-Dec-2021	14:08	Philip Swannell	Work on method PFEProfileHW.
+535	22-Dec-2021	11:20	Philip Swannell	Added UseThreads setting to Config sheet.
+534	21-Dec-2021	13:29	Philip Swannell	Deleted method TradeHeadroomSolverLnFx.
+533	21-Dec-2021	13:16	Philip Swannell	Menu -> `Build Hull-White Model` now works.
+532	21-Dec-2021	12:01	Philip Swannell	Added method JuliaLaunchForCayley.
+531	21-Dec-2021	11:13	Philip Swannell	Changes that (hopefully) will prevent Excel hanging when opening the companion workbooks.
+530	20-Dec-2021	10:33	Philip Swannell	Ran MZTools -> Clean.
+529	20-Dec-2021	10:29	Philip Swannell	Ran AmendVBA.
+528	20-Dec-2021	10:19	Philip Swannell	More work on ditching LNFX.
+527	20-Dec-2021	09:47	Philip Swannell	Deleted methods relating to LNFX model: PortfolioValueLnFx, GetTradesInLnFxFormat, PFEProfileLnFxFromFilters, PFEProfileLnFx, sFxOptionValues2, SplitAndCompressTrades, GetTradesInLnFxFormat, ApplyTradeScaling, DealTypesToOptionStyles, DealTypeToOptionStyle
+526	20-Dec-2021	09:44	Philip Swannell	Simplified method ShowTrades - dropping support for the 'Log-Normal Fx Only' model.
+525	19-Dec-2021	20:36	Philip Swannell	PortfolioValueFromFilters now only does HW.
+524	19-Dec-2021	19:53	Philip Swannell	Release before starting to ditch the "Log-Normal FX-Only" model.
+523	19-Dec-2021	19:23	Philip Swannell	SimplifiedMethod MenuCreditUsageSheet to remove options relating to R.
+522	19-Dec-2021	19:11	Philip Swannell	Updated ToDO sheet.
+521	19-Dec-2021	19:04	Philip Swannell	Fixes to method ShowTrades.
+520	18-Dec-2021	18:19	Philip Swannell	Updated ToDO sheet.
+519	18-Dec-2021	12:13	Philip Swannell	Now call GetTradesInJuliaFormat.
+518	17-Dec-2021	11:52	Philip Swannell	Added module modJulia with first useful function: SaveDataFrameJulia. <- may not use this, to be reviewed
+517	10-Dec-2021	15:44	Philip Swannell	Formatting only.
+516	10-Dec-2021	15:30	Philip Swannell	Ran AmendVBA.
+515	10-Dec-2021	15:27	Philip Swannell	Added to ToDo list
+514	10-Dec-2021	13:45	Philip Swannell	First version of Cayley3.0. Plan is to switch from Cayley2.0's use of R via BERT to using Julia via JuliaExcel.
+513	24-Jun-2021	10:53	Philip Swannell	Removed VBA reference to Bloomberg (BlpCompX 1.0 Type Library). Was preventing compilation on PC without Bloomberg installed.
+512	08-Jan-2021	18:56	Philip Swannell	Another test release.
+511	08-Jan-2021	18:51	Philip Swannell	Another test release.
+510	08-Jan-2021	18:50	Philip Swannell	Another test release.
+509	08-Jan-2021	18:48	Philip Swannell	Another test release.
+508	07-Jan-2021	17:33	Philip Swannell	Testing release script.
+507	07-Jan-2021	17:30	Philip Swannell	ReleaseCleanup now has "Quick Mode".
+506	07-Jan-2021	17:09	Philip Swannell	Testing release script.
+505	07-Jan-2021	16:50	Philip Swannell	ReleaseCleanup no longer calls RunCreditUsageSheet.
+504	07-Jan-2021	15:58	Philip Swannell	HistoricData sheet can now be updated automaically, as long as Bloomberg addin is available.
+503	06-Jan-2021	17:33	Philip Swannell	HistoricData sheet updated to 31 Dec 2021. Bloombeg formula =BDH("EURUSD Curncy","PX_LAST",StartDate,EndDate,"ARRAY=TRUE","Days=W") now seems to give vols with 1% = 1 rather than 1% = 0.01 as was the case back in 2017.
+502	23-Dec-2020	10:05	Philip Swannell	First release as Cayley2.0.xlsm. Experimenting with some of Airbus's potential requirements.
+501	22-Dec-2020	17:27	Philip Swannell	Tweaks to ReleaseCleanup: switch RSourcePath away from my development folder.
+500	22-Dec-2020	14:32	Philip Swannell	I believe that this version has the same functionality as that delivered to Airbus in March 2017, but:<LF>A) PFE profiles will be different thanks to dropping the R function TimeAdjust.<LF>B) This version uses BERT for Excel <-> R communication.<LF>C) This version uses Dec 2020 versions of SolumAddin, R code etc. The workbook most definitely not compatible with the 2017 versions. Hence not possible to install the 2017 Cayley and this one on the same machine at the same time.
+499	22-Dec-2020	12:16	Philip Swannell	Release prior to testing Scenario.
+498	22-Dec-2020	11:23	Philip Swannell	Removed Notes sheet - it's now a standalone workbook.
+497	20-Dec-2020	18:21	Philip Swannell	Ran AmendVBA.
+496	20-Dec-2020	18:12	Philip Swannell	Sheet TradesViewer now works again. Also have executed all calls to sExecuteRCode to test that they work via BERT after the May 2018 changes to BERT.
+495	20-Dec-2020	16:41	Philip Swannell	Hidden sheet "Calibration" now works again, take 2.
+494	20-Dec-2020	16:19	Philip Swannell	Hidden sheet "Calibration" now works again.
+493	19-Dec-2020	18:18	Philip Swannell	Reinstated calls to IntersectWithCompliment.
+492	19-Dec-2020	17:51	Philip Swannell	Solving for Fx and FxVol now works, though not tested heavily. Switched ReleaseCleanup back on.
+491	19-Dec-2020	16:37	Philip Swannell	Fixed calls to SolumAddin.FormatAsInput. Since writing Cayley this method has an added optional argument that defaults to "Toggle". Upshot was that user input cells on the CreditUsage sheet flipped between locked and unlocked when using certain menu items.
+490	19-Dec-2020	15:30	Philip Swannell	Solving for Trade headroom now works (but not tested for Methodology = NOTIONAL BASED).
+489	19-Dec-2020	12:19	Philip Swannell	PFE calculations now work again, i.e. are returning numbers but this workbook will need thorough testing if ever we want to provide Airbus with an updated copy? But other functionality such as solving for headroom still far from working.
+488	19-Dec-2020	11:18	Philip Swannell	Doubleclick handler for RSourcePath.
+487	19-Dec-2020	10:43	Philip Swannell	We should set the RSourcePath for this workbook independently from the RSourcePath for the SCRiPT workbook, so added new setting RSourcePath on the Audit sheet.
+486	19-Dec-2020	09:46	Philip Swannell	Looking at the Audit sheet of SCRiPT, I see that in May 2018, there was a non-backwards compatible change to BERT relating to the handling of arrays with (non null) names. They now come back to Excel with header rows and/or columns. Have marked all calls to sExecuteRCode with TODO comments and will need to check each of them. Should be enough to get Cayley working again?
+485	17-Dec-2020	17:35	Philip Swannell	Work to see if I can get Cayley working again after a conversation with Airbus, which might lead to us providing updated version.<LF>1) Accommodated function name change (in SolumSCRiPTUtils.xlam) CleanoutREnvironment --> ResetREnvironment.<LF>2) SourceRCode has new optional argument WithCayley, so ensured passed that as True.<LF>3) Method IntersectWithComplement has vanished so for the time being have commented out calls.<LF>4) Minimal testing leads me to think that named arrays in R are coming back to Excel via BERT with header rows\columns whereas with BP's code that was not the case. That's leading to all sorts of type mismatches. Will need to examine all calls to sExecuteRCode, but the strange thing is the March 2018 release had PFE working so this may in fact be a change in BERT's behaviour...<LF>5) Stubbed out method ReleaseCleanup as it is erroring thanks to 4) above.
+484	05-Mar-2018	17:45	Philip Swannell	PFE calculations now work again, i.e. are returning numbers but this workbook will need thorough testing if ever we want to provide Airbus with an updated copy?
+483	05-Mar-2018	13:53	Philip Swannell	Started work to make Cayley compatible with recent changes in R. Building the four models now works but PFE calculation still broken.
+482	15-Dec-2017	13:50	Philip Swannell	Added HistoricalData up to 14 Dec 2017, previously was to 21 Feb 2017.
+481	15-Dec-2017	13:24	Philip Swannell	Fix to method AvEDSTradedFromHistory. I'm not 100% sure but I think this bug was caused by a recent change to the behaviour of sInterp w.r.t. treatment of out-of-range values. 
+480	15-Dec-2017	12:06	Philip Swannell	Bug fix to method EURNotional. Bug introduced by switch to BERT which has different (better) handling for returning vectors from R to Excel. Also removed dangerous "Stop Resume" statements in error handler of MyFxPerBaseCcy that could have resulted in infinite loop i.e. Excel hanging.
+479	27-Nov-2017	11:54	Philip Swannell	Changes for SCRiPTUtils.xlam having become SolumSCRiPTUtils.xlam. Release script reveals an error in method AvEDSTradedFromHistory that I have not investigated. Call to sInterp is failing.
+478	02-Nov-2017	18:07	Philip Swannell	Fix to method MyCorrelationMatrix that was looking for a sheet HistoricalCorr in the market data workbook. Now look for HistoricalCorrEUR.
+477	29-Sep-2017	09:59	Philip Swannell	Changes to call R code via BERT rather than SolumSCRiPTExcel C# code - since otherwise work Airbus work will have to be on a "branch" and that will be painful if we want to demo to other potential clients or to do maintenance for Airbus.<LF>WARNING 1: There has been an important change to the R code since we delivered the final version of Cayley to Airbus in March 2017 - namely method TimeAdjust has been stubbed out. This will have an effect on the calculated PFEs.<LF>WARNING 2: I have done very little testing after this change and subtle bugs can be introduced by the differences in the data returned from R via BERT and via Paul's C# code. Most likely impact will be type mismatches.
+476	01-Mar-2017	11:52	Philip Swannell	Tweaks to ScenarioCompare sheet.
+475	27-Feb-2017	16:58	Philip Swannell	Work on new sheet ScenarioCompare.
+474	27-Feb-2017	11:55	Philip Swannell	Bug fix to method AllocateTradesToBanks.
+473	24-Feb-2017	15:27	Philip Swannell	Changed method OpenScenarioFile to read data from the LinesHistory sheet of the file back into the LinesHistory sheet of this workbook. Will make it easier for Tobias to "deep dive" into Scenario results.
+472	24-Feb-2017	14:55	Philip Swannell	Changed method PasteManyScenarioCharts to also paste the Scenario Definition and the "KPIs".
+471	24-Feb-2017	14:28	Philip Swannell	Re-ran Table to get good data in Bubble chart and Bar chart. That data uses trades and market data as of 7 Feb 2017.
+470	24-Feb-2017	12:10	Philip Swannell	Tweak to method RunTable.
+469	24-Feb-2017	09:56	Philip Swannell	Tweaks to code to generate nine bubble charts after successful test.
+468	23-Feb-2017	16:08	Philip Swannell	Exposed method to create nine bubble charts to menu on Table sheet
+467	23-Feb-2017	13:45	Philip Swannell	Changes on the FutureTrades sheet which Tobias would like to look at for a "deep dive".
+466	23-Feb-2017	09:09	Philip Swannell	Memory instrumentation and Debug.Print now called conditional on gDebugMode constant, and workbook cannot be released with that constant equal to True.
+465	22-Feb-2017	15:36	Philip Swannell	Added memory instrumentation to method WhoHasLines that's at the core of scenario runs.
+464	22-Feb-2017	15:05	Philip Swannell	Updated HistoricData sheet to 21 Feb 2017
+463	22-Feb-2017	14:20	Philip Swannell	Fix to method UpdateChartOnCreditUsageSheet for compatibility with Office 2010.
+462	22-Feb-2017	13:32	Philip Swannell	Improved method SoakTest for further memory-leak testing.
+461	22-Feb-2017	10:30	Philip Swannell	Ran Rob Bovey's code cleaner.
+460	22-Feb-2017	09:46	Philip Swannell	Added calls to TestInstallation to workbook open event and to all code attached to menu buttons.
+459	21-Feb-2017	17:16	Philip Swannell	Removed cell on sheet CreditUsage that shows memory usage. Further tests indicate that memory leak is fixed.
+458	21-Feb-2017	16:46	Philip Swannell	Change to method OpenScenarioFile to cope with scenario files saved with version 444 or earlier when the sheet CreditUsage was named PFE- solves problem that Tobias can't use Scenarios sent to him by Guy.
+457	21-Feb-2017	13:52	Philip Swannell	More work on UpdateChartOnPFESheet - believe that this has fixed (or at least reduced) memory leaks.
+456	21-Feb-2017	09:27	Philip Swannell	New method UpdateChartOnPFESheet carved out of method RunPFESheetCore, part of work on memory leak problem.
+455	07-Feb-2017	16:47	Philip Swannell	Added memory instrumentation to method RunTable.
+454	07-Feb-2017	16:42	Philip Swannell	Set workbook and worksheet variables explicitly to Nothing before they go out of scope.
+453	03-Feb-2017	09:45	Philip Swannell	Stubbed out calls to ResizeWindowsForVideoRecording.
+452	23-Jan-2017	09:00	Philip Swannell	Menus that appear on clicking all of the Menu buttons now have accelerator keys. Fix to code to paste charts to new sheet.
+451	22-Jan-2017	19:00	Philip Swannell	Bug fix to saving scenarios - Scenario sheet should have been refreshed first, now it is.
+450	22-Jan-2017	16:59	Philip Swannell	Tweak to speed grid drilldown.
+449	22-Jan-2017	10:09	Philip Swannell	Added expand\contract buttons to Bubble and Bar charts.
+448	22-Jan-2017	09:48	Philip Swannell	Released with Table populated and thus bubble chart and bar chart showing good data.
+447	21-Jan-2017	14:26	Philip Swannell	Make calls to ResizeWindowsForVideoRecording in various places, but only when installed on my PC at home. Also changes to methods OpenLinesWorkbook, OpenTradesWorkbook and OpenMarketWorkbook to make their behaviour more consistent.
+446	21-Jan-2017	10:39	Philip Swannell	Corrections cell comments.
+445	21-Jan-2017	07:26	Philip Swannell	Changed name of PFE sheet to Credit Usage aligns with documentation "All Weather License Agreement Schedule Software Architecture Functionality" and is a more accurate (if less pithy) description.
+444	17-Jan-2017	15:33	Philip Swannell	Menu button on Table sheet had moved. Put it back and added code to put it back in both the release cleanup routine and in the activation method of the Table sheet.
+443	16-Jan-2017	18:40	Philip Swannell	Deleted two banks from Table: BPCE_FR_PAR2 and SMFG_JP_TYO. Guy request.
+442	16-Jan-2017	18:37	Philip Swannell	Change to colours in bar chart - Guy request.
+441	12-Jan-2017	15:07	Philip Swannell	Removed functions AnnotateBankNames and GetColumnFromLinesBook - they've gone to SCRiPTUtils for sharing with SCRiPT workbook.
+440	12-Jan-2017	14:59	Philip Swannell	Tweaks to AnnotateBankNames so that can port to SCRiPTUtils.
+439	12-Jan-2017	12:45	Philip Swannell	Tweaks to handling of NotionalCap, need to confirm with Guy ehther these changes resolve his issue with THR for CIC.
+438	12-Jan-2017	11:36	Philip Swannell	Replaced direct calls to Application.Statusbar = with calls to StatusBarWrap.
+437	12-Jan-2017	09:13	Philip Swannell	Fix in MenuPFESheet to intermittent error in SetRangeValidation - seen during demo during the last visit to Airbus but hard to replicate.
+436	12-Jan-2017	09:07	Philip Swannell	Corrections to method SoakTest.
+435	11-Jan-2017	19:40	Philip Swannell	Ran Rob Bovey's code cleaner.
+434	11-Jan-2017	19:35	Philip Swannell	Added method SoakTest to try to replicated problems Guy is seeing.
+433	11-Jan-2017	16:43	Philip Swannell	Link problem had come back. Fixed it properly this time.
+432	11-Jan-2017	12:39	Philip Swannell	Removed method CheckLinesWorkbook - it's been moved to SCRiPTUtils.xlam.
+431	11-Jan-2017	11:13	Philip Swannell	Solving the link problem (release 429) had broken the sheets BarChart and BubbleChart (by converting formulas to values for all formulas using UDFs in SolumAddin). Fixed this and ran method CompareWorkbookFormulas to check all formulas on all sheets versus a version of Cayley from 29 Dec.
+430	03-Jan-2017	11:23	Philip Swannell	Mended Calibration sheet.
+429	03-Jan-2017	11:14	Philip Swannell	Hopefully solved Link problems at the expense of breaking the "Calibration" sheet that's usually hidden. Needs to be re-wired.
+428	03-Jan-2017	10:19	Philip Swannell	Trying to solve "Link" problems.
+427	29-Dec-2016	10:50	Philip Swannell	Removed method CheckMarketWorkbook - it's been moved to SCRiPTUtils.xlam.
+426	27-Dec-2016	11:26	Philip Swannell	Argument CompressTrades added to functions in the call stack from RunPFESheet down to GetTradesInRFormat.
+425	27-Dec-2016	08:30	Philip Swannell	Fixes to hiding and unhiding of columns on sheet Table.
+424	23-Dec-2016	10:53	Philip Swannell	Removed method CheckTradesWorkbook - it's now in SCRiPTUtils.xlam.
+423	22-Dec-2016	14:25	Philip Swannell	Fix to method ShowTrades in the case that range "ProductCreditLimits" on sheet PFE was not populated when running the method.
+422	22-Dec-2016	09:49	Philip Swannell	Change to method AnnotateBankNames so that similar functionality can be made available in SCRiPTUtils.
+421	21-Dec-2016	12:54	Philip Swannell	Code for handling filter MRUs moved to SCRiPTUtils.
+420	21-Dec-2016	08:21	Philip Swannell	Reverted to version 417 after Link problems. Upped MINVERSIONMDW to 87. Removed method CurrenciesFromQuery - it's been moved to SCRiPTUtils.xlam.
+417	16-Dec-2016	07:25	Philip Swannell	MINVERSIONMDW increaed to 80 following fixes to feed from text file code.
+416	15-Dec-2016	13:34	Philip Swannell	Fix to method WhoHasLines. Test for success of trade headroom solving was incorrect in the case of banks which use a Notional Cap and as a result Scenarios were failing - as seen in test on Tobias's PC.
+415	15-Dec-2016	07:06	Philip Swannell	Improved use of CheckTradesWorkbook.
+414	15-Dec-2016	06:35	Philip Swannell	MINVERSIONMDW increaed to 80 following tests on Tobias's machine.
+413	13-Dec-2016	17:43	Philip Swannell	Moved method GetTradesInRFormat and many sub-routines to SCRiPTUtils.xlam.
+412	13-Dec-2016	16:40	Philip Swannell	Code refactoring to enable move of GetTradesInRFormat to SCRiPTUtils.xlam
+411	13-Dec-2016	16:04	Philip Swannell	Removed 12 functions that have been moved to SCRiPTUtils.xlam: ArePackagesMissing, CleanOutREnvironment, FirstElementOf, InstallPackages, LoggingIsOn, LoggingSwitchOn, SaveDataframe, SaveREnvironment, ShowLogFiles, SourceRCode, stopImplicitCluster, To1Based2D
+410	13-Dec-2016	15:07	Philip Swannell	Added reference to c:\Program Files\Solum\Addins\SCRiPTUtils.xlam.
+409	12-Dec-2016	16:33	Philip Swannell	Changed colours of BarChart.
+408	12-Dec-2016	16:01	Philip Swannell	Data on sheet HistoricData now extends to 9 Dec 2016. Small changes with Guy on the Table sheet.
+407	12-Dec-2016	09:13	Philip Swannell	Change method GetTradesInRFormat to reflect the fact that for FxOptions the date given in the MATURITY_DATE column of the trades workbook is the option expiry date not the payment (settlement) date. Simply add two weekdays (since we have not implemented bank holiday calendars) via private function AddTwoDays.
+406	09-Dec-2016	13:41	Philip Swannell	Removed declared-but-unused variables.
+405	08-Dec-2016	18:19	Philip Swannell	Moved simple PFE calculation to Calibration sheet, small changes to RunTable code.
+404	08-Dec-2016	11:12	Philip Swannell	Added block of cells Simple "PFE calculation for ATM Fx Forward" on the PFE sheet - will remove when fixed calibration problems.
+403	08-Dec-2016	10:34	Philip Swannell	Added Calibration sheet, adapted from sheet of the same name in SCRiPT.
+402	04-Dec-2016	08:51	Philip Swannell	Remove declared but unused variables via MZTools. In method RunTable, the option to "Erase currently displayed data" defaults to TRUE the first time the user runs a table and defaults to its previous value for subsequent runs. Commented code added yesterday.
+401	04-Dec-2016	08:42	Philip Swannell	Re-ran Table
+400	03-Dec-2016	22:51	Philip Swannell	New menu button on BarChart sheet - Can choose which series to plot and plot order.
+399	03-Dec-2016	14:28	Philip Swannell	Reversed change 396 - the historic data imported for 19 July to 1 Dec 2016 was wrong.
+398	03-Dec-2016	14:10	Philip Swannell	Added methods CheckLinesWorkbook, CheckTradesWorkbook and CheckMarketWorkbook to post useful error message if it looks like the user is trying to use incompatible trades, lines or market data workbooks.
+397	03-Dec-2016	11:45	Philip Swannell	Fix for Notional-Based banks that are in breach of lines. Method NBSolverFromFilters was returning negative trade headroom in this case. Now corrected to zero.
+396	02-Dec-2016	16:43	Philip Swannell	Updated HistoricData sheet to 1 Dec 2016.
+395	02-Dec-2016	14:56	Philip Swannell	Corrected problems with banks which are already in breach of lines. Bug was introduced in release 377 - code for handling NotionalCap.
+394	02-Dec-2016	12:33	Philip Swannell	Another fix to SaveDataframe.
+393	01-Dec-2016	15:58	Philip Swannell	Fix to method SaveDataframe.
+392	30-Nov-2016	18:43	Philip Swannell	New "Sort By" drop down on the BarChart sheet.
+391	30-Nov-2016	18:09	Philip Swannell	ColumnFromTable -> sColumnFromTable (cont)
+390	30-Nov-2016	17:29	Philip Swannell	Removed Stop Resume
+389	30-Nov-2016	17:04	Philip Swannell	ColumnFromTable -> sColumnFromTable
+388	28-Nov-2016	11:02	Philip Swannell	Simplified calls to ShowRegularExpressionDialog.
+387	25-Nov-2016	17:51	Philip Swannell	Bug fix in RunTable dialogs.
+386	24-Nov-2016	14:13	Philip Swannell	Changes in RunTable dialog - "Back" buttons now appear to the left of the "Next" buttons".
+385	24-Nov-2016	13:23	Philip Swannell	Further fixes to handling of which asset classes should be included - e.g. chart title now correctly reflects that choice.
+384	24-Nov-2016	12:16	Philip Swannell	Bug fix. When running the Table, as soon as a bank was encountered that used ProductCreditLimits of "Calculation & Limit by Product" then all subsequent banks processed would ignore Rates trades. This bug was introduced in release 374.
+383	23-Nov-2016	16:47	Philip Swannell	Remove declared but unused variables via MZTools.
+382	23-Nov-2016	16:38	Philip Swannell	Soft coding of font colours.
+381	23-Nov-2016	16:31	Philip Swannell	Further work on RunTable dialogs to resemble a "wizard".
+380	23-Nov-2016	15:53	Philip Swannell	Work on comments on the PFE sheet and the Scenario sheets.
+379	23-Nov-2016	14:51	Philip Swannell	Work on RunTable dialogs to resemble a "wizard".
+378	23-Nov-2016	13:42	Philip Swannell	Run Table dialog now gives option to "Erase Currently Displayed Data"
+377	23-Nov-2016	12:08	Philip Swannell	More work on Notional Cap. Scenario results sheet now shows "ScenarioPerformance", some KPIs for the scenario. Added comments to PFE sheet for ProductCreditLimits etc.
+376	22-Nov-2016	17:17	Philip Swannell	Code now takes into account any "Notional Cap" for banks, read from the Lines workbook. 
+375	22-Nov-2016	11:21	Philip Swannell	Bug fix to chart on Scenario Results sheet: the  plots of Hedge Completion Ratio and Line Exhaustion level were missing the first data point.
+374	22-Nov-2016	10:48	Philip Swannell	Now take into account "ProductCreditLimits" which describes how banks net credit risk between rates products and fx products. Allowed values are: "Global Calculation", "Global Limit & Calculation by Product", "Calculation & Limit by Product". Hard one is "Calculation by Product" since then we need to calculate two separate PFEs (one for Rates and one for Fx) and add them and compare that sum to the credit limits. Changes in VBA: New function PFEProfileFromFiltersPCL that wraps PFEProfileFromFilters, calling it twice if necessary. Also changes to solving code, methods HeadroomSolverFromFilters, FxSolverFromFilters and NBSolverFromFilters and the R code that those methods wrap.
+373	21-Nov-2016	10:48	Philip Swannell	Having spoken to Guy, removed the two banks added at release 366.
+372	18-Nov-2016	19:53	Philip Swannell	Improved method DescribeScenario.
+371	18-Nov-2016	18:54	Philip Swannell	Bug fix to method ExecuteTrades to use the same strings as Airbus in column DEAL_TYPE, namely 'PUTsell VANILLA' 'PUTbuy VANILLA' 'CALLsell VANILLA' 'CALLbuy VANILLA'. Should fix bug seen by Guy in running scenarios with options strategies.
+370	18-Nov-2016	17:47	Philip Swannell	Bug fix: ensure all calls to GetTradesInRFormat are wrapped by ThrowIfError.
+369	17-Nov-2016	15:49	Philip Swannell	Bug fix in R code for banks using Shortfall, bug fix to formulas that get the title for the bubble chart.
+368	17-Nov-2016	14:15	Philip Swannell	Ran entire table, saving with results in place.
+367	17-Nov-2016	12:59	Philip Swannell	Fixed bug in Notional-based calculations when there are no trades.
+366	17-Nov-2016	11:57	Philip Swannell	Added two banks (CRES_CH_ZRH, CREDIT SUISSE and SMFG_JP_TYO, SUMITOMO MITSUI LDN) to the Table sheet. Was there a good reason for these two to be missing?
+365	16-Nov-2016	16:53	Philip Swannell	Automatically generate the title of the bubble chart.
+364	16-Nov-2016	16:26	Guy Seknadje	Changes to formats of Bubble and Bar Chart
+363	16-Nov-2016	16:09	Philip Swannell	Fix to what's displayed in column 'THR 3y Min(Bk,Ab)' of the table.
+362	16-Nov-2016	16:01	Philip Swannell	Removed columns on the Table sheet that gave the notional-based weights.
+361	16-Nov-2016	15:20	Philip Swannell	Fixed bug found by Guy in solving for Fx headroom for Notional-based banks. Only occurred if the lines workbook listed the bank as using HISTORICAL in the 'Volatility Input' column.
+360	16-Nov-2016	14:04	Philip Swannell	Deleted two hidden sheets previously used for code testing but no longer useful.
+359	16-Nov-2016	13:20	Philip Swannell	Notional-based line utilisation now works for Rates products.
+358	15-Nov-2016	09:58	Philip Swannell	Renamed NotionalPercentages to FxNotionalPercentages in preparation for extending notional-based calculations to rates trades.
+357	14-Nov-2016	11:23	Philip Swannell	Bug fix: PFEs with LnFx model was including Fx trades even when IncludeAssetClasses was "Rates".
+356	14-Nov-2016	10:21	Philip Swannell	Commented out calls to DoEvents under my hypothesis that this is the cause of hangs.
+355	11-Nov-2016	16:51	Philip Swannell	Corrected some cell comments following change 354.
+354	11-Nov-2016	16:10	Philip Swannell	Simplified how we use market data:<LF>1) Removed sheets DiscountFactors and FxVol<LF>2) LnFx model now always uses market data from the Market Data workbook.<LF>3) When getting vols and correlations for the LnFx model we use the triangle (sCorrelationTriangle) to align correlation structures as far as is possible.
+353	09-Nov-2016	16:42	Philip Swannell	Changes for new structure of Lines book in which we use a Table (ListObject) to store the data.
+352	09-Nov-2016	14:36	Philip Swannell	Ran CodeCleaner.
+351	08-Nov-2016	14:47	Philip Swannell	Improved error message when user does not have write access to scenario results folder following conversation with Tobias.
+350	08-Nov-2016	10:15	Philip Swannell	Improvements to saving Config to Registry.
+349	07-Nov-2016	16:40	Philip Swannell	Shortfall now working - used by Westpac and SocGen.
+348	07-Nov-2016	13:32	Philip Swannell	Started work on implementing Shortfall.
+347	07-Nov-2016	12:36	Philip Swannell	Bank short name now displayed in Table, and simplified formulas on sheets BubbleChart and BarChart as a result.
+346	07-Nov-2016	11:25	Philip Swannell	Change to method StopImplicitCluster to run with On Error Resume Next when run in silent mode as it is when closijng the workbook.
+345	07-Nov-2016	11:17	Philip Swannell	Call new method ResetTableButtons in ReleaseCleanup.
+344	07-Nov-2016	10:03	Philip Swannell	Formatting changes on Table sheet.
+343	06-Nov-2016	16:29	Philip Swannell	Data on Config sheet is now written to the Registry whenever it is changed and read from the Registry when the workbook is opened. Hence the data "stays the same" after the user takes a new version.
+342	06-Nov-2016	15:13	Philip Swannell	Fix to R log files following change to file locations.
+341	05-Nov-2016	15:28	Philip Swannell	Changes to method SaveREnvironment to no longer use c:\RDataDump\ since that won't work at Airbus.
+340	05-Nov-2016	15:22	Philip Swannell	Corrected link confusion.
+339	05-Nov-2016	13:06	Philip Swannell	Bug fix in Fx headroom solving - value shown as PVEUR on the PFE sheet was not correct.
+338	05-Nov-2016	12:17	Philip Swannell	Further changes for Excel 2010 compatibility.
+337	05-Nov-2016	10:28	Philip Swannell	Chart on PFE sheet is now manipulated via SeriesCollection rather than FullSeriesCollection for compatibility with Office 2010.
+336	04-Nov-2016	19:22	Philip Swannell	Bug fix in Fx headroom solving - value shown as EURUSD on the PFE sheet was not correct.
+335	04-Nov-2016	14:33	Philip Swannell	More changes relating to moving file locations to c:\Program Files\Solum\...
+334	04-Nov-2016	13:44	Philip Swannell	Changes relating to moving file locations to c:\Program Files\Solum\...
+333	04-Nov-2016	11:09	Philip Swannell	Added method ClearoutResults that clears results from the PFE sheet and makes the chart not visible when the user switches bank.
+332	03-Nov-2016	19:16	Philip Swannell	Removed two settings from the Config sheet.
+331	03-Nov-2016	18:57	Philip Swannell	Added method GreyoutHeadrooms and called from RunPFESheetCore. This is in response to feedback from Anne Bousquet that it's hard to tell that headroom displayed can be "stale" in that it relates to inputs as of the last time a headroom calc was done which may even be for a different bank than the one displayed currently and for which the PFE has been updated.
+330	03-Nov-2016	12:13	Philip Swannell	Fixed bug found during demos at Airbus. Range EURUSD on sheet PFE was not being updated correctly after solving for Fx headroom.
+329	03-Nov-2016	12:01	Philip Swannell	Fixed bug found by Alexis Pavageau: double-clicking on both Base Currency and CreditLineInterp gave the impression that these were inputs when they in fact are not.
+328	03-Nov-2016	11:55	Philip Swannell	Fix in method RefreshScenarioDefinition so as not to leave "ghost" borders when opening a scenario definition containing fewer rows than the one previously displayed on the sheet.
+327	03-Nov-2016	11:48	Philip Swannell	Change so that "Calculate" of the PFE sheet is attached to Shift F9 rather than F9. Otherwise when calculation is automatic, it takes ages to get Excel to a state where we can switch calculation to not-automatic.
+326	02-Nov-2016	17:22	Philip Swannell	Bug fix. Method AvEDSTradedFromHistory could get an Overflow error if a) the number of months in the scenario was not a multiple of 12; and b) the last day of the historical period was not a good business day.
+325	01-Nov-2016	12:54	Philip Swannell	Ran CodeCleaner.
+324	01-Nov-2016	12:41	Philip Swannell	Fixed bug found by Guy in RunTable. As soon as a Notional-Based bank was encountered then NumObservations was increased to 400, with bad effect on run-times!
+323	01-Nov-2016	12:27	Philip Swannell	Work on sheet CommentEditor.
+322	31-Oct-2016	14:49	Philip Swannell	Bug fixes (to bugs found by Guy) in method RunTable - was not working correctly when ModelType = LnFx and LnFxUsesDataFromR = FALSE.
+321	31-Oct-2016	13:48	Philip Swannell	Change on the ScenarioDefinition sheet. For Scenarios where ShocksDerivedFrom reads 'History' but UseSPeedGrid is FALSE then we set the AvEDSTraded
+320	31-Oct-2016	12:44	Philip Swannell	Worked on cell comments on all of the sheets. Rather than editing the comments directly (quite a headache) we have a sheet called CommentEditor which maintains a list of all the cell comments in the workbook with a button to copy from the cells of CellComments to the cell comments of the sheets. Subsumes the earlier sheet TableComments that did something similar but just for the sheet Table.
+319	30-Oct-2016	18:01	Philip Swannell	Some fixes to method PasteManyScenarioCharts, but the method is bizarrely unreliable. Sometimes it works and sometimes, with the exact same input sit does not. Gets error: "The specified dimension is not valid for the current chart type" at CopyChart line 2. Not yet figured out what's going on.
+318	30-Oct-2016	15:03	Philip Swannell	Started work on comments for scenario sheets.
+317	29-Oct-2016	18:33	Philip Swannell	Successful tests of RunManyScenarios.
+316	29-Oct-2016	13:07	Philip Swannell	ScenarioDescription now takes account of AllocationByYear.
+315	29-Oct-2016	12:35	Philip Swannell	Now remove sdf and srf files from the MRU lists if an attempt to open them fails.
+314	29-Oct-2016	11:46	Philip Swannell	Bug fix to RunManyScenarios - we were not passing in the name of the model. Also improved how errors are reported.
+313	29-Oct-2016	11:16	Philip Swannell	Changes to error handling in method RunScenario. We now "give up" when we encounter a bank for which the trade headroom calculation fails - setting trade headroom for that bank to zero would mask problems and could lead to scenario results giving the wrong impression
+312	29-Oct-2016	10:55	Philip Swannell	Bug fix: When PortfolioAgeing > 0 the notional schedule for amortising swaps was wrong - we were dropping notionals from the end of the schedule instead of dropping them from the start.
+311	28-Oct-2016	18:29	Philip Swannell	Improvements to menus on ScenarioDefinition and ScenarioResults sheets - the MRU file lists are now integrated into the menu structure.
+310	28-Oct-2016	11:35	Philip Swannell	Improved text written to application status bar during a scenario run. RunScenario now saves definition and result files (RunManyScenarios has always done this). Hopefully fixed problem with chart on ScenarioResults sheet ending up with way too many series. ScenarioDescription now mentions trade and line morphing.
+309	28-Oct-2016	09:43	Philip Swannell	Work on sheet TestRSRS to debug problems with the chart on the ScenarioResults sheet.
+308	27-Oct-2016	22:41	Philip Swannell	Bug fix to RunScenario. Results were completely and obviously wrong - sometimes the easiest to diagnose?
+307	27-Oct-2016	18:29	Philip Swannell	Added method DescribeScenario to come up with a short description of a scenario for use as: a) the title of the chart; b) suggested file name for the scenario. Also deleted long-since redundant sheet ResultFilesList.
+306	27-Oct-2016	15:22	Philip Swannell	Bug fix to AvEDSTradedFromHistory - was failing with 'Subscript out of range' when LowFxSpeed was so big that all hedging for the year would be done in just one month (unrealistic).
+305	27-Oct-2016	10:31	Philip Swannell	Bug fix to RunScenario - was failing with "Index out of range" error.
+304	26-Oct-2016	22:27	Philip Swannell	Added parameters UseSpeedGrid, SpeedGridWidth, HighFxSpeed, LowFxSpeed, VaryGridWidth, SpeedGridBaseVol, AnnualReplenishment to ScenarioDefinition and ScenarioResults sheets. Added method AvEDSTradedFromHistory to calculate the monthly Replenishment amounts and AvEDSTraded. All hooked through to the change event of the ScenarioDefinition sheet for easy setting up of Scenarios. Also added "drill-down" via the menu on the ScenarioDefinition sheet to allow examination of the details of the speed grid operation.
+303	26-Oct-2016	12:31	Philip Swannell	Changes to HistoricData sheet and made visible - useful for choosing periods on which to base scenarios.
+302	26-Oct-2016	11:53	Philip Swannell	Saving and retrieving scenario definition files and scenario results files now works. Also 'Paste Charts to new workbook?' works from ScenarioResults sheet.
+301	25-Oct-2016	23:15	Philip Swannell	Method RefreshScenarioResultsSheet works. 
+300	24-Oct-2016	18:11	Philip Swannell	Scenario Analysis main loop now works - next step = method to refresh the ScenarioResults sheet - call at the end of RunScenario and also in method to open previously calculated results.
+299	23-Oct-2016	18:11	Philip Swannell	Work on ScenarioAnalysis. Almost working though bugs remain in handling of PortfolioAgeing and exact dates and rates for trades executed.
+298	23-Oct-2016	16:19	Philip Swannell	Re-wrote method UpdateLinesHistory.
+297	23-Oct-2016	12:22	Philip Swannell	Bug fixes to error handling in method LookupCounterpartyInfo. Upshot of this error was that PFE percentile of 95% was being used irrespective of the number in the lines workbook.
+296	22-Oct-2016	08:05	Philip Swannell	Release to back up work in progress
+295	21-Oct-2016	14:49	Philip Swannell	Added menu item 'Solve for Trade Headroom (custom allocation)?'
+294	20-Oct-2016	10:24	Philip Swannell	Started work to reform the Scenarios sheet.
+293	19-Oct-2016	18:55	Philip Swannell	Before reform of Scenarios.
+292	19-Oct-2016	16:31	Philip Swannell	Work on Fx Vol solving. It works but its slow. Probably not worth the effort involved in porting to R?
+291	19-Oct-2016	15:36	Philip Swannell	Work on comments on the PFE sheet.
+290	19-Oct-2016	14:16	Philip Swannell	Bug fix: Fx solving for Notional-based banks was taking fx spot rates from the wrong source if ModelType was HW.
+289	19-Oct-2016	13:45	Philip Swannell	Bug fix: Notional-Based calculations were taking spot fx rates from the wrong source if model was HW.
+288	19-Oct-2016	13:32	Philip Swannell	Call AnnotateBankNames in double-click handler on PFE sheet so that pop-up bank names show more than just the cryptic code.
+287	19-Oct-2016	11:37	Philip Swannell	ReleaseCleanup now protects the workbook.
+286	19-Oct-2016	10:43	Philip Swannell	Removed four parameters from the Config sheet.
+285	19-Oct-2016	09:45	Philip Swannell	Work on TradeValues sheet. Can now see values from either or both of the two models (HW or LnFx) and compare with Airbus MTM and compare HW vs LnFx. Will be useful in user acceptance phase. Removed sheet TradeValuesLnFx and some VBA code that only it used.
+284	18-Oct-2016	18:58	Philip Swannell	Trade headroom solving now much faster for Notional-based banks via hand-crafted method NBSolverFromFilters that's called from RunPFESheetCore.
+283	18-Oct-2016	16:07	Philip Swannell	Bug fix: FxOptions were not being scaled when being sent for valuation under HW.
+282	18-Oct-2016	09:26	Philip Swannell	Changed the order of some of the columns on the Table sheet.
+281	18-Oct-2016	07:55	Philip Swannell	Method FormatPFESheet now sets Validation for some of the cell on the PFE sheet.
+280	18-Oct-2016	07:53	Philip Swannell	Bug fix: When running trade headroom calculations, PV was wrong (was equal to the PV for the previously-processed bank) in the case of banks who are already in breach of limits. Bug was in the R code rather than the VBA code.
+279	18-Oct-2016	06:14	Philip Swannell	Bug fix to NotionalBasedByFilters. Was not working with ExtraTrades when Model = HW.
+278	17-Oct-2016	16:47	Philip Swannell	Bug Fix: For trades with Notional-based banks, PortfolioAgeing was being applied twice - to have double the intended effect!!! Also introduced cacheing in method GetTradesInLnFxFormat, this will speed up solving for Notional-Based banks and for all banks in the LnFx model.
+277	17-Oct-2016	12:59	Philip Swannell	Chart on PFE sheet now has button at its top left to resize it.
+276	17-Oct-2016	12:05	Philip Swannell	Added filtering to sheet Table.
+275	17-Oct-2016	09:51	Philip Swannell	Bug fix to NotionalBasedFromTrades. Was not working with HW model when the bank had zero trades.
+274	17-Oct-2016	09:12	Philip Swannell	Bug fix to RunPFESheetCore - fixes problem with "#Non-number found!" being shown as headroom in USD on the Table sheet.
+273	16-Oct-2016	13:29	Philip Swannell	Now see EUR PV on the Table sheet.
+272	16-Oct-2016	13:04	Philip Swannell	Changes to code relating to R packages. Now detect if packages are missing and tell the user that they need to be downloaded.
+271	16-Oct-2016	13:02	Philip Swannell	Portfolio PV calculation is now done in method RunPFESheet. This is a speedup since (except for Notional-based banks) we can take PV from the t = 0 point of the PFE graph.
+270	16-Oct-2016	07:39	Philip Swannell	Added more columns to the table to show the headroom (PFE vs Line gap) denominated in USD. The BubbleChart sheet now reads this directly rather than doing its own Fx conversion. Also improved the comments in the cells on the top row of the Table sheet.
+269	14-Oct-2016	18:03	Philip Swannell	Incorporated Hermione's work to show basis point differences on the sheet TradesViewer.
+268	14-Oct-2016	16:46	Philip Swannell	Added comments to the header row of the Table, taking the comments from the document "All Weather Phase II Appendix 4 Credit Headroom Result File specification"
+267	14-Oct-2016	11:17	Philip Swannell	Fixed bug in FxVol headroom solving. FxVol headroom solving is very naive and slow - e.g. 110 seconds for CitiBank with HW, 255, 60.
+266	14-Oct-2016	10:15	Philip Swannell	Bug fixes to sheet Table, fixed bug with Notional-Based calculations when Model is HW and bank has zero trades.
+265	13-Oct-2016	17:38	Philip Swannell	Reformed the way we count trades. This now happens at the very low-level function ApplyCurrenciesToInclude so we get a count (shown on the PFE sheet) of both the number of trades valued and the number of trades excluded because they do not match the CurrenciesToInclude setting on the Config sheet.
+264	13-Oct-2016	15:56	Philip Swannell	Changes to the Menu buttons, they are back to being button objects (rather than shapes). Therefore keyboad contrl via Alt X works if the active sell intersects the button.
+263	13-Oct-2016	15:19	Philip Swannell	Imported Hermione's new version of SaveDataframe that makes use of the colClasses argument to the R method read.csv
+262	13-Oct-2016	14:24	Philip Swannell	Notional-Based calculations can now use market data from R - code is still VBA though.
+261	13-Oct-2016	09:42	Philip Swannell	Removed sheet "VeryHidden" since ported functionality for fast duplicate removal to SolumAddin.
+260	12-Oct-2016	17:41	Philip Swannell	More work on Notional-based calculations. 
+259	12-Oct-2016	14:40	Philip Swannell	Notional-based calculations now pay attention to whether we are using LnFx or HW model. Still no notional-based calculations for rates trades however.
+258	12-Oct-2016	13:48	Philip Swannell	TradesViewer sheet now shows values calculated using historical Fx vol when the bank in question uses historic vols. This raises the question of wheter it is correct to use historic fx vol to mark fx options within a PFE calculation in which we are using historic fx vol.
+257	12-Oct-2016	13:09	Philip Swannell	Changes to make it less likely that users will see errors relating to packages by making a call to InstallPackages the first time the user clicks the menu button.
+256	11-Oct-2016	19:00	Philip Swannell	Updated method MyFxVolFromR that's used for the LnFx model when using data from R. Previously it was ignoring the argument UseHistorical. Now it pays attention to it...
+255	11-Oct-2016	18:33	Philip Swannell	Hooking in to the correct model
+254	10-Oct-2016	17:35	Philip Swannell	Now create two markets: CayleyModel and CayleyModelHistoric.
+253	09-Oct-2016	12:12	Philip Swannell	Tweaks to sheet TradesList.
+252	08-Oct-2016	20:04	Philip Swannell	Deleted sheet TestSheet
+251	08-Oct-2016	19:56	Philip Swannell	Sheet TradesList now has filters like Portfolio sheet of SCRiPT.
+250	08-Oct-2016	17:47	Philip Swannell	Bug fix to PortfolioValuesHW. Added text in red at the top of sheets FxVols and DiscountFactors to mention that the data is only used by the LnFx model.
+249	07-Oct-2016	15:23	Philip Swannell	Method PortfolioValueHW can now return a vector of values with embedded error strings when particular trades cannot be valued.
+248	07-Oct-2016	13:38	Philip Swannell	Fixed bug found by Guy. FxVol shocking was not working when using LnFx model and LnFxModelUsesMarketDataFromR was TRUE. Fix was to method MyFxVolFromR.
+247	07-Oct-2016	12:01	Philip Swannell	Improvements to method ShowTrades. Calculation of PVs is now optional.
+246	07-Oct-2016	11:20	Philip Swannell	Release cleanup now calls new method SetSheetVisibility so that when we release the workbook only sheets that we want the user to see are visible.
+245	07-Oct-2016	10:14	Philip Swannell	Work on all the items in the "R environment" menu to make their purpose clear.
+244	06-Oct-2016	15:24	Philip Swannell	Menu items "Print Charts..." and "Paste Charts to new workbook..." had stopped working after introducing the HW model. Now fixed.
+243	06-Oct-2016	10:37	Philip Swannell	Further work on TradesList sheet.
+242	05-Oct-2016	17:25	Philip Swannell	Added sheet TradeValuesHW - work in progress
+241	05-Oct-2016	14:03	Philip Swannell	Bug fixes in RunTable the PFE headrooms were being displayed in the table as they after solving for Fx or trade headoom i.e. close to zero.
+240	05-Oct-2016	11:46	Philip Swannell	Updated DiscountFactors sheet to 30 Sep 2016.
+239	05-Oct-2016	11:29	Philip Swannell	Method GetTradesInRFormat is frequently called with identical arguments to the previous call so it caches its return. Added method FlushStatics for safety and call that on workbook activation and after writing trades to the FutureTrades sheet.
+238	05-Oct-2016	10:48	Philip Swannell	Change in ChooseVectorFromFilters. Now only use regular expressions when filter "looks like" a regular expression (contains ^ or $ or |) otherwise do exact matching against the string.
+237	05-Oct-2016	10:07	Philip Swannell	Fixes on TradeValues sheet.
+236	04-Oct-2016	18:11	Philip Swannell	Fixes on sheet BubbleChart.
+235	04-Oct-2016	17:39	Philip Swannell	Removed some redundant methods and variables (via MZTools).
+234	04-Oct-2016	17:30	Philip Swannell	Fixed bug found by Guy in call to sJustifyArrayOfStrings.
+233	04-Oct-2016	15:45	Philip Swannell	Removed sheet 'Example'.
+232	04-Oct-2016	15:41	Philip Swannell	Tweaks to RunTable
+231	04-Oct-2016	12:33	Philip Swannell	Debugs to RunTableCore and switched from using Collection to Dictionary for accumulating results.
+230	04-Oct-2016	09:51	Philip Swannell	Changes to method RunTableCore (and similar methods) to improve the text displayed in "Is this what you want to do?" dialog.
+229	03-Oct-2016	16:41	Philip Swannell	Added code to apply number formatting to the sheet Table.
+228	03-Oct-2016	14:56	Philip Swannell	PFE sheet setting 'ModelType' can now be set to 'Both' in which case the PFE is displayed under both MCHW and LnFx. Deleted two of the (usually hidden) test sheets which had become redundant.
+227	03-Oct-2016	11:57	Philip Swannell	Bug fixes to Notional-based calculations.
+226	03-Oct-2016	11:21	Philip Swannell	Simplified handling of Lines Morphing. Rather than having a second lines workbook referenced on the Config sheet, we change the PFE sheet setting MorphTheLines (Boolean) to LinesScaleFactor (Double).
+225	30-Sep-2016	19:48	Philip Swannell	Work on the sheet Table and its associated module modTable.
+224	29-Sep-2016	19:16	Philip Swannell	Code refactoring and commenting.
+223	29-Sep-2016	17:30	Philip Swannell	Fx Solving now works for the HW model. 
+222	29-Sep-2016	10:12	Philip Swannell	TradeScaling now correctly avoids scaling trades from the FutureTrades sheet.
+221	28-Sep-2016	17:32	Philip Swannell	Replaced TradeMorphing (turn existing EUR\USD forwards into a triple of Forward, Call and Put) into much simpler TradeScaling whereby ALL trades are scaled by ScaleFactor. Need to check that we are not scaling "FutureTrades" i.e. trades executed during the scenario!
+220	28-Sep-2016	14:44	Philip Swannell	CHAPM (i.e. PFE sheet) now now supports market shocking with LnFx model using market data from R.
+219	28-Sep-2016	13:02	Philip Swannell	CHAPM (i.e. PFE sheet) now now supports market shocking with HW model.
+218	28-Sep-2016	10:03	Philip Swannell	Bug fixes to switch from CurrenciesToIgnore to CurrenciesToInclude.
+217	27-Sep-2016	16:38	Philip Swannell	Started work to replace TradeMorphing with TradeScaling.
+216	27-Sep-2016	16:10	Philip Swannell	Fixed bug with CrossCurrencySwap - was omitting to flip the trade to being from the bank's perspective.
+215	27-Sep-2016	15:02	Philip Swannell	Switch from having a CurrenciesToIgnore setting on the Config sheet to a CurrenciesToInclude setting.
+214	27-Sep-2016	14:12	Philip Swannell	Variable CurrenciesToIgnore is now passed up and down the call stack rather than being grabbed from the Config sheet at a point very deep in the call stack.
+213	27-Sep-2016	10:25	Philip Swannell	Changes on Bar Chart sheet to bring into line with Guy's branched version.
+212	26-Sep-2016	14:20	Philip Swannell	Changes on Table sheet to bring into line with changes on Guy's "branched" version".
+211	26-Sep-2016	12:59	Philip Swannell	Removed Counterparty Mapping sheet - all the data we need is now held in the Lines workbook.
+210	23-Sep-2016	20:21	Philip Swannell	Code refactoring and commenting.
+209	23-Sep-2016	17:45	Philip Swannell	Work on saving out total USD PV when running Scenarios under HW.
+208	23-Sep-2016	14:41	Philip Swannell	Added method AddOrRemoveBanks to provide a user interface to maintaining the list of banks which should appear on the sheets Table and WhoHasLines.
+207	23-Sep-2016	09:58	Philip Swannell	Improvements and bug fixes to double-click handling and MRU filters.
+206	21-Sep-2016	16:47	Philip Swannell	Ran CodeCleaner
+205	21-Sep-2016	16:35	Philip Swannell	Improvements to double-click handling.
+204	21-Sep-2016	16:32	Philip Swannell	Added method ShowTradesForR, available under menu 'R Environment' > 'Show trades formatted for R'
+203	21-Sep-2016	10:12	Philip Swannell	Bug fix to ChooseVectorFromFilters. When using regular expressions we now coerce the data to strings.
+202	20-Sep-2016	16:59	Philip Swannell	Fix to GetTradesInRFormat - FxOptions were being generated as puts when they should have been calls and vice versa.
+201	20-Sep-2016	15:34	Philip Swannell	Improvements to TestSheet - no longer causes there to be Excel-style links to other workbooks.
+200	20-Sep-2016	14:38	Philip Swannell	Started work to "mend" Scenario Analysis, i.e. make it work again for LnFx model.
+199	20-Sep-2016	14:08	Philip Swannell	Improvements to method RefreshPFE sheet.
+198	20-Sep-2016	12:00	Philip Swannell	Changes in GetTradesInRFormat to (finally) cope with amortising trades.
+197	19-Sep-2016	17:16	Philip Swannell	Further fix to ObsDatesFromTransactions (used by LnFx model) Fixed problem noticed by Guy that PFE profile for a single Fx forward looked linear when should be concave.
+196	19-Sep-2016	15:33	Philip Swannell	Change to GetTradesInRFormat to use the "Tolerant" syntax for amortisation schedules. :-)
+195	19-Sep-2016	13:56	Philip Swannell	Change to method BuildModelInR to promote the major currencies to alleviate the "add a currency and PFEs of existing trades changes" problem.
+194	14-Sep-2016	10:02	Philip Swannell	Tweaks to menu construction in method RunPFESheet.
+193	13-Sep-2016	13:18	Philip Swannell	WhoHasLines sheet now works. Table sheet works, except not doing FXheadroom when using HW.
+192	12-Sep-2016	15:01	Philip Swannell	Bug fix to method ObsDatesFromTransactions. Was failing when trades in the trades workbook matured before the AnchorDate.
+191	12-Sep-2016	14:53	Philip Swannell	Deleted method PopulateFxForwardPFEArgs - was of "Can't do Fx Options" vintage.
+190	12-Sep-2016	10:57	Philip Swannell	Added menu items for switching logging on and off. Removed now-redundant sheet Phase2.
+189	09-Sep-2016	18:29	Philip Swannell	"Extra Trades" for use with HW model are now correctly created to have zero PV. Added "Rebuild Hull-White Model" and "Open Market Data Workbook" options to main menu. Model is automatically built when it's needed but does not exist. 
+188	09-Sep-2016	15:13	Philip Swannell	Started work on accessor functions to get market data from R for use by the LnFx model. 
+187	08-Sep-2016	16:32	Philip Swannell	Removed obsolete functions from module Main - these functions date from prior to July 2015 at which stage we handled only Fx forwards not fx options. Functions were: TestPFEByFilters, PFEByFilters, PFEForFixedCashflows, ApplyAgeing, ComponentPVs, FutureCashflows.
+186	08-Sep-2016	12:27	Philip Swannell	Reduce use ws.Range("RangeName") and replace with method RangeFromSheet(ws,"RangeName") for more informative error messages.
+185	08-Sep-2016	10:27	Philip Swannell	Trade headroom solving now works for the HW model.
+184	07-Sep-2016	09:59	Philip Swannell	Method RefreshPFESheet now working. No longer have any formulas on PFE sheet.
+183	06-Sep-2016	13:54	Philip Swannell	Work on new method RefreshPFE sheet, but no changes yet to PFE sheet.
+182	06-Sep-2016	10:58	Philip Swannell	Added setting IncludeAssetClasses to PFE sheet.
+181	06-Sep-2016	09:42	Philip Swannell	PortfolioAgeing now works for HW model, via change to method GetTradesInRFormat. PFE is calculated from paths for PV in that "BaseCurrency".
+180	05-Sep-2016	18:49	Philip Swannell	PFE generation using Hull White now copes with MorphInstructions. Also copes with BaseCurrency (i.e. currency in which credit lines are denominated) being different from the Numeraire currency of the model.
+179	02-Sep-2016	11:12	Philip Swannell	Method sFxOptionPFEProfile no longer returns a header row, in line with method PFEProfileForTradesMatchingQuery. Will make it easier to have one function that calls either of those two as appropraite.
+178	01-Sep-2016	16:51	Philip Swannell	Work on trade headroom calculation using Hull-White model in R. Also layout changeds on sheet PFE. Deleted long-since redundant sheet called FutureTradeValues.
+177	31-Aug-2016	16:52	Philip Swannell	Code refactoring.
+176	31-Aug-2016	13:37	Philip Swannell	Fixed bug in cell formulas showing totals  at the bottom of the "Table" sheet.
+175	31-Aug-2016	10:50	Hermione Glyn	Added R Environment section to menu on PFE sheet.
+174	30-Aug-2016	12:59	Philip Swannell	Added new setting on Config sheet: CurrenciesToIgnore
+173	30-Aug-2016	11:03	Philip Swannell	Switched off reading of amortisation table (so that amortising trades treated as non-amortising) via change to method GetTradeDataInRFormat. TODO switch back on when Airbus have carried out the work requested in my mail of 12 August.
+172	30-Aug-2016	10:19	Philip Swannell	Release from London of work not released in France.
+171	11-Aug-2016	17:51	Philip Swannell	Test sheet now points to trade data dated 25/7/16.
+170	10-Aug-2016	18:55	Philip Swannell	There is confusion as to whether the correct header in the trade data should be PARENT_CPTY (as used before June 2016)  or CPTY_PARENT (as used after). Have switched to CPTY_PARENT as the "correct" header but can cope with either header in the trades workbook.
+169	04-Aug-2016	12:28	Philip Swannell	Started work on amortising swaps.
+168	03-Aug-2016	13:54	Philip Swannell	Debug to method FixCellComments.
+167	03-Aug-2016	13:01	Philip Swannell	Testing and bug fixing
+166	03-Aug-2016	09:13	Philip Swannell	Method GetTradeDataInRFormat now handles rates trades (but not yet amortising trades)
+165	02-Aug-2016	12:07	Philip Swannell	Work on cell comments
+164	01-Aug-2016	10:01	Philip Swannell	Switch to using RangeFromSheet in place of .Range so that errors yield more helpful error messages.
+163	27-Jul-2016	14:21	Philip Swannell	Minor reforms to the Scenario sheet to make it clearer what's an input and what's not.
+162	26-Jul-2016	16:05	Philip Swannell	Changes for sheet Phase2.
+161	26-Jul-2016	12:50	Philip Swannell	Added vols for USDMXN, needed for Citibank's trades.
+160	26-Jul-2016	12:25	Philip Swannell	Improved error handling in method sFxOptionPFEProfile.
+159	25-Jul-2016	16:50	Philip Swannell	Added ability to export the data on sheet Table, attached to Menu button - allows us to document the file format.
+158	25-Jul-2016	15:37	Philip Swannell	Menu item to open trades\lines workbook now has "Shift to Activate".
+157	20-Jul-2016	18:24	Philip Swannell	Added data to sheet HistoricData
+156	20-Jul-2016	12:19	Philip Swannell	Spelling corrections in comments etc.
+155	19-Jul-2016	14:29	Philip Swannell	Formatting of FxVols sheet.
+154	19-Jul-2016	13:53	Hermione Glyn	Updated FxVols for 30-Jun-2016 and FxCorrelations using historic data 18 Jul 2006 to 18 Jul 2016. Updates the HistoricData sheet to 18 Jul 2016.
+153	19-Jul-2016	09:14	Philip Swannell	Updated DiscountFactors sheet to be in synch with Airbus data for 30 June 2016.
+152	19-Jul-2016	08:54	Philip Swannell	Changes to double-click handler for Config sheet.
+151	18-Jul-2016	19:17	Philip Swannell	Trade filtering now supports regular expressions.
+150	18-Jul-2016	17:48	Philip Swannell	Change to alignment of text passed to MsgBoxPlus.
+149	18-Jul-2016	17:40	Philip Swannell	Experimenting with restricting selction to unlocked cells on PFE sheet. Good idea or not?
+148	18-Jul-2016	17:08	Philip Swannell	Added code for trade compression.
+147	14-Jul-2016	16:12	Philip Swannell	Added function PFEProfileForTrades, a wrapper to R function of the same name.
+146	14-Jul-2016	11:22	Philip Swannell	Fixed bug in shPFE.Worksheet_BeforeDoubleClick. Added temporary sheet Phase2 for debugging new code.
+145	13-Jul-2016	15:01	Philip Swannell	Started work on method FormatTradesForR for "Cayley phase II"!
+144	12-Jul-2016	15:07	Philip Swannell	MsgBox > MsgBoxPlus, Application.InputBox > InputBoxPlus.
+143	12-Jul-2016	13:49	Philip Swannell	Removed module modNotionalBasedOLD. Removed sheets 'Single Equiv Trade' and 'Old v New'. Changes to sheet formatting to be more consistent with styles used in SCRiPT.
+142	12-Jul-2016	11:03	Philip Swannell	Changes on the config sheet to make it easier to configure the workbook for development at home.
+141	16-Jun-2016	15:23	Philip Swannell	Hook in to common code for menu on this Audit sheet.
+140	01-Mar-2016	16:55	Philip Swannell	Added menu on this audit sheet to hook into the same "development tools" as we use for the SCRiPT workbook. Workbook rechristed as simply Cayley.xlsm rather than  Cayley PFE Calculator v???.xlsm
+139	19-Jan-2016	10:54	Philip Swannell	Fixed compile errors found by Guy.
+138	27-Nov-2015	18:46	Philip Swannell	Fix in method SolveFxHeadroom to handle case when no possible Fx shock exhausts lines.
+137	27-Nov-2015	17:20	Guy Seknadje	Updated vols as of 27 Nov 2015. 
+136	26-Nov-2015	18:49	Philip Swannell	Added method RedrawDiscountFactorsSheet, called from button on DiscountFactors sheet. It parses the trades file for discount factor and Fx spot data and updates the sheet. Will save time each time Airbus sends an updated portfolio. Also changed method DealTypeToOptionStyle to understand DEAL_TYPE "PUTsell VANILLA", which appears in the latest trade data file.
+135	26-Nov-2015	13:25	Philip Swannell	Changed Config sheet to point to 20 Nov 2015 portfolio
+134	01-Oct-2015	11:44	Philip Swannell	Final save before trip to Munich.
+133	29-Sep-2015	09:25	Philip Swannell	More small changes prior to demo to Airbus:<LF>Fix to "Something went wrong" error box when calculating with Counterparty (Filter1Value) is "All"<LF>Menu changes so that "Activate Trades workbook" appears instead of "Open Trades workbook" when it's already open.<LF>Found and fixed circular reference that was in sheet ResultFilesList - Excel gave a very poor steer as to where the problem was.<LF>Fixed bug on TradeValues sheet for banks with no trades.<LF>Fix on sheet Table - formulas at bottom of table were getting included as part of the range sorted by the sort buttons atop the table.<LF>Big speedup to code to display previously saved Scenario Results - stop using .Copy and .Paste and use instead Target.Value = Source.Value - execution time falls from 47 seconds to 3 seconds.<LF>Added grouping of columns on the sheet Table via MoreLess buttons.
+132	28-Sep-2015	15:36	Philip Swannell	Hid various sheets that Airbus team need not see.
+131	21-Sep-2015	14:52	Philip Swannell	Change to method SetOptionsStrategy to cope with StrategySwitchPoints containing first token SwitchOnTime - second attempt.
+130	21-Sep-2015	13:28	Philip Swannell	Updates to sheet ResultFilesList to add scenarios 116 to 142.
+129	21-Sep-2015	12:30	Philip Swannell	Change to method SetOptionsStrategy to cope with StrategySwitchPoints containing first token SwitchOnTime.
+128	08-Sep-2015	13:44	Philip Swannell	Change to method SolveTradeHeadroom2 - method used to solve for joint 3,4 & 5 year. Should fix pathological cases encountered in Scenarios 124 and 130 where calculated lines available were giant negative numbers. Also brought filename into synch with number shown on this Audit sheet.
+127	04-Sep-2015	12:19	Philip Swannell	Change to OpenTradesSourceBook and OpenLinesSourceBook to have optional argument HideOnOpening.
+126	04-Sep-2015	12:08	Philip Swannell	Bug fix to error handling in method SetOptionsStrategy.
+125	01-Sep-2015	13:37	Philip Swannell	Started work on variable options strategy - allow a strategy that only uses options when trade headroom is low.
+124	29-Jul-2015	12:44	Philip Swannell	Fix bug in sFxOptionPFEProfileFromFilters for the case where filters return no trades.
+123	29-Jul-2015	09:16	Philip Swannell	Example sheet: added column to show trade PVs. Release cleanup now hides column headers - for potential use in presentation.
+122	27-Jul-2015	16:58	Philip Swannell	Added Scenarios 100 to 105 to ResultFileList.
+121	27-Jul-2015	14:52	Philip Swannell	Added Scenarios 88 to 99 to ResultFileList.
+120	24-Jul-2015	17:48	Philip Swannell	Yet more work in shPFESafeCalculate. Added sheet FutureTradeValues. Added Scenarios 82 to 87 to sheet ResultFileList
+119	24-Jul-2015	10:13	Philip Swannell	More work in shPFESafeCalculate
+118	23-Jul-2015	13:04	Philip Swannell	Improvement in method shPFESafeCalculate, added Scenarios 71 to 79 to sheet ResultFilesList - global search and replace of "=" for "=" - equivalent to re-entering every formula, may help in recalculation badness. Cosmetic changes to the layout of sheets PFE and Scenario. Improved method GraphTitle that returns the title for the chart on the PFE sheet.
+117	22-Jul-2015	19:49	Philip Swannell	With Paul, attempted to fix the unpleasant silent failure in shPFE.Calculate
+116	22-Jul-2015	14:28	Philip Swannell	Implemented "Line Morphing" - we have a second version of the Lines workbook, in which all banks grant a 20% increase in lines for the first two years. A "MorphTheLines" setting on the PFE sheet controsl whether we use this version or the regular one.
+115	22-Jul-2015	11:57	Philip Swannell	Fixed bugs in calculation of trade headroom for Notional-based banks - unfortunately this bug invalidates many of the scenarios we have run.
+114	21-Jul-2015	14:18	Philip Swannell	New sheet "Single Equiv Trade" to calculate equivalent single EURUSD forward to each bank's portfolio of EURUSD forwards. Also updated sheet ResultFilesList for Scanarios 49 to 70.
+113	20-Jul-2015	15:33	Philip Swannell	Fixed a number of bugs in method UpdateLinesHistory
+112	20-Jul-2015	14:40	Philip Swannell	Changed the layout of the sheet Scenario
+111	20-Jul-2015	10:57	Philip Swannell	Bug fix to method FixUpFutureTradesSheet - was causing errors to be thrown when displaying scenario results. Also fixed error in generation of graph titles.
+110	17-Jul-2015	17:07	Philip Swannell	New sheet ResultFileList to hold the mapping of Scenario Result File name to Graph Title. Fixes to sheet NewvOld.
+109	17-Jul-2015	13:00	Philip Swannell	Now support CalcMethod Sobol/Moment-Matching which uses Moment-Matching if possible (portfolio has no options) otherwise uses Sobol.
+108	17-Jul-2015	11:51	Philip Swannell	Added graph titles for the 30 Scenarios run last night and the next 18 to be run tonight - 48 in total.
+107	16-Jul-2015	19:38	Philip Swannell	Changes to facilitate creating the 30 ScenarioDefinition files.
+106	16-Jul-2015	14:35	Philip Swannell	Scenario Definition and Scenario Results files now contain the following values from the sheet PFE: CalcMethod, NumMCPaths, MaxNumObservations, ForwardsRatio, PutRatio, CallRatio, PutStrikeOffset, CallStrikeOffset.<LF>Paul's method RunManyScenariosExt now calls OpenTradesSourceBook and OpenLinesSourceBook
+105	16-Jul-2015	14:21	Philip Swannell	Updated Vols as per Guy's email of 13:43 today.
+104	16-Jul-2015	13:55	Philip Swannell	Added module modExternalCalls.
+103	16-Jul-2015	11:22	Philip Swannell	Bug fixes to Scenario code.
+102	15-Jul-2015	14:37	Philip Swannell	Re-introduced Moment-Matching as a CalcMethod - works only for portfolios of FxForwards. Cell notes and conditional formatting for newly added inputs on PFE sheet.
+101	15-Jul-2015	12:28	Philip Swannell	Testing and debugging.
+100	14-Jul-2015	15:29	Philip Swannell	Notional-based line utilisation working. Trade morphing working. Starting on speed-ups to method sFxOptionPFEProfile for which performance is currently very poor when a large number of options are in the portfolio.
+99	14-Jul-2015	08:25	Philip Swannell	Started work on re-write of Notional-based calculations.
+98	13-Jul-2015	19:19	Philip Swannell	Reworked sheet Cashflows, which ignored options, to become TradeValues, that copes with Options.
+97	13-Jul-2015	15:30	Philip Swannell	Method RunScenario can now cope with an "OptionStrategy" defined by five numbers: ForwardsRatio, PutRatio, CallRatio, PutStrikeOffset, CallStrikeOffset. When hadging trades are executed each forward is replaced by a triplet of Forward, Put and Call with the parameters of those trades being determined by those five numbers (in a hopefully-not-too-hard-to-guess way).
+96	12-Jul-2015	19:36	Philip Swannell	Still can't get the method PFEByFiltersWithOptions as fast as PFEByFilters. Sheet OldvNew demonstrates that it takes 1.9 times as long for the Barclays portfolio. We may heve to just live with this?
+94	12-Jul-2015	14:20	Philip Swannell	Refactoring for improved speed.
+93	12-Jul-2015	11:39	Philip Swannell	Refactored so that we can share code for generation of observation dates from old forwards-only code to new Forwards-and-options code.
+92	12-Jul-2015	09:56	Philip Swannell	Added new (temporary) sheet OldvNew for testing and optimising the new Options-Capable code versus old code.
+91	11-Jul-2015	18:35	Philip Swannell	Work on PFEByFiltersWithOptions - copes with ExtraTrades, handles PortfolioAgeing. Refactored so that PFEVyFiltersWithOptions calls lower-level function sFxOptionPFEProfile which is suitable for calling on the Example sheet. Re-worked Example sheet to now do options as well as forwards.
+90	10-Jul-2015	19:33	Philip Swannell	Work on new method PFEByFiltersWithOptions.
+89	09-Jul-2015	19:06	Philip Swannell	Work on new method PFEByFiltersWithOptions.
+88	09-Jul-2015	17:36	Philip Swannell	Sheet Cashflows now shows trades including Fx Options.
+87	09-Jul-2015	15:12	Philip Swannell	Started work on integrating options code.
+86	09-Jul-2015	11:09	Philip Swannell	Changes to method ReleaseCleanup.
+85	08-Jul-2015	11:37	Philip Swannell	More updates to the FxVols sheet sent by Guy.
+84	06-Jul-2015	16:54	Philip Swannell	Guy has updated the FxVols sheet.
+83	06-Jul-2015	14:48	Philip Swannell	Sheet DiscountFactors now holds data for 30 June, still need to update sheet FxVols
+82	01-Jul-2015	14:40	Philip Swannell	Simplified some formulas on sheet FxVols
+81	29-Jun-2015	13:34	Philip Swannell	Fix to chart on sheet PFE, and enhacements to method PrintCharts.
+80	26-Jun-2015	12:26	Philip Swannell	Small change on Scenario sheet to correct display of starting point of path for Fx Vol in the "non-historic" cases.
+79	26-Jun-2015	08:56	Philip Swannell	Changes on Scenario sheet so we can analyse path of total portfolio PV.
+78	25-Jun-2015	18:05	Philip Swannell	Work to allow for automated saving out of ScenarioDefinition files for the Fast Speed Grid.
+77	25-Jun-2015	16:10	Philip Swannell	Now write total portfolio PV to Scenario Results - will help in looking at value of SpeedGrid.
+76	25-Jun-2015	15:54	Philip Swannell	Fixed "Portfolio Ageing bug" for Guy.
+75	25-Jun-2015	15:09	Philip Swannell	Tweaks to Graph on Scenario sheet.
+74	25-Jun-2015	12:36	Philip Swannell	Running Table on sheet Table no longer resets the Fx and FxVol shocks (Guy request). Second attempt at this fix.
+73	25-Jun-2015	10:03	Philip Swannell	Use daily rather than monthly data for EURUSD Fx and FxVol on the graph on the Scenario sheet.
+72	24-Jun-2015	15:05	Philip Swannell	Updated Correlations as per Guy's emailed sheet.
+71	24-Jun-2015	14:14	Philip Swannell	ScenarioDefinition can now include column headed AvEDSTraded (AverageEuroDollarSpotTraded) in which case the forward Fx trades are executed based off that spot Fx rate and not the spot Fx rate implied by the shock to the market. Useful for implementing SpeedGrid simulation.
+70	24-Jun-2015	08:24	Philip Swannell	Changes to graph on Scenario sheet.
+69	23-Jun-2015	15:24	Philip Swannell	Added "GenerateGraphs from Scenario Results" option under Scenario Menu.
+68	22-Jun-2015	14:58	Philip Swannell	Debug to code for "Catch up".
+67	22-Jun-2015	12:14	Philip Swannell	Change in RunScenario - now do a "catch up" after a period of underhedging.
+66	19-Jun-2015	14:46	Philip Swannell	When loading and saving Scenario results or definitions, the file name is reflected on the Scenario sheet.
+65	19-Jun-2015	09:44	Guy Seknadje	Formatting changes on various sheets. Updated vols and correlations 
+64	18-Jun-2015	13:55	Philip Swannell	Corrected error on sheet Example.
+63	18-Jun-2015	11:51	Philip Swannell	Improved error handling in RunManyScenarios. Default calculation method is back to Moment-Matching following Paul's fix to the MinPack Solver.
+62	17-Jun-2015	15:31	Philip Swannell	Added LinesHistory sheet
+61	17-Jun-2015	14:18	Philip Swannell	Updates sheet Table, update sheet BubbleChart.
+60	17-Jun-2015	13:13	Philip Swannell	Running Table on sheet Table no longer resets the Fx and FxVol shocks (Guy request).
+59	17-Jun-2015	12:48	Philip Swannell	Fixed problems in formulas of sheets BubbleChart nd BarChart.
+58	17-Jun-2015	08:28	Philip Swannell	Improved error handling in method RunScenario and RunManyScenarios. Improved calculation of Line utitlisation to avaoid #Value errors for maturities greater than the longest trade with a given bank.
+57	16-Jun-2015	17:24	Philip Swannell	Guy provided updated market data for certain Vols and Correlations. Removed Sumitome (SMFG_JP_TYO) from sheets Table and WhoHasLines. 
+56	16-Jun-2015	16:00	Philip Swannell	Added ability to read and write to file both for Scenario Definitions and ScenarioResults. Added ability to run a number of scenarios (whose definitions must first be written to file).
+55	16-Jun-2015	10:17	Philip Swannell	Added cell comments on more of the cells in column A of the sheet PFE to explain the meaning of inputs to the analysis.
+54	14-Jun-2015	14:28	Philip Swannell	Removed seven banks from the sheet WhoHasLines and the sheet Table: ITAU_BR_SAO (ITAU), DABA_DK_CPH (Danske Bank), DNBA_NO_OSL (Nordbank), DENEL_FIN_ZA (Denel Treasury), GIBA_AT_VIE (Erste), FIRN_ZA_JNB (First Rand Bank), NEDS_ZA_JNB (Nedbank)
+53	14-Jun-2015	14:04	Philip Swannell	Sheets Scenario and WhoHasTrades now have blocks of data to show the parameters used to generate the data displayed. Sheet Scenario now also displays the total amount of trade headroom available after each round of trade allocation.
+52	14-Jun-2015	08:25	Philip Swannell	Stopped resetting FilterBy2 and Filter2Value to None , since we may need to filter out trades done by certain banks using the IncludeThisOne? Flag. When testing results noticed and fixed bug in RunScenario - flag "IncludeFutureTrades was not being correctly set.
+51	13-Jun-2015	15:16	Philip Swannell	Changes to AllocateTradesToBanks to potentially use up 100% of the trade headroom that each bank has, not leave up to $50m unused as previously. Also changed method RunScenario to write out the total amounts of trades allocated at each maturity for each date in the scenario.
+50	13-Jun-2015	14:34	Philip Swannell	Fixed bug in method ConstructExtraTrades (not sure when this was introduced). Added option from menu to "Solve for Trade Headroom (joint 3, 4 and 5Y)". Method SolveTradeHeadroom2 now uses more robust solver- needed to find solution in the case of trades with RBS.
+49	12-Jun-2015	16:31	Philip Swannell	We now look up CreditLineInterp from the lines workbook.
+48	12-Jun-2015	13:45	Philip Swannell	Moved calculation of Component PVs from the sheet PFE to the sheet Cashflows - will speed up execution of Scenarios 
+47	12-Jun-2015	12:30	Philip Swannell	Fixed bug found by Guy for Notional-based banks. Was not working when PortfolioAgeing > 0.
+46	11-Jun-2015	16:09	Philip Swannell	Re-write method AllocateTradesToBanks. Introduced CreditLineInterp idea of Guy's.
+45	11-Jun-2015	15:47	Philip Swannell	Solving for Trade and Fx headroom no longer resets the shocks to 1. Also brought the version number on this sheet into line with the version number given in the file name.
+44	11-Jun-2015	15:22	Philip Swannell	Release for Guy to use
+43	11-Jun-2015	15:00	Philip Swannell	Solvers now run faster
+42	11-Jun-2015	13:58	Philip Swannell	Re-write method WhoHasLines.
+41	11-Jun-2015	11:55	Philip Swannell	Formatting changes on PFE sheet.
+40	11-Jun-2015	09:38	Philip Swannell	Moved Fx_Shock and Fx_Vol_Shock cells to the main (PFE) sheet.
+39	10-Jun-2015	18:27	Philip Swannell	Changes to method GraphTitle.
+38	10-Jun-2015	17:07	Philip Swannell	More work in ModScenario
+37	09-Jun-2015	16:00	Philip Swannell	work in modScenario.
+36	09-Jun-2015	10:27	Philip Swannell	Fixes to sheets BarChart and BubbleChart
+35	08-Jun-2015	18:13	Philip Swannell	Added sheet WhoHasLines with associated code. Will be part of Guy's "Scenario" idea.
+34	08-Jun-2015	10:09	Philip Swannell	Method ChooseGoodDates now called instead of sGrid to select dates to calculate PFE when there are many transactions (relative to MaxNumObservations). ChooseGoodDates estimates those dates likely to have high and low PFEs se we can get away with calculating PFEs on a smaller number of dates.
+33	08-Jun-2015	10:09	Philip Swannell	Changes to methods PFEForCashflows and PFEFromFilters - extra argument ShowDetails.
+32	07-Jun-2015	15:34	Philip Swannell	Can choose whether to use Moment-Matching, Monte-Carlo with either Sobol sequences (quasi random) or specified random number generator (pseudo random).
+31	04-Jun-2015	09:53	Philip Swannell	Added FxVol shocking - will need for scenario analysis
+30	03-Jun-2015	09:53	Philip Swannell	Clean-up Config sheet.
+29	31-May-2015	18:19	Philip Swannell	Protected VBA code.
+28	31-May-2015	17:32	Philip Swannell	Added extra sheets BubbleChart and BarChart
+27	31-May-2015	12:34	Philip Swannell	Extra column on sheet Table - aim to replicate Guy's graphs of Available Notional vs Fx breakeven
+26	29-May-2015	14:15	Philip Swannell	Bug fixes relating to worksheet protection.
+25	29-May-2015	14:04	Philip Swannell	Ran table, though still waiting for Guy's final version of the Lines workbook.
+24	29-May-2015	13:01	Philip Swannell	FxVols sheet now has alternative data for Historical vols, flipped ExtraTrades so that Amount is USD not EUR, added more columns to the sheet Table. Added release cleanup routine.
+23	29-May-2015	09:21	Philip Swannell	Added MaxNumObservations on Config sheet.
+22	26-May-2015	19:12	Philip Swannell	Handle banks with whom Cayley currently have no trades - continued
+21	26-May-2015	18:22	Philip Swannell	Handle banks with whom Cayley currently have no trades.
+20	26-May-2015	15:17	Philip Swannell	Added "Print Charts" capability.
+19	26-May-2015	12:16	Philip Swannell	New sheet "Table" to allow looping over all counterparty banks.
+18	25-May-2015	10:38	Philip Swannell	Implemented solving for Fx Headroom.
+17	25-May-2015	09:36	Philip Swannell	Implemented portfolio ageing. Graph title now reflects addition of extra trades and amount of portfolio ageing.
+16	23-May-2015	18:17	Philip Swannell	Re-wrote algorithm for Notional-based credit line. Now simpler  - old algorithm was complicated and wrong.
+15	23-May-2015	07:22	Philip Swannell	Headroom calculation now works when Calibration failures are encountered in PFE calculation.
+14	22-May-2015	19:52	Philip Swannell	SingleChoiceDialog now persists the user's search preferences.
+13	22-May-2015	19:45	Philip Swannell	Solving for Trade Headroom now works for Methodology = NOTIONAL BASED.
+12	22-May-2015	19:14	Philip Swannell	Fix for problem of the extra trades just popping by a day or so into the wrong bucket for notional-based lines
+11	22-May-2015	18:23	Philip Swannell	Added calculation for Notional-based lines - not yet fully tested.
+10	22-May-2015		Philip Swannell	Added menu button and new sheet "PFE for FxForwards".
+9	21-May-2015	18:42	Philip Swannell	Added PFE headroom and Solver for Trade headroom.
+8	20-May-2015	16:53	Philip Swannell	Simplified method PopulateVariables to call sInterp with InterpType being FlatToRight.
+7	20-May-2015	16:53	Philip Swannell	Change to method PopulateVariables to construct arguments for call to sFxForwardPFE more efficiently. Time to calculate PFE for all 8,067 trades falls from 22 seconds to 8 seconds.
+6	19-May-2015	17:12	Philip Swannell	Change to method PopulateVariables to never use more than 364 observation dates. So can now calculate PFE for entire Cayley portfolio. Takes 22 seconds though there may be speedups available?
+5	19-May-2015	14:51	Philip Swannell	Added required FxVols to calculate PFEs for UBS, Lloyds and RBS whose reporting currencies are CHF, GBP and GBP respectively.
+4	19-May-2015	13:49	Philip Swannell	1) Bug fix. Results were gibberish if the report currency was not EUR.<LF>2) Changed main sheet so there is a "Calculate!" button that executes a macro that pastes the result of the analysis into a range PFEByFiltersReturn. This solves a problem that the chart was failing to update.<LF>3) New sheet ComponentPVs gives the initial Fx Exposure from the bank's perspective. Useful for chacking initial point of the PFE graph.<LF>4) Main sheet shows credit lines for the Bank, looked up from a separate workbook referenced as "Source workbook for Lines" on the Config sheet.
+3	15-May-2015	18:35	Philip Swannell	Can now enter a base currency on the main sheet, though only have market data to support EUR and USD for the time being. Simplified FxVol sheet and copied across data that Sophia downloaded from Bloomberg.
+2	15-May-2015	09:00	Philip Swannell	Can enter confidence levels on main sheet. Calibration failure handled more gracefully. Counterparty mapping table addeded.
+1	14-May-2015	11:55	Philip Swannell	First version for use by other team members.

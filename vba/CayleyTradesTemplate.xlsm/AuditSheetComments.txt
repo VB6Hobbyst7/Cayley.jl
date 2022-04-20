@@ -1,0 +1,10 @@
+Version	Date	Time	Author	Comment
+9	10-Mar-2022	13:23	Philip Swannell	Input message generation now delegated to FilterRangeByHidingRows.
+8	10-Mar-2022	11:50	Philip Swannell	Made filtering more discoverable via input messages.
+7	09-Mar-2022	12:12	Philip Swannell	Change to make "copy visible rows" menu option available.
+6	09-Mar-2022	11:36	Philip Swannell	Bug fix to Workbook_SheetBeforeDoubleClick.
+5	09-Mar-2022	10:37	Philip Swannell	Locked VBA project.
+4	08-Mar-2022	09:41	Philip Swannell	Suppress save changes dialog, since the trades workbooks are not the store of data.
+3	08-Mar-2022	09:35	Philip Swannell	Tweak to Workbook_SheetChange.
+2	08-Mar-2022	09:16	Philip Swannell	Tweak to Workbook_SheetChange.
+1	07-Mar-2022	20:17	Philip Swannell	First version
