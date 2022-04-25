@@ -16,7 +16,7 @@ End Sub
 ' Author    : Philip Swannell
 ' Date      : 13-Jun-2016
 ' Purpose   : Apply cell formatting to the cells of a currency sheet
-'             CollapseColumns can be True, False or empty (leave collapse state as is)
+'             CollapseColumns can be True, False or Empty (leave collapse state as is)
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub FormatCurrencySheet(ws As Worksheet, ClearComments As Boolean, CollapseColumns As Variant)
           Dim b As Button
@@ -63,7 +63,7 @@ Sub FormatCurrencySheet(ws As Worksheet, ClearComments As Boolean, CollapseColum
 20            .Font.Size = 22
 21        End With
 
-          'ensure that all empty cells have no formats etc.
+          'Ensure that all empty cells have no formats etc.
 22        TLSwaptionAddress = RangeFromSheet(ws, "VolInit").Cells(0, 0).Address
 23        For Each c In ws.UsedRange.Cells
 24            If IsEmpty(c.Value) Then
@@ -195,7 +195,7 @@ Sub FormatCurrencySheet(ws As Worksheet, ClearComments As Boolean, CollapseColum
 
 132       RangeToAutoFit.Columns.AutoFit
 
-133       Set RangeToFormat = sexpandRightDown(RangeFromSheet(ws, "VolInit").Cells(0, 0))
+133       Set RangeToFormat = sExpandRightDown(RangeFromSheet(ws, "VolInit").Cells(0, 0))
 
 134       With RangeToFormat
 135           If ClearComments Then
@@ -250,7 +250,7 @@ Sub FormatCurrencySheet(ws As Worksheet, ClearComments As Boolean, CollapseColum
 181                       SetValidation c, "BBIR,CFIR,CMPL,CMPN,CNTR,GFIS,ICPL,LAST,SMKO,TRPU", "That's not a valid Contributor"
 182                       c.Font.Color = gTextColor
 183                       .Locked = False
-184                   Case "example Code"
+184                   Case "Example Code"
 185                       .Locked = True
 186               End Select
 187           Next c
@@ -287,48 +287,45 @@ Sub FormatCurrencySheet(ws As Worksheet, ClearComments As Boolean, CollapseColum
 209           .Locked = False
 210           .Font.Color = gTextColor
 211           With .Validation
-                .Delete
-212               .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+212               .Delete
+213               .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
                       xlBetween, Formula1:="RFR,IBOR"
-213           End With
-           .Offset(0, -1).HorizontalAlignment = xlHAlignRight
-           AddGreyBorders .Offset(0, -1).Resize(1, 2), True
+214           End With
+215           .Offset(0, -1).HorizontalAlignment = xlHAlignRight
+216           AddGreyBorders .Offset(0, -1).Resize(1, 2), True
            
-214       End With
-
-
-
+217       End With
 
           'Set width of empty columns
-215       For Each c In ws.UsedRange.Rows(1).Cells
-216           If IsEmpty(c.Value) Then
-217               If c.End(xlDown).Row = ws.Rows.Count Then
-218                   c.ColumnWidth = 2
-219               End If
-220           End If
-221       Next
+218       For Each c In ws.UsedRange.Rows(1).Cells
+219           If IsEmpty(c.Value) Then
+220               If c.End(xlDown).Row = ws.Rows.Count Then
+221                   c.ColumnWidth = 2
+222               End If
+223           End If
+224       Next
 
-222       If VarType(CollapseColumns) = vbBoolean Then
-223           GroupingButtonDoAllOnSheet ws, Not (CollapseColumns)
-224       Else
-225           GroupingButtonDoAllOnSheet ws, Not (Collapsed)
-226       End If
+225       If VarType(CollapseColumns) = vbBoolean Then
+226           GroupingButtonDoAllOnSheet ws, Not (CollapseColumns)
+227       Else
+228           GroupingButtonDoAllOnSheet ws, Not (Collapsed)
+229       End If
 
-227       For Each b In ws.Buttons
-228           If InStr(b.OnAction, "ShowMenu") > 0 Then
+230       For Each b In ws.Buttons
+231           If InStr(b.OnAction, "ShowMenu") > 0 Then
 
-229               b.Top = 3
-230               b.Left = 247
-231               b.Height = 24
-232               b.Width = 65
-233               b.Placement = xlFreeFloating
-234               b.Caption = "Menu..."
-235           End If
-236       Next
+232               b.Top = 3
+233               b.Left = 247
+234               b.Height = 24
+235               b.Width = 65
+236               b.Placement = xlFreeFloating
+237               b.Caption = "Menu..."
+238           End If
+239       Next
 
-237       Exit Sub
+240       Exit Sub
 ErrHandler:
-238       Throw "#FormatCurrencySheet (line " & CStr(Erl) + "): " & Err.Description & "!"
+241       Throw "#FormatCurrencySheet (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -357,7 +354,7 @@ End Sub
 ' Author    : Philip Swannell
 ' Date      : 13-Jun-2016
 ' Purpose   : Apply cell formatting to the cells of an inflation sheet
-'             CollapseColumns can be True, False or empty (leave collapse state as is)
+'             CollapseColumns can be True, False or Empty (leave collapse state as is)
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub FormatInflationSheet(ws As Worksheet, ClearComments As Boolean, CollapseColumns As Variant)
           Dim b As Button
@@ -503,14 +500,14 @@ Sub FormatInflationSheet(ws As Worksheet, ClearComments As Boolean, CollapseColu
 121           .Validation.Delete
 122           For Each c In .Columns(2).Cells
 123               Select Case c.Offset(0, -1).Value
-                  Case "LagMethod"
-124                   SetValidation c, sConcatenateStrings(sSupportedInflationLagMethods()), "Please select a valid LagMethod. Use in-cell dropdown to see allowed values."
-125                   c.Locked = False
-126                   c.Font.Color = gTextColor
-127               Case "effectiveDate"
-128                   SetValidation c, sConcatenateStrings(sSupportedInflationeffectiveDates()), "Please select a valid effective Date. Use in-cell dropdown to see allowed values."
-129                   c.Locked = False
-130                   c.Font.Color = gTextColor
+                      Case "LagMethod"
+124                       SetValidation c, sConcatenateStrings(sSupportedInflationLagMethods()), "Please select a valid LagMethod. Use in-cell dropdown to see allowed values."
+125                       c.Locked = False
+126                       c.Font.Color = gTextColor
+127                   Case "EffectiveDate"
+128                       SetValidation c, sConcatenateStrings(sSupportedInflationEffectiveDates()), "Please select a valid Effective Date. Use in-cell dropdown to see allowed values."
+129                       c.Locked = False
+130                       c.Font.Color = gTextColor
 131               End Select
 132           Next c
 133       End With
@@ -575,19 +572,19 @@ End Sub
 ' Date      : 15-Jun-2016
 ' Purpose   : Set the validation on a range to an arbitrary list
 ' -----------------------------------------------------------------------------------------------------------------------
-Private Function SetValidation(R As Range, List As String, errorMessage As String)
+Private Function SetValidation(R As Range, List As String, ErrorMessage As String)
 1         On Error GoTo ErrHandler
 2         On Error GoTo ErrHandler
 3         With R.Validation
 4             .Delete
 5             .Add Type:=xlValidateList, AlertStyle:=xlValidAlertInformation, _
-                   Operator:=xlBetween, Formula1:=List
+                  Operator:=xlBetween, Formula1:=List
 6             .IgnoreBlank = True
 7             .InCellDropdown = True
 8             .InputTitle = ""
 9             .ErrorTitle = "Cayley Market Data"
 10            .InputMessage = ""
-11            .errorMessage = errorMessage
+11            .ErrorMessage = ErrorMessage
 12            .ShowInput = True
 13            .ShowError = True
 14        End With
@@ -608,14 +605,14 @@ Private Function SetValidationForFreq(R As Range)
 2         With R.Validation
 3             .Delete
 4             .Add Type:=xlValidateList, AlertStyle:=xlValidAlertInformation, _
-                   Operator:=xlBetween, Formula1:="Ann,Semi,Quart"
+                  Operator:=xlBetween, Formula1:="Ann,Semi,Quart"
 5             .IgnoreBlank = True
 6             .InCellDropdown = True
 7             .InputTitle = ""
 8             .ErrorTitle = "Cayley Market Data"
 9             .InputMessage = ""
-10            .errorMessage = _
-              "That's not a valid payment frequency."
+10            .ErrorMessage = _
+                  "That's not a valid payment frequency."
 11            .ShowInput = True
 12            .ShowError = True
 13        End With
@@ -636,14 +633,14 @@ Private Function SetValidationForFloatDCT(R As Range)
 2         With R.Validation
 3             .Delete
 4             .Add Type:=xlValidateList, AlertStyle:=xlValidAlertInformation, _
-                   Operator:=xlBetween, Formula1:="A/360,A/365F"
+                  Operator:=xlBetween, Formula1:="A/360,A/365F"
 5             .IgnoreBlank = True
 6             .InCellDropdown = True
 7             .InputTitle = ""
 8             .ErrorTitle = "Cayley Market Data"
 9             .InputMessage = ""
-10            .errorMessage = _
-              "That's not a valid floating daycount."
+10            .ErrorMessage = _
+                  "That's not a valid floating daycount."
 11            .ShowInput = True
 12            .ShowError = True
 13        End With
@@ -664,14 +661,14 @@ Private Function SetValidationForFixedDCT(R As Range)
 2         With R.Validation
 3             .Delete
 4             .Add Type:=xlValidateList, AlertStyle:=xlValidAlertInformation, _
-                   Operator:=xlBetween, Formula1:="30/360,30e/360,30e/360 (ISDA),A/360,A/365F,Act/Act"
+                  Operator:=xlBetween, Formula1:="30/360,30E/360,30E/360 (ISDA),A/360,A/365F,Act/Act"
 5             .IgnoreBlank = True
 6             .InCellDropdown = True
 7             .InputTitle = ""
 8             .ErrorTitle = "Cayley Market Data"
 9             .InputMessage = ""
-10            .errorMessage = _
-              "That's not a valid fixed daycount."
+10            .ErrorMessage = _
+                  "That's not a valid fixed daycount."
 11            .ShowInput = True
 12            .ShowError = True
 13        End With
@@ -716,7 +713,7 @@ Sub FormatFxVolSheet(ClearComments As Boolean)
 4         Set SPH = CreateSheetProtectionHandler(ws)
 5         Set SUH = CreateScreenUpdateHandler()
 
-6         Set RangeWithHeaders = sexpandRightDown(RangeFromSheet(ws, "FxDataTopLeft"))
+6         Set RangeWithHeaders = sExpandRightDown(RangeFromSheet(ws, "FxDataTopLeft"))
 7         With RangeWithHeaders
 8             Set RangeNoHeaders = .Offset(1, 1).Resize(.Rows.Count - 1, .Columns.Count - 1)
 9         End With
@@ -765,7 +762,7 @@ Sub FormatFxVolSheet(ClearComments As Boolean)
                   Dim Formula1 As String
 47                Numeraire = RangeFromSheet(shConfig, "Numeraire", False, True, False, False, False).Value
 48                CellAddress = "$" & Replace(.Cells(1, 1).Address, "$", "")
-49                Formula1 = "=ISeRROR(FIND(""" + Numeraire + """" & ls & CellAddress + "))"
+49                Formula1 = "=ISERROR(FIND(""" + Numeraire + """" & ls & CellAddress + "))"
 50                .FormatConditions.Delete
 51                .FormatConditions.Add Type:=xlExpression, Formula1:=Formula1
 52                .FormatConditions(1).SetFirstPriority
@@ -776,7 +773,7 @@ Sub FormatFxVolSheet(ClearComments As Boolean)
 57            End With
 58        End With
 
-59        With sexpandRightDown(RangeFromSheet(ws, "HistoricFxVolsTopLeft"))
+59        With sExpandRightDown(RangeFromSheet(ws, "HistoricFxVolsTopLeft"))
 60            .ClearFormats
 61            With .Offset(, 1).Resize(, .Columns.Count - 1)
 62                .NumberFormat = "0.00%"
@@ -788,7 +785,7 @@ Sub FormatFxVolSheet(ClearComments As Boolean)
 68            .ColumnWidth = 8
 69            Numeraire = RangeFromSheet(shConfig, "Numeraire", False, True, False, False, False).Value
 70            CellAddress = "$" & Replace(.Cells(1, 1).Address, "$", "")
-71            Formula1 = "=ISeRROR(FIND(""" + Numeraire + """" + ls + CellAddress + "))"
+71            Formula1 = "=ISERROR(FIND(""" + Numeraire + """" + ls + CellAddress + "))"
 72            .FormatConditions.Delete
 73            .FormatConditions.Add Type:=xlExpression, Formula1:=Formula1
 74            .FormatConditions(1).SetFirstPriority
@@ -844,12 +841,12 @@ Sub FormatCreditSheet(ClearComments As Boolean)
 3         Set SPH = CreateSheetProtectionHandler(ws)
 4         Set SUH = CreateScreenUpdateHandler()
 
-5         Set HeaderRows = sexpandRightDown(RangeFromSheet(ws, "CDSTopLeft")).Offset(-1, 0).Resize(2, 19)
+5         Set HeaderRows = sExpandRightDown(RangeFromSheet(ws, "CDSTopLeft")).Offset(-1, 0).Resize(2, 19)
 6         Set CDSRangeWithHeaders = CDSRange(ws)
 7         With CDSRangeWithHeaders
 8             Set CDSRangeNoHeaders = .Offset(1, 1).Resize(.Rows.Count - 1, .Columns.Count - 1)
 9         End With
-10        Set TickersWithHeaders = sexpandRightDown(RangeFromSheet(ws, "CDSTickersTopLeft")).Resize(CDSRangeWithHeaders.Rows.Count)
+10        Set TickersWithHeaders = sExpandRightDown(RangeFromSheet(ws, "CDSTickersTopLeft")).Resize(CDSRangeWithHeaders.Rows.Count)
 
 11        With CDSRangeWithHeaders
 12            If ClearComments Then

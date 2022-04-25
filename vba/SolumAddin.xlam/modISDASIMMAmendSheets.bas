@@ -15,7 +15,7 @@ Sub InsertDataFolderCallsToBook(wb As Workbook, ReleaseAsWell As Boolean)
 2             InsertDataFolderCallsToSheet ws, NumCellsAmended
 3         Next
 4         If NumCellsAmended > 0 Then
-5             Application.GoTo wb.Worksheets("Audit").Cells(1, 1)
+5             Application.Goto wb.Worksheets("Audit").Cells(1, 1)
 6             AddLineToAuditSheet wb.Worksheets("Audit"), False, "Added calls to ISDASIMMDataFolder"
 7             If ReleaseAsWell Then
 8                 RunReleaseCleanup wb
@@ -171,7 +171,7 @@ Sub FormatBookLinksToTextFile(wb As Workbook, ReleaseAsWell As Boolean, CloseWhe
 
 15        If NumCellsAmended1 + NumCellsAmended2 > 0 Then
 16            If ReleaseAsWell Then
-17                Application.GoTo wb.Worksheets("Audit").Cells(1, 1)
+17                Application.Goto wb.Worksheets("Audit").Cells(1, 1)
 18                RunReleaseCleanup wb
 19                ReleaseWorkbook wb, , , True
 20                If CloseWhenDone Then wb.Close False

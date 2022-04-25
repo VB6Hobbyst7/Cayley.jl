@@ -11,7 +11,7 @@ Option Explicit
 
 Private Function TheRangeToFilter() As Range
 1         On Error GoTo ErrHandler
-2         With sexpandRightDown(RangeFromSheet(Me, "CDSTopLeft"))
+2         With sExpandRightDown(RangeFromSheet(Me, "CDSTopLeft"))
 3             Set TheRangeToFilter = .Offset(1).Resize(.Rows.Count - 1)
 4         End With
 5         Exit Function
@@ -26,15 +26,15 @@ End Function
 ' Purpose   : Filtering...
 ' -----------------------------------------------------------------------------------------------------------------------
 Private Sub Worksheet_Change(ByVal Target As Range)
-          Static Inevent As Boolean
+          Static InEvent As Boolean
           Dim Message As String
           Dim RegKeys As Variant
           Dim SPH As clsSheetProtectionHandler
 
 1         On Error GoTo ErrHandler
-2         If Inevent Then Exit Sub
+2         If InEvent Then Exit Sub
 
-3         Inevent = True
+3         InEvent = True
 
 4         If Not Application.Intersect(Target, RangeFromSheet(Me, "TheFilters")) Is Nothing Then
 5             RegKeys = sArrayConcatenate("SMDC", sArrayTranspose(Me.Range("TheFilters").Offset(3)))
@@ -48,11 +48,11 @@ Private Sub Worksheet_Change(ByVal Target As Range)
 13                End If
 14            End With
 15        End If
-16        Inevent = False
+16        InEvent = False
 17        Exit Sub
 ErrHandler:
 18        SomethingWentWrong "#Worksheet_Change (line " & CStr(Erl) + "): " & Err.Description & "!"
-19        Inevent = False
+19        InEvent = False
 End Sub
 
 Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
@@ -67,7 +67,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 4             AttributeName = CStr(Target.Offset(3).Value)
 5             RegKey = "SMDC" & AttributeName
 6             Set DataToFilter = Application.Intersect(TheRangeToFilter(), Target.EntireColumn)
-7             Res = ShowRegularexpressionDialog(Target, AttributeName, DataToFilter, , "Filter rows", "Show rows where:", True, RegKey, False)
+7             Res = ShowRegularExpressionDialog(Target, AttributeName, DataToFilter, , "Filter rows", "Show rows where:", True, RegKey, False)
 8             Exit Sub
 9         End If
 

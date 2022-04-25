@@ -46,9 +46,9 @@ Sub MenuTableSheet()
 
 3         OBAO = OtherBooksAreOpen(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen)
 4         If OBAO Then
-5             chOpenOtherBooks = CreateMissing()
-6             FidOpenOtherBooks = CreateMissing()
-7             enbOpenOtherBooks = CreateMissing()
+5             chOpenOtherBooks = createmissing()
+6             FidOpenOtherBooks = createmissing()
+7             enbOpenOtherBooks = createmissing()
 8         Else
 9             chOpenOtherBooks = NameForOpenOthers(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen, False)
 10            FidOpenOtherBooks = 23
@@ -214,7 +214,7 @@ Sub TestRunTable()
 
 3         Exit Sub
 ErrHandler:
-4         SomethingWentWrong "#TestRunTable (line " & CStr(Erl) + "): " & Err.Description & "!"
+4         SomethingWentWrong "#TestRunTable (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ GoBack2:
 
 45        UnrecognisedBanks = sCompareTwoArrays(BanksToRun, TheTableNoHeaders.Columns(1).Value, "In1AndNotIn2")
 46        If sNRows(UnrecognisedBanks) >= 2 Then
-47            Throw "The following banks are not recognised, since they do not appear in the Lines workbook: " + sConcatenateStrings(sSubArray(UnrecognisedBanks, 2), ", ")
+47            Throw "The following banks are not recognised, since they do not appear in the Lines workbook: " & sConcatenateStrings(sSubArray(UnrecognisedBanks, 2), ", ")
 48        End If
 
 49        If Not SilentMode Then
@@ -355,16 +355,19 @@ GoBack2:
 64        End If
 
           Dim TimeStart
-65        TimeStart = Now()
-66        MessageLogWrite "Run table core starting at " & _
+65        ShowFileInSnakeTail , True
+66        TimeStart = Now()
+67        Application.StatusBar = "The table is being updated. Progress is shown in the SnakeTail application."
+            
+68        MessageLogWrite "Run table core starting at " & _
               Format(TimeStart, "dd-mmm-yyyy hh:mm:ss") & vbLf & "Prompt was:" & _
               vbLf & sConcatenateStrings(sJustifyArrayOfStrings(PromptArray, "Courier New", 11, " "), vbLf)
 
-67        Set SUH = CreateScreenUpdateHandler()
+69        Set SUH = CreateScreenUpdateHandler()
 
-68        JuliaLaunchForCayley
-69        OpenOtherBooks
-70        BuildModelsInJulia False, RangeFromSheet(shCreditUsage, "FxShock"), RangeFromSheet(shCreditUsage, "FxVolShock")
+70        JuliaLaunchForCayley
+71        OpenOtherBooks
+72        BuildModelsInJulia False, RangeFromSheet(shCreditUsage, "FxShock"), RangeFromSheet(shCreditUsage, "FxVolShock")
 
           ' When using the HW model, there is a significant speed up in headroom solving (cacheing of
           ' the "cube" of trade values) that works best when successive banks being solved for
@@ -375,102 +378,97 @@ GoBack2:
           Dim N As Long
           Dim RowToProcess As Long
           Dim ThisBank
-71        N = sNRows(BanksToRun)
-72        colBCs = sReshape(0, N, 1)
-73        For i = 1 To N
-74            colBCs(i, 1) = ThrowIfError(LookupCounterpartyInfo(BanksToRun(i, 1), "Base Currency"))(1, 1)
-75        Next i
+73        N = sNRows(BanksToRun)
+74        colBCs = sReshape(0, N, 1)
+75        For i = 1 To N
+76            colBCs(i, 1) = ThrowIfError(LookupCounterpartyInfo(BanksToRun(i, 1), "Base Currency"))(1, 1)
+77        Next i
 
-76        colIndices = sMatch(BanksToRun, TheTable.Columns(1).Value)
-77        ArrayToSort = sArrayRange(colBCs, BanksToRun, colIndices)
-78        ArrayToSort = sSortedArray(ArrayToSort)
+78        colIndices = sMatch(BanksToRun, TheTable.Columns(1).Value)
+79        ArrayToSort = sArrayRange(colBCs, BanksToRun, colIndices)
+80        ArrayToSort = sSortedArray(ArrayToSort)
 
           'Pain that we have to store a separate list of potentially valid keys into the collection - See suggestions at http://stackoverflow.com/questions/5702362/vba-collection-list-of-keys
           Dim BankLimitsHeaders
           Dim CopyOffset As Long
           Dim LimitsHeaders
           Dim MethodologyHeaders
-79        LimitsHeaders = sTokeniseString("1Y Limit,2Y Limit,3Y Limit,4Y Limit,5Y Limit,7Y Limit,10Y Limit")
-80        MethodologyHeaders = sTokeniseString("Methodology,Confidence %,Volatility Input,Base Currency,Product Credit Limits,Notional Cap")
-81        BankLimitsHeaders = sTokeniseString("THR Bank 1Y,THR Bank 3Y")
+81        LimitsHeaders = sTokeniseString("1Y Limit,2Y Limit,3Y Limit,4Y Limit,5Y Limit,7Y Limit,10Y Limit")
+82        MethodologyHeaders = sTokeniseString("Methodology,Confidence %,Volatility Input,Base Currency,Product Credit Limits,Notional Cap")
+83        BankLimitsHeaders = sTokeniseString("THR Bank 1Y,THR Bank 3Y")
 
-          Dim m0 As Double
-          Dim m1 As Double
           Dim t0 As Double
 
-82        With RangeFromSheet(shTable, "TheTable")
-83            For i = 1 To sNRows(ArrayToSort)
-84                t0 = sElapsedTime()
-85                If gDebugMode Then m0 = sExcelWorkingSetSize()
-86                RowToProcess = ArrayToSort(i, 3)
-87                ThisBank = .Cells(RowToProcess, 1).Value
-88                If ThisBank <> ArrayToSort(i, 2) Then Throw "Assertion failed - mismatch in bank names"
-89                PrepareForCalculation ThisBank, False, False, True
-90                StatusBarWrap CStr(i) & "/" & CStr(N) & "    " & ThisBank
-91                Set D1 = New Dictionary
-92                Set D2 = New Dictionary
-93                Set D3 = New Dictionary
+84        With RangeFromSheet(shTable, "TheTable")
+85            For i = 1 To sNRows(ArrayToSort)
+86                t0 = sElapsedTime()
+87                RowToProcess = ArrayToSort(i, 3)
+88                ThisBank = .Cells(RowToProcess, 1).Value
+89                If ThisBank <> ArrayToSort(i, 2) Then Throw "Assertion failed - mismatch in bank names"
+90                PrepareForCalculation ThisBank, False, False, True
+91                MessageLogWrite CStr(i) & "/" & CStr(N) & "    " & ThisBank
+92                Set D1 = New Dictionary
+93                Set D2 = New Dictionary
+94                Set D3 = New Dictionary
                   
                   'Can use .Add method rather than DictAdd since we know that we are adding rather than overwriting the contents of the dictionary
-94                D1.Add "CounterpartyLongName", LookupCounterpartyInfo(ThisBank, "CPTY LONG NAME")
-95                D1.Add "CounterpartyVeryShortName", LookupCounterpartyInfo(ThisBank, "Very short name")
-96                D1.Add "Limits", LookupCounterpartyInfo(ThisBank, LimitsHeaders, Empty)
+95                D1.Add "CounterpartyLongName", LookupCounterpartyInfo(ThisBank, "CPTY LONG NAME")
+96                D1.Add "CounterpartyVeryShortName", LookupCounterpartyInfo(ThisBank, "Very short name")
+97                D1.Add "Limits", LookupCounterpartyInfo(ThisBank, LimitsHeaders, Empty)
                   Dim MethodologyArray
-97                MethodologyArray = sArrayTranspose(LookupCounterpartyInfo(ThisBank, MethodologyHeaders, Empty))
-98                MethodologyArray(1, 5) = Replace(MethodologyArray(1, 5), "Calculation", "Calc")
-99                D1.Add "Methodology", MethodologyArray
-100               D1.Add "BankLimits", sArrayTranspose(LookupCounterpartyInfo(ThisBank, BankLimitsHeaders))
-101               D1.Add "AirbusTHR3Y", LookupCounterpartyInfo(ThisBank, "Airbus THR 3Y")
+98                MethodologyArray = sArrayTranspose(LookupCounterpartyInfo(ThisBank, MethodologyHeaders, Empty))
+99                MethodologyArray(1, 5) = Replace(MethodologyArray(1, 5), "Calculation", "Calc")
+100               D1.Add "Methodology", MethodologyArray
+101               D1.Add "BankLimits", sArrayTranspose(LookupCounterpartyInfo(ThisBank, BankLimitsHeaders))
+102               D1.Add "AirbusTHR3Y", LookupCounterpartyInfo(ThisBank, "Airbus THR 3Y")
 
-102               D1.Add "TradeSolveResult", Empty
-103               D1.Add "FxSolveResult", Empty
-104               D1.Add "ProfileResult", Empty
+103               D1.Add "TradeSolveResult", Empty
+104               D1.Add "FxSolveResult", Empty
+105               D1.Add "ProfileResult", Empty
 
-105               If DoTradeHeadroom Then
-106                   RunCreditUsageSheet "Solve1to5", False, True, False, D2
-107                   D2.Add "THR3YMinBkAirbus", sArrayMin(LookupCounterpartyInfo(ThisBank, "Airbus THR 3Y"), SafeIndex(D2.Item("TradeHeadroom"), 3, 1))
-108               End If
-109               If DoFxHeadroom Then
-110                   RunCreditUsageSheet "SolveFx", False, True, False, D3
-111               End If
-112               If Not (DoTradeHeadroom Or DoFxHeadroom) Then
-113                   RunCreditUsageSheet "Standard", False, True, False, D4
-114               End If
+106               If DoTradeHeadroom Then
+107                   RunCreditUsageSheet "Solve1to5", False, True, False, D2
+108                   D2.Add "THR3YMinBkAirbus", sArrayMin(LookupCounterpartyInfo(ThisBank, "Airbus THR 3Y"), SafeIndex(D2.Item("TradeHeadroom"), 3, 1))
+109               End If
+110               If DoFxHeadroom Then
+111                   RunCreditUsageSheet "SolveFx", False, True, False, D3
+112               End If
+113               If Not (DoTradeHeadroom Or DoFxHeadroom) Then
+114                   RunCreditUsageSheet "Standard", False, True, False, D4
+115               End If
 
-115               D1.Add "TimeStamp", Now()
-116               D1.Add "ProcessTime", sElapsedTime() - t0
+116               D1.Add "TimeStamp", Now()
+117               D1.Add "ProcessTime", sElapsedTime() - t0
 
-117               If EraseHeadroom Then
-118                   .Rows(RowToProcess).offset(, 1).Resize(, .Columns.Count - 1).ClearContents
-119               End If
+118               If EraseHeadroom Then
+119                   .Rows(RowToProcess).offset(, 1).Resize(, .Columns.Count - 1).ClearContents
+120               End If
 
-120               CopyOffset = .Cells(RowToProcess, 1).Row - shTable.Range("TradeSolveResult").Row
-121               DictionaryToSheet D1, shTable, CopyOffset
-122               If DoTradeHeadroom Then
-123                   If Not DictGet(D2, "Success") Then
-124                       TrimDictionary D2, "TradeSolveResult"
-125                   End If
-126                   DictionaryToSheet D2, shTable, CopyOffset
-127               End If
-128               If DoFxHeadroom Then
-129                   If Not DictGet(D3, "Success") Then
-130                       TrimDictionary D3, "FxSolveResult"
-131                   End If
-132                   DictionaryToSheet D3, shTable, CopyOffset
-133               End If
-134               If Not (DoTradeHeadroom Or DoFxHeadroom) Then
-135                   If DictGet(D4, "Success") Then
-136                       TrimDictionary D3, "ProfileResult"
-137                   End If
-138                   DictionaryToSheet D4, shTable, CopyOffset
-139               End If
+121               CopyOffset = .Cells(RowToProcess, 1).Row - shTable.Range("TradeSolveResult").Row
+122               DictionaryToSheet D1, shTable, CopyOffset
+123               If DoTradeHeadroom Then
+124                   If Not DictGet(D2, "Success") Then
+125                       TrimDictionary D2, "TradeSolveResult"
+126                   End If
+127                   DictionaryToSheet D2, shTable, CopyOffset
+128               End If
+129               If DoFxHeadroom Then
+130                   If Not DictGet(D3, "Success") Then
+131                       TrimDictionary D3, "FxSolveResult"
+132                       D3.Add "FxRoot", D3("FxSolveResult")
+133                   End If
+134                   DictionaryToSheet D3, shTable, CopyOffset
+135               End If
+136               If Not (DoTradeHeadroom Or DoFxHeadroom) Then
+137                   If DictGet(D4, "Success") Then
+138                       TrimDictionary D3, "ProfileResult"
+139                   End If
+140                   DictionaryToSheet D4, shTable, CopyOffset
+141               End If
 
-140               shTable.Calculate
-141               RefreshScreen
-142               If gDebugMode Then m1 = sExcelWorkingSetSize()
-143               Message = "i: " & CStr(i) & " Bank: " & ThisBank
-144               If gDebugMode Then Message = Message & " WorkingSetSize: " & Format(m1, "###,##0") + _
-                      " DeltaWorkingSetSize: " & Format(m1 - m0, "###,##0")
+142               shTable.Calculate
+143               RefreshScreen
+144               Message = "i: " & CStr(i) & " Bank: " & ThisBank
 145               MessageLogWrite Message
 146           Next i
 147       End With
@@ -485,11 +483,11 @@ GoBack2:
 152       MessageLogWrite "Run table core finishing at " & Format(TimeEnd, "dd-mmm-yyyy hh:mm:ss") & _
               " TimeElapsed = " & CStr((TimeEnd - TimeStart) * 24 * 60 * 60) & " seconds"
             
-153       StatusBarWrap False
-154       Exit Sub
+153       Application.StatusBar = False
+154       SafeAppActivate shTable
+155       Exit Sub
 ErrHandler:
-155       Throw "#RunTable (line " & CStr(Erl) & "): " & Err.Description & "!"
-156       StatusBarWrap False
+156       Throw "#RunTable (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -596,7 +594,7 @@ Sub FixBarChart(ChangeSeries As Boolean)
 
 3         Headers = sSubArray(sArrayTranspose(RangeFromSheet(shBarChart, "DataForChart").Rows(1)), 2)
 
-4         InitialChoices = CreateMissing()
+4         InitialChoices = createmissing()
 5         For i = cht.SeriesCollection.Count To 1 Step -1
 6             InitialChoices = sArrayStack(InitialChoices, cht.SeriesCollection(i).Name)
 7         Next i
@@ -693,7 +691,7 @@ Sub TrimDictionary(D As Dictionary, KeepThisKey As String)
 
 7         Exit Sub
 ErrHandler:
-8         Throw "#TrimDictionary (line " & CStr(Erl) + "): " & Err.Description & "!"
+8         Throw "#TrimDictionary (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------

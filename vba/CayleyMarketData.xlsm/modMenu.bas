@@ -57,96 +57,96 @@ Sub ShowMenu()
 
 25        If IsCurrencySheet(ActiveSheet) Then
 26            TheChoices = sArrayStack(chFeedFromTextFile, chFeedCcySheetFromTextFile, _
-                                       "", chFeedAllCcysFromTextFile, _
-                                       "", chFeedAllRatesFromTextFile, _
-                                       chFeedFromBloomberg, "", _
-                                       "--&Clear Bloomberg comments", chClearCommentsActive, _
-                                       "", chClearCommentsAll)
+                  "", chFeedAllCcysFromTextFile, _
+                  "", chFeedAllRatesFromTextFile, _
+                  chFeedFromBloomberg, "", _
+                  "--&Clear Bloomberg comments", chClearCommentsActive, _
+                  "", chClearCommentsAll)
 27            TheChoices = sReshape(TheChoices, sNRows(TheChoices) / 2, 2)
 28        ElseIf IsInflationSheet(ActiveSheet) Then
 29            TheChoices = sArrayStack(chFeedFromBloomberg, "", _
-                                       "--&Clear Bloomberg comments", chClearCommentsActive, _
-                                       "", chClearCommentsAll)
+                  "--&Clear Bloomberg comments", chClearCommentsActive, _
+                  "", chClearCommentsAll)
 
 30            TheChoices = sReshape(TheChoices, sNRows(TheChoices) / 2, 2)
 31        ElseIf ActiveSheet.Name = shFx.Name Then
 
 32            TheChoices = sArrayStack("Rates from text &file", chFeedFXSheetFromTextFile, _
-                                       "", chFeedAllCcysFromTextFile, _
-                                       "", chFeedAllRatesFromTextFile, _
-                                       chFeedFromBloomberg, "", _
-                                       chAlignFxSpotRates, "", _
-                                       "--&Clear Bloomberg comments", chClearCommentsActive, _
-                                       "", chClearCommentsAll, _
-                                       "--" & chAddFxVolPair, "", _
-                                       chDeleteFxVolPair, "")
+                  "", chFeedAllCcysFromTextFile, _
+                  "", chFeedAllRatesFromTextFile, _
+                  chFeedFromBloomberg, "", _
+                  chAlignFxSpotRates, "", _
+                  "--&Clear Bloomberg comments", chClearCommentsActive, _
+                  "", chClearCommentsAll, _
+                  "--" & chAddFxVolPair, "", _
+                  chDeleteFxVolPair, "")
 33            TheChoices = sReshape(TheChoices, sNRows(TheChoices) / 2, 2)
 34        ElseIf Left(ActiveSheet.Name, 14) = "HistoricalCorr" Then
 35            TheChoices = sArrayStack(chOpenCMG, chImportHistoricalCorr)
 36        ElseIf ActiveSheet Is shCredit Then
 37            TheChoices = sArrayStack("Feed from text &file", chFeedCreditFromTextFile, _
-                                       "", chFeedAllRatesFromTextFile, _
-                                       chFeedFromBloomberg, "", _
-                                       chAddBank, "", _
-                                       chDeleteBank, "")
+                  "", chFeedAllRatesFromTextFile, _
+                  chFeedFromBloomberg, "", _
+                  chAddBank, "", _
+                  chDeleteBank, "")
 38            TheChoices = sReshape(TheChoices, sNRows(TheChoices) / 2, 2)
 39        End If
 
 40        TheChoices = sArrayStack(TheChoices, "--" & chOpenSCRiPT)
-          Dim enableFlags
+          Dim EnableFlags
           Dim MatchID
-41        enableFlags = sReshape(True, sNRows(TheChoices), 1)
+41        EnableFlags = sReshape(True, sNRows(TheChoices), 1)
 42        If Not IsBloombergInstalled Then
 43            MatchID = sMatch(chFeedFromBloomberg, sSubArray(TheChoices, 1, 1, , 1))
 44            If IsNumber(MatchID) Then
-45                enableFlags(MatchID, 1) = False
+45                EnableFlags(MatchID, 1) = False
 46            End If
 47        End If
 
-48        Res = ShowCommandBarPopup(TheChoices, , enableFlags)
+48        Res = ShowCommandBarPopup(TheChoices, , EnableFlags)
 
 49        Application.Cursor = xlWait
 50        Select Case Res
-          Case "#Cancel!"
-51            GoTo earlyexit
-52        Case Unembellish(chFeedCcySheetFromTextFile)
-53            FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "One Ccy"
-54        Case Unembellish(chFeedAllCcysFromTextFile)
-55            FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "All Ccys"
-56        Case Unembellish(chFeedAllRatesFromTextFile)
-57            FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "All"
-58        Case Unembellish(chFeedFXSheetFromTextFile)
-59            FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "Fx Only"
-60        Case Unembellish(chClearCommentsActive)
-61            ClearCommentsFromActiveSheet
-62        Case Unembellish(chClearCommentsAll)
-63            ClearCommentsFromAllSheets
-64        Case Unembellish(chAddFxVolPair)
-65            AddCurrencyPair
-66        Case Unembellish(chDeleteFxVolPair)
-67            DeleteRowsFromRange sexpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft")), 1, "Fx Vol", 1, "FxDataTopLeft"
-68            SyncHistoricVols
-69        Case Unembellish(chImportHistoricalCorr)
-70            Application.Cursor = xlDefault
-71            ImportHistoricalCorr ActiveSheet
-72        Case Unembellish(chOpenSCRiPT)
-73            OpenSCRiPTWorkBook False, True
-74        Case Unembellish(chOpenCMG)
-75            OpenAWorkbook "c:\SolumWorkbooks\Correlation Matrix Generator.xlsm", False, True
-76        Case Unembellish(chFeedCreditFromTextFile)
-77            FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "Credit Only"
-78        Case Unembellish(chFeedFromBloomberg)
-79            FeedRatesFromBloomberg
-80        Case Unembellish(chAddBank)
-81            AddCreditCounterparty
-82        Case Unembellish(chDeleteBank)
-83            DeleteCreditCounterparty
-84        Case Unembellish(chAlignFxSpotRates)
-85            AlignFxSpotRates False
-86        Case Else
-87            Throw "#Unrecognised choice: " & Res
+              Case "#Cancel!"
+51                GoTo earlyExit
+52            Case Unembellish(chFeedCcySheetFromTextFile)
+53                FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "One Ccy"
+54            Case Unembellish(chFeedAllCcysFromTextFile)
+55                FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "All Ccys"
+56            Case Unembellish(chFeedAllRatesFromTextFile)
+57                FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "All"
+58            Case Unembellish(chFeedFXSheetFromTextFile)
+59                FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "Fx Only"
+60            Case Unembellish(chClearCommentsActive)
+61                ClearCommentsFromActiveSheet
+62            Case Unembellish(chClearCommentsAll)
+63                ClearCommentsFromAllSheets
+64            Case Unembellish(chAddFxVolPair)
+65                AddCurrencyPair
+66            Case Unembellish(chDeleteFxVolPair)
+67                DeleteRowsFromRange sExpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft")), 1, "Fx Vol", 1, "FxDataTopLeft"
+68                SyncHistoricVols
+69            Case Unembellish(chImportHistoricalCorr)
+70                Application.Cursor = xlDefault
+71                ImportHistoricalCorr ActiveSheet
+72            Case Unembellish(chOpenSCRiPT)
+73                OpenSCRiPTWorkBook False, True
+74            Case Unembellish(chOpenCMG)
+75                OpenAWorkbook "c:\SolumWorkbooks\Correlation Matrix Generator.xlsm", False, True
+76            Case Unembellish(chFeedCreditFromTextFile)
+77                FeedRatesFromTextFile FileFromConfig("MarketDataFile"), "Credit Only"
+78            Case Unembellish(chFeedFromBloomberg)
+79                FeedRatesFromBloomberg
+80            Case Unembellish(chAddBank)
+81                AddCreditCounterparty
+82            Case Unembellish(chDeleteBank)
+83                DeleteCreditCounterparty
+84            Case Unembellish(chAlignFxSpotRates)
+85                AlignFxSpotRates False
+86            Case Else
+87                Throw "#Unrecognised choice: " & Res
 88        End Select
-earlyexit:
+earlyExit:
 89        Application.Cursor = xlDefault
 90        Exit Sub
 ErrHandler:
@@ -166,19 +166,19 @@ Function GetCOBDate(ByRef ButtonClicked As String) As Long
           Dim Res As Variant
           Static DateAsNumber As Long
           Static LastTime As Double
-          Dim extraPrompt As String
+          Dim ExtraPrompt As String
 
           Const DateFormat = "dd-mmm-yyyy"
 1         On Error GoTo ErrHandler
 
 2         If DateAsNumber = 0 Or (Now() - LastTime) > 0.5 Then
 3             Select Case Date Mod 7
-              Case 1
-4                 DateAsString = Format(CLng(Date) - 2, DateFormat)
-5             Case 2
-6                 DateAsString = Format(CLng(Date) - 3, DateFormat)
-7             Case Else
-8                 DateAsString = Format(CLng(Date) - 1, DateFormat)
+                  Case 1
+4                     DateAsString = Format(CLng(Date) - 2, DateFormat)
+5                 Case 2
+6                     DateAsString = Format(CLng(Date) - 3, DateFormat)
+7                 Case Else
+8                     DateAsString = Format(CLng(Date) - 1, DateFormat)
 9             End Select
 10        Else
 11            DateAsString = Format(DateAsNumber, DateFormat)
@@ -186,7 +186,7 @@ Function GetCOBDate(ByRef ButtonClicked As String) As Long
 
 TryAgain:
 13        Application.Cursor = xlDefault
-14        Prompt = "Close of business date (" + DateFormat + ")" + vbLf + vbLf + "Note that the AnchorDate on the Config sheet" + vbLf + "is set to be this date." + extraPrompt
+14        Prompt = "Close of business date (" + DateFormat + ")" + vbLf + vbLf + "Note that the AnchorDate on the Config sheet" + vbLf + "is set to be this date." + ExtraPrompt
 15        Res = InputBoxPlus(Prompt, "Feed COB data", DateAsString, "< &Back", "&Cancel", , , , , , "&Next >", ButtonClicked)
 16        If Res = "" Or Res = False Then
 17            GetCOBDate = 0
@@ -199,11 +199,11 @@ TryAgain:
           'don't allow weekends or dates in the future
 24        If DateAsNumber = 0 Then GoTo TryAgain
 25        If DateAsNumber > Date Then
-26            extraPrompt = vbLf + vbLf + "Date entered must be on or before today"
+26            ExtraPrompt = vbLf + vbLf + "Date entered must be on or before today"
 27            GoTo TryAgain
 28        End If
 29        If DateAsNumber Mod 7 < 2 Then
-30            extraPrompt = vbLf + vbLf + "Date entered must be a weekday"
+30            ExtraPrompt = vbLf + vbLf + "Date entered must be a weekday"
 31            GoTo TryAgain
 32        End If
 
@@ -223,7 +223,7 @@ End Function
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub AddCurrencyPair()
 1         On Error GoTo ErrHandler
-2         AddPairs "Add Currency Pair", sexpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft")), True
+2         AddPairs "Add Currency Pair", sExpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft")), True
 3         SyncHistoricVols
 4         Exit Sub
 ErrHandler:
@@ -240,7 +240,7 @@ Private Sub AddPairs(Title As String, VolRange As Range, HasHeaderRow As Boolean
 1         On Error GoTo ErrHandler
           Dim AllCurrencies As Variant
           Dim ChooseVector As Variant
-          Dim existingPairs As Variant
+          Dim ExistingPairs As Variant
           Dim i As Long
           Dim inputBoxRes As String
           Dim newPair As String
@@ -256,15 +256,15 @@ Private Sub AddPairs(Title As String, VolRange As Range, HasHeaderRow As Boolean
 
 3         If HasHeaderRow Then
 4             Set Tmp = VolRange.Offset(1).Resize(VolRange.Rows.Count - 1, 1)
-5             existingPairs = Tmp.Value
+5             ExistingPairs = Tmp.Value
 6         Else
-7             existingPairs = VolRange.Columns(1).Value
+7             ExistingPairs = VolRange.Columns(1).Value
 8         End If
 
 TryAgain:
 9         Prompt = "New currency pair:" + vbLf + "More than one pair? Use a comma-separated list."
 10        inputBoxRes = InputBoxPlus(Prompt, Title, inputBoxRes, , , 400)
-11        If inputBoxRes = "" Or inputBoxRes = "False" Then GoTo earlyexit
+11        If inputBoxRes = "" Or inputBoxRes = "False" Then GoTo earlyExit
 
 12        NewPairs = sTokeniseString(UCase(inputBoxRes))
 13        Force2DArray NewPairs
@@ -277,10 +277,10 @@ TryAgain:
 19            If Len(newPair) <> 6 Then
 20                ChooseVector(i, 1) = False
 21                Problems(i, 1) = "does not have six characters"
-22            ElseIf IsNumber(sMatch(newPair, existingPairs)) Then
+22            ElseIf IsNumber(sMatch(newPair, ExistingPairs)) Then
 23                ChooseVector(i, 1) = False
 24                Problems(i, 1) = "is already listed"
-25            ElseIf IsNumber(sMatch(newPair2, existingPairs)) Then
+25            ElseIf IsNumber(sMatch(newPair2, ExistingPairs)) Then
 26                ChooseVector(i, 1) = False
 27                Problems(i, 1) = "is already listed (as " + newPair2 + ")"
 28            ElseIf Not IsNumber(sMatch(Left(newPair, 3), AllCurrencies)) Then
@@ -294,7 +294,7 @@ TryAgain:
 36                Problems(i, 1) = "is not valid because the first and second currencies are the same"
 37            Else
 38                ChooseVector(i, 1) = True
-39                existingPairs = sArrayStack(existingPairs, newPair)
+39                ExistingPairs = sArrayStack(ExistingPairs, newPair)
 40                Problems(i, 1) = "is OK to add"
 41            End If
 42        Next i
@@ -320,17 +320,17 @@ TryAgain:
 56        If NumBad > 0 Then
 57            Prompt = "Some of the Fx pairs you typed are not valid. Here's why:" + vbLf + sConcatenateStrings(Problems, vbLf)
 58            Prompt = Prompt + vbLf + vbLf + "What do you want to do?" + vbLf + _
-                       "Add the valid Fx vols" + vbLf + _
-                       "edit your list of Fx vols" + vbLf + _
-                       "Do nothing"
-59            Select Case MsgBoxPlus(Prompt, vbQuestion + vbYesNoCancel, Title, "Add valid", "edit list", "Do nothing", , 400)
-              Case vbYes
-                  'continue
-60            Case vbNo
-61                inputBoxRes = sConcatenateStrings(sMChoose(NewPairs, ChooseVector))    'just show the good ones
-62                GoTo TryAgain
-63            Case Else
-64                Exit Sub
+                  "Add the valid Fx vols" + vbLf + _
+                  "Edit your list of Fx vols" + vbLf + _
+                  "Do nothing"
+59            Select Case MsgBoxPlus(Prompt, vbQuestion + vbYesNoCancel, Title, "Add valid", "Edit list", "Do nothing", , 400)
+                  Case vbYes
+                      'continue
+60                Case vbNo
+61                    inputBoxRes = sConcatenateStrings(sMChoose(NewPairs, ChooseVector))    'just show the good ones
+62                    GoTo TryAgain
+63                Case Else
+64                    Exit Sub
 65            End Select
 66        End If
 
@@ -340,7 +340,7 @@ TryAgain:
 70            .Cells(.Rows.Count + 1, 1).Resize(NumGood, 1).Value = sMChoose(NewPairs, ChooseVector)
 71        End With
 
-earlyexit:
+earlyExit:
 72        FormatFxVolSheet False
 
 73        Exit Sub
@@ -357,8 +357,8 @@ End Sub
 '             should be called after we add or delete pairs from the implied vols data.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub SyncHistoricVols()
-          Dim existingData
-          Dim existingRange
+          Dim ExistingData
+          Dim ExistingRange
           Dim FromRow
           Dim i As Long
           Dim j As Long
@@ -370,45 +370,45 @@ Sub SyncHistoricVols()
           Dim SPH As clsSheetProtectionHandler
 
 1         On Error GoTo ErrHandler
-2         Set existingRange = sexpandRightDown(RangeFromSheet(shFx, "HistoricFxVolsTopLeft"))
-3         NC = existingRange.Columns.Count
-4         existingData = existingRange.Value
+2         Set ExistingRange = sExpandRightDown(RangeFromSheet(shFx, "HistoricFxVolsTopLeft"))
+3         NC = ExistingRange.Columns.Count
+4         ExistingData = ExistingRange.Value
 
 5         Set LabelsRange = sExpandDown(RangeFromSheet(shFx, "FxDataTopLeft"))
 6         With LabelsRange
 7             NewDataLeftCol = .Offset(1).Resize(.Rows.Count - 1).Value
 8         End With
 
-9         If sArraysIdentical(NewDataLeftCol, sSubArray(existingData, 1, 1, , 1)) Then
+9         If sArraysIdentical(NewDataLeftCol, sSubArray(ExistingData, 1, 1, , 1)) Then
 10            Exit Sub
 11        End If
 
-12        MatchIDs = sMatch(NewDataLeftCol, sSubArray(existingData, 1, 1, , 1))
+12        MatchIDs = sMatch(NewDataLeftCol, sSubArray(ExistingData, 1, 1, , 1))
 
-13        NewData = sReshape("", sNRows(NewDataLeftCol), sNCols(existingData))
+13        NewData = sReshape("", sNRows(NewDataLeftCol), sNCols(ExistingData))
 
 14        For i = 1 To sNRows(NewData)
 15            FromRow = MatchIDs(i, 1)
 16            If IsNumber(FromRow) Then
 17                For j = 1 To NC
-18                    NewData(i, j) = existingData(FromRow, j)
+18                    NewData(i, j) = ExistingData(FromRow, j)
 19                Next j
 20            Else
-                  NewData(i, 1) = NewDataLeftCol(i, 1)
-21                For j = 2 To NC
-22                    NewData(i, j) = Empty
-23                Next j
-24            End If
-25        Next i
+21                NewData(i, 1) = NewDataLeftCol(i, 1)
+22                For j = 2 To NC
+23                    NewData(i, j) = Empty
+24                Next j
+25            End If
+26        Next i
 
-26        Set SPH = CreateSheetProtectionHandler(shFx)
-27        existingRange.Clear
-28        existingRange.Resize(sNRows(NewData)).Value = NewData
-29        FormatFxVolSheet False
+27        Set SPH = CreateSheetProtectionHandler(shFx)
+28        ExistingRange.Clear
+29        ExistingRange.Resize(sNRows(NewData)).Value = NewData
+30        FormatFxVolSheet False
 
-30        Exit Sub
+31        Exit Sub
 ErrHandler:
-31        Throw "#SyncHistoricVols (line " & CStr(Erl) + "): " & Err.Description & "!"
+32        Throw "#SyncHistoricVols (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
 
 Function OpenCorrelationMatrixGenerator(HideOnOpening As Boolean, Activate As Boolean) As Workbook
@@ -479,7 +479,7 @@ Sub DeleteCreditCounterparty()
           Dim TopLeftName As String
 1         On Error GoTo ErrHandler
 2         TopLeftName = "CDSTopLeft"
-3         Set R = sexpandRightDown(RangeFromSheet(shCredit, TopLeftName))
+3         Set R = sExpandRightDown(RangeFromSheet(shCredit, TopLeftName))
 4         Set R = R.Offset(-1).Resize(R.Rows.Count + 1)
 5         rowAlias = "counterparty"
 6         DeleteRowsFromRange R, 2, rowAlias, 1, TopLeftName, "FormatCreditSheet2"
@@ -498,7 +498,7 @@ End Sub
 Sub AddCreditCounterparty()
           Dim CDSData As Range
           Dim ChooseVector As Variant
-          Dim existingCounterparties As Variant
+          Dim ExistingCounterparties As Variant
           Dim i As Long
           Dim inputBoxRes As String
           Dim NewCounterparties As Variant
@@ -510,12 +510,12 @@ Sub AddCreditCounterparty()
 
 1         On Error GoTo ErrHandler
 2         Set CDSData = CDSRange(shCredit)
-3         existingCounterparties = CDSData.Offset(1, 0).Columns(1).Value
+3         ExistingCounterparties = CDSData.Offset(1, 0).Columns(1).Value
 
 TryAgain:
 4         Prompt = "New counterparty:" + vbLf + "More than one? Use a comma-separated list."
 5         inputBoxRes = InputBoxPlus(Prompt, , inputBoxRes, , , 400)
-6         If inputBoxRes = "" Or inputBoxRes = "False" Then GoTo earlyexit
+6         If inputBoxRes = "" Or inputBoxRes = "False" Then GoTo earlyExit
 
 7         NewCounterparties = sTokeniseString(UCase(inputBoxRes))
 8         Force2DArray NewCounterparties
@@ -524,12 +524,12 @@ TryAgain:
 
 11        For i = 1 To sNRows(NewCounterparties)
 12            NewCounterparty = UCase(NewCounterparties(i, 1))
-13            If IsNumber(sMatch(NewCounterparty, existingCounterparties)) Then
+13            If IsNumber(sMatch(NewCounterparty, ExistingCounterparties)) Then
 14                ChooseVector(i, 1) = False
 15                Problems(i, 1) = "is already listed"
 16            Else
 17                ChooseVector(i, 1) = True
-18                existingCounterparties = sArrayStack(existingCounterparties, NewCounterparty)
+18                ExistingCounterparties = sArrayStack(ExistingCounterparties, NewCounterparty)
 19                Problems(i, 1) = "is OK to add"
 20            End If
 21        Next i
@@ -555,17 +555,17 @@ TryAgain:
 35        If NumBad > 0 Then
 36            Prompt = "Some of the counterparties you typed are not valid. Here's why:" + vbLf + sConcatenateStrings(Problems, vbLf)
 37            Prompt = Prompt + vbLf + vbLf + "What do you want to do?" + vbLf + _
-                       "Add the valid counterparties" + vbLf + _
-                       "edit your list of counterparties" + vbLf + _
-                       "Do nothing"
-38            Select Case MsgBoxPlus(Prompt, vbQuestion + vbYesNoCancel, "Add valid", "edit list", "Do nothing", , 400)
-              Case vbYes
-                  'continue
-39            Case vbNo
-40                inputBoxRes = sConcatenateStrings(sMChoose(NewCounterparties, ChooseVector))    'just show the good ones
-41                GoTo TryAgain
-42            Case Else
-43                Exit Sub
+                  "Add the valid counterparties" + vbLf + _
+                  "Edit your list of counterparties" + vbLf + _
+                  "Do nothing"
+38            Select Case MsgBoxPlus(Prompt, vbQuestion + vbYesNoCancel, "Add valid", "Edit list", "Do nothing", , 400)
+                  Case vbYes
+                      'continue
+39                Case vbNo
+40                    inputBoxRes = sConcatenateStrings(sMChoose(NewCounterparties, ChooseVector))    'just show the good ones
+41                    GoTo TryAgain
+42                Case Else
+43                    Exit Sub
 44            End Select
 45        End If
 
@@ -575,7 +575,7 @@ TryAgain:
 49            .Cells(.Rows.Count + 1, 1).Resize(NumGood, 1).Value = sMChoose(NewCounterparties, ChooseVector)
 50        End With
 
-earlyexit:
+earlyExit:
 51        FormatCreditSheet False
 52        Exit Sub
 ErrHandler:
@@ -605,7 +605,7 @@ End Function
 Sub DeleteRowsFromRange(R As Range, NumHeaderRows As Long, rowAlias As String, MinAllowed As Long, Optional TopLeftName As String, Optional FormatMethodName As String)
           Dim Choices As Variant
           Dim Chosen As Variant
-          Dim endNum As Long
+          Dim EndNum As Long
           Dim i As Long
           Dim MatchIDs As Variant
           Dim OrigTopLeftAddress As String
@@ -625,8 +625,8 @@ TryAgain:
 6         Chosen = ShowMultipleChoiceDialog(Choices, , Title, Prompt)
 7         If sArraysIdentical(Chosen, "#User Cancel!") Then Exit Sub
 8         If IsEmpty(Chosen) Then Exit Sub
-9         endNum = StartNum - sNRows(Chosen)
-10        If endNum < MinAllowed Then
+9         EndNum = StartNum - sNRows(Chosen)
+10        If EndNum < MinAllowed Then
 11            MsgBoxPlus "You must leave at least " + CStr(MinAllowed) + " " + rowAlias + " not deleted", , Title
 12            GoTo TryAgain
 13        End If
@@ -670,7 +670,7 @@ TryAgain:
 41        Set SPH = Nothing    'set to nothing now otherwise its terminate event clear out the undo buffer
 
 42        If FormatMethodName <> "" Then
-43            ThrowIferror Application.Run(FormatMethodName)
+43            ThrowIfError Application.Run(FormatMethodName)
 44        End If
 
           'Application.OnUndo "Undo " & Title, "'SolumAddin.xlam'!RestoreRange"
@@ -730,12 +730,12 @@ Sub AlignFxSpotRates(Silent As Boolean, Optional BaseCCY As String)
 20                PromptArray = sArrayRange(sMChoose(Pairs, ChooseVector), sMChoose(Rates, ChooseVector), sMChoose(NewRates, ChooseVector), PercentageChanges)
 21                PromptArray = sArrayStack(sArrayRange("Ccy Pair", "Old value", "New value", "% increase"), PromptArray)
 22                Prompt = "Operation will change the folowing rates by more than " + Format(Threshold, "0.00%") + vbLf + vbLf + _
-                           sConcatenateStrings(sJustifyArrayOfStrings(PromptArray, "Calibri", 11, " " & vbTab, False, False), vbLf)
+                      sConcatenateStrings(sJustifyArrayOfStrings(PromptArray, "Calibri", 11, " " & vbTab, False, False), vbLf)
 23                Prompt = Prompt + vbLf + vbLf + "Do you want to continue?"
 24                If MsgBoxPlus(Prompt, vbYesNo + vbQuestion, , "Yes, continue", "No, do nothing", Title, , 400) <> vbYes Then Exit Sub
 25            End If
 26        End If
-27        Numchanged = sArrayCount(sArrayNot(sArrayequals(Rates, NewRates)))
+27        Numchanged = sArrayCount(sArrayNot(sArrayEquals(Rates, NewRates)))
 
 28        If Not sArraysIdentical(Rates, NewRates) Then
 29            Set SPH = CreateSheetProtectionHandler(shFx)
@@ -849,6 +849,4 @@ Function RebaseFX(Pairs, Rates, ByVal BaseCCY As String)
 ErrHandler:
 61        RebaseFX = "#RebaseFX (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
-
-
 

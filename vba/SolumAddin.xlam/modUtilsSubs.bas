@@ -478,7 +478,7 @@ Sub InsertFileNames()
 43            Overwrite = True
 44            For Each c In RangeToPasteTo.Cells
 45                If Not IsEmpty(c.Value) Then
-46                    Application.GoTo RangeToPasteTo
+46                    Application.Goto RangeToPasteTo
 47                    Overwrite = MsgBoxPlus("Overwrite these cells?" + vbLf + vbLf + "(Ctrl Z to undo)", vbYesNo + vbQuestion + vbDefaultButton2, "Insert File Names") = vbYes
 48                    Exit For
 49                End If

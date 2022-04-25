@@ -11,7 +11,7 @@ Function GetHedgeHorizon()
 
 6         Exit Function
 ErrHandler:
-7         Throw "#GetHedgeHorizon (line " & CStr(Erl) + "): " & Err.Description & "!"
+7         Throw "#GetHedgeHorizon (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 Sub Test_BuildModelsInJulia()
@@ -110,7 +110,7 @@ Function BuildModelsInJulia(ForceRecreate As Boolean, FxShock As Double, FxVolSh
 49            Message = "Building Hull White model with currencies " & sConcatenateStrings(CCysToBuild, ", ")
 
               'Save market data to file...
-50            StatusBarWrap "Exporting market data for " & sConcatenateStrings(CCysToBuild, ", ")
+50            MessageLogWrite "Exporting market data for " & sConcatenateStrings(CCysToBuild, ", ")
 
 51            ThrowIfError Application.Run("'" & MarketWB.FullName & "'!SaveDataFromMarketWorkbookToFile", _
                   MarketWB, FileName, CCysToBuild, Numeraire, , 2)
@@ -128,30 +128,26 @@ Function BuildModelsInJulia(ForceRecreate As Boolean, FxShock As Double, FxVolSh
               "Cayley.pack4models(" & MN_CM & "," & MN_CMS & "," & MN_CMH & "," & _
               MN_CMHS & "," & CStr(FxShock) & "," & CStr(FxVolShock) & ")"
 
-57        If gDebugMode Then Debug.Print Expression
+57        MessageLogWrite Message
 
-58        StatusBarWrap Message
+58        Assign JuliaResult, JuliaEvalVBA(Expression)
+59        If VarType(JuliaResult) = vbString Then
+60            Throw JuliaResult
+61        ElseIf VarType(JuliaResult) = vbObject Then
+62            Set gModel_CM = JuliaResult(MN_CM)
+63            Set gModel_CMS = JuliaResult(MN_CMS)
+64            Set gModel_CMH = JuliaResult(MN_CMH)
+65            Set gModel_CMHS = JuliaResult(MN_CMHS)
+66        End If
 
-59        Assign JuliaResult, JuliaEvalVBA(Expression)
-60        If VarType(JuliaResult) = vbString Then
-61            Throw JuliaResult
-62        ElseIf VarType(JuliaResult) = vbObject Then
-63            Set gModel_CM = JuliaResult(MN_CM)
-64            Set gModel_CMS = JuliaResult(MN_CMS)
-65            Set gModel_CMH = JuliaResult(MN_CMH)
-66            Set gModel_CMHS = JuliaResult(MN_CMHS)
-67        End If
+67        Set gMarketData = ParseJsonFile(FileName)
 
-68        Set gMarketData = ParseJsonFile(FileName)
+68        Set MarketWB = Nothing
 
-69        StatusBarWrap False
-70        Set MarketWB = Nothing
-
-71        Exit Function
+69        Exit Function
 ErrHandler:
-72        ErrorString = "#BuildModelsInJulia (line " & CStr(Erl) & "): " & Err.Description & "!"
-73        StatusBarWrap False
-74        Throw ErrorString
+70        ErrorString = "#BuildModelsInJulia (line " & CStr(Erl) & "): " & Err.Description & "!"
+71        Throw ErrorString
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------

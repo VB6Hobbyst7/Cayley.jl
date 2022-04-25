@@ -27,12 +27,7 @@ Sub AmendForLiborTransition(ws As Worksheet)
 
 17        End With
 
-
-
-
-
 End Sub
-
 
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : ClearCommentsFromActiveSheet
@@ -140,49 +135,47 @@ Function ReleaseCleanup()
 32        End If
 
           'Activate top-left of each visible sheet
-34        For Each ws In ThisWorkbook.Worksheets
-35            ws.Protect , True, True
-36            ws.Calculate
-37            If IsCurrencySheet(ws) Then
-38                FormatCurrencySheet ws, ClearComments, True
-39            ElseIf IsInflationSheet(ws) Then
-40                FormatInflationSheet ws, ClearComments, True
-41            End If
+33        For Each ws In ThisWorkbook.Worksheets
+34            ws.Protect , True, True
+35            ws.Calculate
+36            If IsCurrencySheet(ws) Then
+37                FormatCurrencySheet ws, ClearComments, True
+38            ElseIf IsInflationSheet(ws) Then
+39                FormatInflationSheet ws, ClearComments, True
+40            End If
 
-42            If ws.CodeName <> "sh" & Replace(ws.Name, " ", "_") Then
-43                ThisWorkbook.VBProject.VBComponents(ws.CodeName).Name = "shTempName"
-44                ThisWorkbook.VBProject.VBComponents(ws.CodeName).Name = "sh" & Replace(ws.Name, " ", "_")
-45            End If
+41            If ws.CodeName <> "sh" & Replace(ws.Name, " ", "_") Then
+42                ThisWorkbook.VBProject.VBComponents(ws.CodeName).Name = "shTempName"
+43                ThisWorkbook.VBProject.VBComponents(ws.CodeName).Name = "sh" & Replace(ws.Name, " ", "_")
+44            End If
 
-46            If ws.Visible = xlSheetVisible Then
-47                Application.GoTo ws.Cells(1, 1)
-48                ActiveWindow.DisplayGridlines = False
-49                ActiveWindow.DisplayHeadings = False
-50            End If
-51        Next ws
-52        HideUnhideSheets ThisWorkbook, sArrayStack("EUR", "CAD", "USD", "GBP", "CHF", "JPY"), shConfig.Range("Numeraire"), "All"
-53        With shFx.Range("TheFilters")
-54            .ClearContents
-55            .Cells(1, 1).Value = shConfig.Range("Numeraire")
-56        End With
-57        Application.GoTo shFx.Cells(1, 1)
+45            If ws.Visible = xlSheetVisible Then
+46                Application.GoTo ws.Cells(1, 1)
+47                ActiveWindow.DisplayGridlines = False
+48                ActiveWindow.DisplayHeadings = False
+49            End If
+50        Next ws
+51        HideUnhideSheets ThisWorkbook, sArrayStack("EUR", "CAD", "USD", "GBP", "CHF", "JPY"), shConfig.Range("Numeraire"), "All"
+52        With shFx.Range("TheFilters")
+53            .ClearContents
+54            .Cells(1, 1).Value = shConfig.Range("Numeraire")
+55        End With
+56        Application.GoTo shFx.Cells(1, 1)
 
-58        Exit Function
+57        Exit Function
 ErrHandler:
           'Must return an error string since we call via Application.Run.
-59        ReleaseCleanup = "#ReleaseCleanup (line " & CStr(Erl) + "): " & Err.Description & "!"
+58        ReleaseCleanup = "#ReleaseCleanup (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 Private Function SetCellForRelease(ws As Worksheet, RangeName As String, NewValue As Variant, ByRef ChangesMade)
           Dim c As Range
 1         Set c = RangeFromSheet(ws, RangeName)
-2         If Not sNearlyequals(c.Value, NewValue) Then
+2         If Not sNearlyEquals(c.Value, NewValue) Then
 3             ChangesMade = sArrayStack(ChangesMade, sArrayRange(ws.Name, RangeName, c.Value, NewValue))
 4             SafeSetCellValue c, NewValue
 5         End If
 End Function
-
-
 
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : SortSheets
@@ -215,7 +208,7 @@ Sub SortSheets()
 13        SheetListInflation = sSortedArray(STK_Inflation.report)
 
 14        sheetList = sArrayStack(shFx.Name, shCredit.Name, shHiddenSheet.Name, SheetListCcy, SheetListInflation, _
-                                  shHistoricalCorrEUR.Name, shHistoricalCorrUSD.Name, shHistoricalCorrGBP.Name, shConfig.Name, shAudit.Name)
+              shHistoricalCorrEUR.Name, shHistoricalCorrUSD.Name, shHistoricalCorrGBP.Name, shConfig.Name, shAudit.Name)
 
 15        If Not (ThisWorkbook.Worksheets(1) Is shFx) Then
 16            shFx.Move Before:=ThisWorkbook.Worksheets(1)
@@ -295,10 +288,10 @@ Sub HideUnhideSheets(MarketWb As Workbook, CurrenciesToShow As Variant, ByVal Nu
           Dim ws As Worksheet
 1         On Error GoTo ErrHandler
           Dim AnyChanges As Boolean
-          Dim exSH As clsexcelStateHandler
+          Dim ExSH As clsExcelStateHandler
           Dim origActiveSheet As Worksheet
 
-2         Set exSH = CreateexcelStateHandler(, , , , , True)
+2         Set ExSH = CreateExcelStateHandler(, , , , , True)
 3         Set SUH = CreateScreenUpdateHandler()
 
 4         Set origActiveSheet = MarketWb.ActiveSheet
@@ -350,7 +343,7 @@ Sub HideUnhideSheets(MarketWb As Workbook, CurrenciesToShow As Variant, ByVal Nu
 48            End If
 49        End If
 
-50        Set exSH = Nothing
+50        Set ExSH = Nothing
 51        Set SUH = Nothing
 
 52        Exit Sub
@@ -377,7 +370,7 @@ End Sub
 ' Procedure : ForceCorrelationsToBeSymmetric
 ' Author    : Philip Swannell
 ' Date      : 21-Jun-2016
-' Purpose   : enters array formulas so that each column beneath the diagonal is set to an
+' Purpose   : Enters array formulas so that each column beneath the diagonal is set to an
 '             array formula pointing to the corresponding row above the diagonal
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub ForceCorrelationsToBeSymmetric(ws As Worksheet)
@@ -391,7 +384,7 @@ Sub ForceCorrelationsToBeSymmetric(ws As Worksheet)
 1         On Error GoTo ErrHandler
 2         Set SPH = CreateSheetProtectionHandler(ws)
 
-3         Set CorrRng = sexpandRightDown(RangeFromSheet(ws, "HistCorrMatrix"))
+3         Set CorrRng = sExpandRightDown(RangeFromSheet(ws, "HistCorrMatrix"))
 4         With CorrRng
 5             Set CorrRng = .Offset(1, 1).Resize(.Rows.Count - 1, .Columns.Count - 1)
 
@@ -400,7 +393,7 @@ Sub ForceCorrelationsToBeSymmetric(ws As Worksheet)
 7             For i = 1 To N - 1
 8                 Set SourceRange = Range(.Cells(i, i + 1), .Cells(i, N))
 9                 Set TargetRange = Range(.Cells(i + 1, i), .Cells(N, i))
-10                TargetRange.FormulaArray = "=TRANSPOSe(" + Replace(SourceRange.Address, "$", "") + ")"
+10                TargetRange.FormulaArray = "=TRANSPOSE(" + Replace(SourceRange.Address, "$", "") + ")"
 11            Next i
 12        End With
 
@@ -455,7 +448,7 @@ Sub ImportHistoricalCorr(TargetSheet As Worksheet)
 14                            On Error GoTo ErrHandler
 15                            If Not R Is Nothing Then
 16                                Set R = R.Offset(-1, -1).Resize(R.Rows.Count + 1, R.Columns.Count + 1)
-17                                AllPossibleAddresses = sArrayStack(AllPossibleAddresses, R.Address(external:=True))
+17                                AllPossibleAddresses = sArrayStack(AllPossibleAddresses, R.Address(External:=True))
 18                                AllPossibleRangeNames = sArrayStack(AllPossibleRangeNames, RangeName + " " + vbTab + CStr(R.Rows.Count - 1) + "x" + CStr(R.Columns.Count - 1))
 19                            End If
 20                        End If
@@ -463,7 +456,7 @@ Sub ImportHistoricalCorr(TargetSheet As Worksheet)
 22                End If
 23            Next ws
 24        Next wb
-endLoop:
+EndLoop:
 
 25        If IsMissing(AllPossibleAddresses) Then
 26            Default = ""
@@ -485,7 +478,7 @@ endLoop:
 
           'If Not Default = "" Then
           '    Application.Goto Range(Default)
-          'end If
+          'End If
 
 40        If Default = "" Then
 41            Prompt = "Please select a range containing the correlation matrix with headers" + vbLf + vbLf + "Use the workbook 'c:\SolumWorkbooks\Correlation Matrix Generator.xlsm' to generate the data."
@@ -508,13 +501,13 @@ endLoop:
 54        If R.Columns.Count <> R.Rows.Count Then Throw "Range must have the same number of rows as columns"
 55        For i = 2 To R.Columns.Count
 56            Select Case Right(CStr(R.Cells(1, i).Value), 3)
-              Case " IR", " FX"
-                  'OK
-57            Case Else
-58                Throw "Labels in the top row must end with either ' FX' or 'IR', but cell " + R.Cells(1, i).Address(external:=True) + " does not"
+                  Case " IR", " FX"
+                      'OK
+57                Case Else
+58                    Throw "Labels in the top row must end with either ' FX' or 'IR', but cell " + R.Cells(1, i).Address(External:=True) + " does not"
 59            End Select
 60            If CStr(R.Cells(i, 1)) <> CStr(R.Cells(1, i)) Then
-61                Throw "Labels in the first column must be the same as labels in the top row but cells " + R.Cells(1, i).Address(external:=True) & " and " + R.Cells(i, 1).Address(external:=True) + " are different"
+61                Throw "Labels in the first column must be the same as labels in the top row but cells " + R.Cells(1, i).Address(External:=True) & " and " + R.Cells(i, 1).Address(External:=True) + " are different"
 62            End If
 63        Next i
 
@@ -523,25 +516,25 @@ endLoop:
 
 66        For i = 1 To N
 67            For j = 1 To N
-68                If Not IsNumber(TheMatrix(i, j)) Then Throw "Non numbers detected in the selected range, e.g. at " + R.Cells(i + 1, j + 1).Address(external:=True)
+68                If Not IsNumber(TheMatrix(i, j)) Then Throw "Non numbers detected in the selected range, e.g. at " + R.Cells(i + 1, j + 1).Address(External:=True)
 69            Next j
 70        Next i
 
 71        For i = 1 To N
-72            If TheMatrix(i, i) <> 1 Then Throw "On-diagonal cells must be 1, but cell " + R.Cells(i + 1, i + 1).Address(external:=True) + " is not"
+72            If TheMatrix(i, i) <> 1 Then Throw "On-diagonal cells must be 1, but cell " + R.Cells(i + 1, i + 1).Address(External:=True) + " is not"
 73        Next i
 
 74        For i = 1 To N
 75            For j = 1 To i - 1
-76                If TheMatrix(i, j) <> TheMatrix(j, i) Then Throw "Selected range is not a symmetric matrix with headers, for example " + R.Cells(i + 1, j + 1).Address(external:=True) & " and " + R.Cells(j + 1, i + 1).Address(external:=True) + " are different"
-77                If TheMatrix(i, j) > 1 Or TheMatrix(i, j) < -1 Then Throw "All cells in the selected range (excluding headers) must be in the range -1 to 1, but " + Cells(i + 1, j + 1).Address(external:=True) + " is not"
+76                If TheMatrix(i, j) <> TheMatrix(j, i) Then Throw "Selected range is not a symmetric matrix with headers, for example " + R.Cells(i + 1, j + 1).Address(External:=True) & " and " + R.Cells(j + 1, i + 1).Address(External:=True) + " are different"
+77                If TheMatrix(i, j) > 1 Or TheMatrix(i, j) < -1 Then Throw "All cells in the selected range (excluding headers) must be in the range -1 to 1, but " + Cells(i + 1, j + 1).Address(External:=True) + " is not"
 78            Next j
 79        Next i
 
 80        If IsInCollection(R.Parent.Names, "StartDate") Then
-81            If IsInCollection(R.Parent.Names, "endDate") Then
+81            If IsInCollection(R.Parent.Names, "EndDate") Then
 82                On Error Resume Next
-83                Notes = "Data imported from range " + RelevantName(R) + " of workbook " + R.Parent.Parent.FullName + " which used data from " + Format(R.Parent.Range("StartDate").Value, "d-mmm-yyyy") + " to " + Format(R.Parent.Range("endDate").Value, "d-mmm-yyyy")
+83                Notes = "Data imported from range " + RelevantName(R) + " of workbook " + R.Parent.Parent.FullName + " which used data from " + Format(R.Parent.Range("StartDate").Value, "d-mmm-yyyy") + " to " + Format(R.Parent.Range("EndDate").Value, "d-mmm-yyyy")
 84                On Error GoTo ErrHandler
 85            End If
 86        End If
@@ -557,7 +550,7 @@ endLoop:
 
 89        TargetSheet.Range("B2").Value = Notes
 
-90        Set OldRange = sexpandRightDown(TargetSheet.Range("HistCorrMatrix"))
+90        Set OldRange = sExpandRightDown(TargetSheet.Range("HistCorrMatrix"))
 91        OldRange.Clear
 
 92        Set NewRange = TargetSheet.Range("HistCorrMatrix").Resize(R.Rows.Count, R.Columns.Count)
@@ -604,14 +597,14 @@ Sub DoConditionalFormatting(R As Range)
 3             .FormatConditions.AddColorScale ColorScaleType:=2
 4             .FormatConditions(.FormatConditions.Count).SetFirstPriority
 5             .FormatConditions(1).ColorScaleCriteria(1).Type = _
-              xlConditionValueNumber
+                  xlConditionValueNumber
 6             .FormatConditions(1).ColorScaleCriteria(1).Value = -1
 7             With .FormatConditions(1).ColorScaleCriteria(1).FormatColor
 8                 .Color = 2650623
 9                 .TintAndShade = 0
 10            End With
 11            .FormatConditions(1).ColorScaleCriteria(2).Type = _
-              xlConditionValueNumber
+                  xlConditionValueNumber
 12            .FormatConditions(1).ColorScaleCriteria(2).Value = 1
 13            With .FormatConditions(1).ColorScaleCriteria(2).FormatColor
 14                .Color = 10285055

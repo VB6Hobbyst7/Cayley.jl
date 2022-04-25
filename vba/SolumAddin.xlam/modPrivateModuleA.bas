@@ -181,25 +181,54 @@ End Function
 ' Date      : 14-Dec-2015
 ' Purpose   : Wrapped by sFileCopy. Handles URL for Source file, but not for target file.
 ' -----------------------------------------------------------------------------------------------------------------------
-Function CoreFileCopy(SourceFile As String, TargetFile As String)
-          Dim F As Scripting.file
+Function CoreFileCopy(SourceFile As String, TargetFile As String, Optional OverwriteReadOnlyFiles As Boolean)
+          Dim SF As Scripting.file
           Dim FSO As Scripting.FileSystemObject
+          Dim EN As Long
+          Dim TF As Scripting.file
+          Dim TargetExists As Boolean
+          Dim TargetIsReadOnly
+                        
 1         On Error GoTo ErrHandler
-2         If LCase$(Left$(SourceFile, 4)) = "http" Then
-3             CoreFileCopy = CoreURLDownloadToFile(SourceFile, TargetFile)
-4         Else
-5             CheckFileNameIsAbsolute TargetFile
-6             Set FSO = New FileSystemObject
-7             Set F = FSO.GetFile(SourceFile)
-8             F.Copy TargetFile, True
-9             CoreFileCopy = TargetFile
-10            Set FSO = Nothing: Set F = Nothing
-11        End If
-12        Exit Function
+2         CheckFileNameIsAbsolute TargetFile
+3         If LCase$(Left$(SourceFile, 4)) <> "http" Then
+4             CheckFileNameIsAbsolute SourceFile
+5         End If
+
+6         Set FSO = New FileSystemObject
+
+7         On Error Resume Next
+8         Set TF = FSO.GetFile(TargetFile)
+9         EN = Err.Number
+10        On Error GoTo ErrHandler
+11        TargetExists = EN = 0
+12        If TargetExists Then
+13            TargetIsReadOnly = TF.Attributes And 1
+14        End If
+              
+15        If TargetIsReadOnly Then
+16            If OverwriteReadOnlyFiles Then
+17                TF.Attributes = TF.Attributes - 1
+18            Else
+19                Throw "Copy failed because TargetFile '" & TargetFile & "' already exists and is read only. Consider setting argument OverwriteReadOnlyFiles to True"
+20            End If
+21        End If
+
+22        If LCase$(Left$(SourceFile, 4)) = "http" Then
+23            CoreFileCopy = CoreURLDownloadToFile(SourceFile, TargetFile)
+24        Else
+25            Set SF = FSO.GetFile(SourceFile)
+
+26            SF.Copy TargetFile, True
+27            CoreFileCopy = TargetFile
+28            Set FSO = Nothing: Set SF = Nothing
+29        End If
+30        Exit Function
 ErrHandler:
-13        CoreFileCopy = "#" + Err.Description + "!"
-14        Set FSO = Nothing: Set F = Nothing
+31        CoreFileCopy = "#" & Err.Description & "!"
+32        Set FSO = Nothing: Set SF = Nothing
 End Function
+
 
 'http://www.vbforums.com/showthread.php?412514-Binary-copy-file
 ' but with bug fixes...

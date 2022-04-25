@@ -12,20 +12,20 @@ Option Explicit
 Sub RunThisAtTopOfCallStack()
 
 1         On Error GoTo ErrHandler
-
-3         If Application.Cursor <> xlDefault Then
-4             Application.Cursor = xlDefault
-5         End If
-6         If Not Application.EnableEvents Then
-7             Application.EnableEvents = True
-8         End If
-9         SetCalculationToManual
+2         If Application.Cursor <> xlDefault Then
+3             Application.Cursor = xlDefault
+4         End If
+5         If Not Application.EnableEvents Then
+6             Application.EnableEvents = True
+7         End If
+8         SetCalculationToManual
+9         Application.StatusBar = False
 10        CheckAddinVersion "SolumAddin.xlam", gMinimumSolumAddinVersion
 11        CheckAddinVersion "SolumSCRiPTUtils.xlam", gMinimumSolumSCRiPTUtilsVersion
 
 12        Exit Sub
 ErrHandler:
-13        Throw "#RunThisAtTopOfCallStack (line " & CStr(Erl) + "): " & Err.Description & "!"
+13        Throw "#RunThisAtTopOfCallStack (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Function FileFromConfig(NameOnConfig As String)
 
 4         Exit Function
 ErrHandler:
-5         Throw "#FileFromConfig (line " & CStr(Erl) + "): " & Err.Description & "!"
+5         Throw "#FileFromConfig (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -185,132 +185,130 @@ Sub ReleaseCleanup()
           Dim globalsError As String
 
 1         On Error GoTo ErrHandler
-2         If gDebugMode Then
-3             Throw "Please set global constant modUtilities.gDebugMode to False before releasing.", True
-4         End If
 
           Dim vNum
-5         vNum = Application.Workbooks("SolumAddin.xlam").Worksheets("Audit").Range("Headers").Cells(2, 1).Value
-6         If gMinimumSolumAddinVersion <> vNum Then globalsError = "VBA constant modGlobals.gMinimumSolumAddinVersion should be updated from " & gMinimumSolumAddinVersion & " to " + CStr(vNum)
-7         vNum = Application.Workbooks("SolumSCRiPTUtils.xlam").Worksheets("Audit").Range("Headers").Cells(2, 1).Value
-8         If gMinimumSolumSCRiPTUtilsVersion <> vNum Then globalsError = globalsError & IIf(globalsError = "", "", " and ") & "VBA constant modGlobals.gMinimumSolumSCRiPTUtilsVersion should be updated from " & gMinimumSolumSCRiPTUtilsVersion & " to " + CStr(vNum)
-9         If globalsError <> "" Then Throw globalsError
+2         vNum = Application.Workbooks("SolumAddin.xlam").Worksheets("Audit").Range("Headers").Cells(2, 1).Value
+3         If gMinimumSolumAddinVersion <> vNum Then globalsError = "VBA constant modGlobals.gMinimumSolumAddinVersion should be updated from " & gMinimumSolumAddinVersion & " to " & CStr(vNum)
+4         vNum = Application.Workbooks("SolumSCRiPTUtils.xlam").Worksheets("Audit").Range("Headers").Cells(2, 1).Value
+5         If gMinimumSolumSCRiPTUtilsVersion <> vNum Then globalsError = globalsError & IIf(globalsError = "", "", " and ") & "VBA constant modGlobals.gMinimumSolumSCRiPTUtilsVersion should be updated from " & gMinimumSolumSCRiPTUtilsVersion & " to " & CStr(vNum)
+6         If globalsError <> "" Then Throw globalsError
 
           Dim Prompt As String
-10        Prompt = "Do quick cleanup?"
-11        Res = MsgBoxPlus(Prompt, vbYesNoCancel + vbQuestion + vbDefaultButton2, _
+7         Prompt = "Do quick cleanup?"
+8         Res = MsgBoxPlus(Prompt, vbYesNoCancel + vbQuestion + vbDefaultButton2, _
               ThisWorkbook.Name, "Yes, Quick", "No, Full", "Cancel, Abort Release")
 
-12        If Res = vbCancel Then
-13            Throw "Release aborted", True
-14        ElseIf Res = vbYes Then
-15            Application.GoTo shCreditUsage.Cells(1, 1)
-16            Exit Sub
-17        End If
+9         If Res = vbCancel Then
+10            Throw "Release aborted", True
+11        ElseIf Res = vbYes Then
+12            Application.GoTo shCreditUsage.Cells(1, 1)
+13            Exit Sub
+14        End If
 
-18        Application.FormulaBarHeight = 1
-19        Set SUH = CreateScreenUpdateHandler()
+15        Application.FormulaBarHeight = 1
+16        Set SUH = CreateScreenUpdateHandler()
 
-20        ThisWorkbook.Protect , False, False
+17        ThisWorkbook.Protect , False, False
 
-21        SetSheetVisibility False
+18        SetSheetVisibility False
 
-22        For Each ws In ThisWorkbook.Worksheets
-23            ResizeCommentsOnSheet ws
-24            Res = ws.UsedRange.Rows.Count
-25            ws.Protect , True, True
-26            If ws.Visible = xlSheetVisible Then
-27                ActiveWindow.DisplayGridlines = False
-28                ActiveWindow.DisplayHeadings = False
-29                ActiveWindow.Zoom = 100
-30                If ws.EnableSelection = xlNoRestrictions Then
-31                    Application.GoTo ws.Cells(1, 1)
-32                Else
-33                    ActiveWindow.ScrollIntoView 0, 0, 1, 1
-34                End If
-35            End If
-36        Next ws
+19        For Each ws In ThisWorkbook.Worksheets
+20            ResizeCommentsOnSheet ws
+21            Res = ws.UsedRange.Rows.Count
+22            ws.Protect , True, True
+23            If ws.Visible = xlSheetVisible Then
+24                ActiveWindow.DisplayGridlines = False
+25                ActiveWindow.DisplayHeadings = False
+26                ActiveWindow.Zoom = 100
+27                If ws.EnableSelection = xlNoRestrictions Then
+28                    Application.GoTo ws.Cells(1, 1)
+29                Else
+30                    ActiveWindow.ScrollIntoView 0, 0, 1, 1
+31                End If
+32            End If
+33        Next ws
 
-37        ChangesMade = sArrayRange("Worksheet", "Parameter", "Changed From", "Changed To")
+34        ChangesMade = sArrayRange("Worksheet", "Parameter", "Changed From", "Changed To")
 
-38        SetCellForRelease shCreditUsage, "Filter1Value", BankName, ChangesMade
-39        SetCellForRelease shCreditUsage, "FilterBy1", "Counterparty Parent", ChangesMade
-40        SetCellForRelease shCreditUsage, "FilterBy2", "None", ChangesMade
-41        SetCellForRelease shCreditUsage, "Filter2Value", "None", ChangesMade
-42        SetCellForRelease shCreditUsage, "IncludeExtraTrades", False, ChangesMade
-43        SetCellForRelease shCreditUsage, "IncludeFutureTrades", False, ChangesMade
-44        SetCellForRelease shCreditUsage, "IncludeAssetClasses", "Rates and Fx", ChangesMade
-45        SetCellForRelease shCreditUsage, "PortfolioAgeing", 0, ChangesMade
-46        SetCellForRelease shCreditUsage, "FxShock", 1, ChangesMade
-47        SetCellForRelease shCreditUsage, "FxVolShock", 1, ChangesMade
-48        SetCellForRelease shCreditUsage, "ModelType", MT_HW, ChangesMade
-49        SetCellForRelease shCreditUsage, "NumMCPaths", 255, ChangesMade
-50        SetCellForRelease shCreditUsage, "NumObservations", 100, ChangesMade
-51        SetCellForRelease shCreditUsage, "TradesScaleFactor", 1, ChangesMade
-52        SetCellForRelease shCreditUsage, "LinesScaleFactor", 1, ChangesMade
-53        SetCellForRelease shCreditUsage, "ExtraTradesAre", "Fx Airbus sells USD, buys EUR", ChangesMade
-54        SetCellForRelease shConfig, "FxTradesCSVFile", "..\data\trades\ExampleFxTrades.csv", ChangesMade
-55        SetCellForRelease shConfig, "RatesTradesCSVFile", "..\data\trades\ExampleRatesTrades.csv", ChangesMade
-56        SetCellForRelease shConfig, "AmortisationCSVFile", "..\data\trades\ExampleAmortisation.csv", ChangesMade
-57        SetCellForRelease shConfig, "LinesWorkbook", "CayleyLines.xlsm", ChangesMade
-58        SetCellForRelease shConfig, "MarketDataWorkbook", "CayleyMarketData.xlsm", ChangesMade
-59        SetCellForRelease shConfig, "HedgeHorizon", 8, ChangesMade
-60        SetCellForRelease shExportToTMS, "FeedRates", True, ChangesMade
-61        SetCellForRelease shExportToTMS, "ExportTrades", True, ChangesMade
-62        SetCellForRelease shExportToTMS, "ExportMarketData", True, ChangesMade
-63        SetCellForRelease shExportToTMS, "ExportTable", True, ChangesMade
-64        SetCellForRelease shExportToTMS, "ExportCharts", True, ChangesMade
-65        RangeFromSheet(shExportToTMS, "Scenarios").Value = sArraySquare(sReshape(True, 3, 1), _
+35        SetCellForRelease shCreditUsage, "Filter1Value", BankName, ChangesMade
+36        SetCellForRelease shCreditUsage, "FilterBy1", "Counterparty Parent", ChangesMade
+37        SetCellForRelease shCreditUsage, "FilterBy2", "None", ChangesMade
+38        SetCellForRelease shCreditUsage, "Filter2Value", "None", ChangesMade
+39        SetCellForRelease shCreditUsage, "IncludeExtraTrades", False, ChangesMade
+40        SetCellForRelease shCreditUsage, "IncludeFutureTrades", False, ChangesMade
+41        SetCellForRelease shCreditUsage, "IncludeAssetClasses", "Rates and Fx", ChangesMade
+42        SetCellForRelease shCreditUsage, "PortfolioAgeing", 0, ChangesMade
+43        SetCellForRelease shCreditUsage, "FxShock", 1, ChangesMade
+44        SetCellForRelease shCreditUsage, "FxVolShock", 1, ChangesMade
+45        SetCellForRelease shCreditUsage, "ModelType", MT_HW, ChangesMade
+46        SetCellForRelease shCreditUsage, "NumMCPaths", 255, ChangesMade
+47        SetCellForRelease shCreditUsage, "NumObservations", 100, ChangesMade
+48        SetCellForRelease shCreditUsage, "TradesScaleFactor", 1, ChangesMade
+49        SetCellForRelease shCreditUsage, "LinesScaleFactor", 1, ChangesMade
+50        SetCellForRelease shCreditUsage, "ExtraTradesAre", "Fx Airbus sells USD, buys EUR", ChangesMade
+51        SetCellForRelease shConfig, "FxTradesCSVFile", "..\data\trades\ExampleFxTrades.csv", ChangesMade
+52        SetCellForRelease shConfig, "RatesTradesCSVFile", "..\data\trades\ExampleRatesTrades.csv", ChangesMade
+53        SetCellForRelease shConfig, "AmortisationCSVFile", "..\data\trades\ExampleAmortisation.csv", ChangesMade
+54        SetCellForRelease shConfig, "LinesWorkbook", "CayleyLines.xlsm", ChangesMade
+55        SetCellForRelease shConfig, "MarketDataWorkbook", "CayleyMarketData.xlsm", ChangesMade
+56        SetCellForRelease shConfig, "HedgeHorizon", 8, ChangesMade
+57        SetCellForRelease shExportToTMS, "FeedRates", True, ChangesMade
+58        SetCellForRelease shExportToTMS, "ExportTrades", True, ChangesMade
+59        SetCellForRelease shExportToTMS, "ExportMarketData", True, ChangesMade
+60        SetCellForRelease shExportToTMS, "ExportTable", True, ChangesMade
+61        SetCellForRelease shExportToTMS, "ExportCharts", True, ChangesMade
+62        SetCellForRelease shBubbleChart, "FxBreakEvenFloor", 0, ChangesMade
+63        RangeFromSheet(shExportToTMS, "Scenarios").Value = sArraySquare(sReshape(True, 3, 1), _
               sArrayStack( _
               "C:\CayleyScenarios\$30_bn_pa_3,4,5Y_100%_fwds_Path_Jan-09-Jan-11.sdf", _
               "C:\CayleyScenarios\$30_bn_pa_3,4,5Y_100%_fwds_Path_Jan-07-Jan-09.sdf", _
               "C:\CayleyScenarios\$30_bn_pa_3,4,5Y_100%_fwds_Path_Jan-00-Jan-02.sdf"), _
               sReshape(False, 17, 1), sReshape(Empty, 17, 1))
 
-66        If sNRows(ChangesMade) > 1 Then
-67            For i = 2 To sNRows(ChangesMade)
-68                For j = 3 To 4
-69                    Select Case VarType(ChangesMade(i, j))
+64        If sNRows(ChangesMade) > 1 Then
+65            For i = 2 To sNRows(ChangesMade)
+66                For j = 3 To 4
+67                    Select Case VarType(ChangesMade(i, j))
                           Case vbBoolean
-70                            ChangesMade(i, j) = UCase(ChangesMade(i, j))
-71                        Case vbString
-72                            ChangesMade(i, j) = "'" & ChangesMade(i, j) & "'"
-73                        Case Else
-74                            ChangesMade(i, j) = CStr(ChangesMade(i, j))
-75                    End Select
-76                Next
-77            Next
-78            Prompt = "Release cleanup made the following changes to the workbook:" & vbLf & vbLf & _
+68                            ChangesMade(i, j) = UCase(ChangesMade(i, j))
+69                        Case vbString
+70                            ChangesMade(i, j) = "'" & ChangesMade(i, j) & "'"
+71                        Case Else
+72                            ChangesMade(i, j) = CStr(ChangesMade(i, j))
+73                    End Select
+74                Next
+75            Next
+76            Prompt = "Release cleanup made the following changes to the workbook:" & vbLf & vbLf & _
                   sConcatenateStrings(sJustifyArrayOfStrings(ChangesMade, "SegoeUI", 9, vbTab), vbLf)
-79            MsgBoxPlus Prompt, vbInformation, , , , , , 1000, , , 60, vbOK
-80        End If
+77            MsgBoxPlus Prompt, vbInformation, , , , , , 1000, , , 60, vbOK
+78        End If
 
-81        ResetTableButtons
-82        AlignMenuButtons
-83        ClearFutureTrades
-84        ClearOutTradeValuesSheet
-85        FormatExportToTMS
+79        ResetTableButtons
+80        AlignMenuButtons
+81        ClearFutureTrades
+82        ClearOutTradeValuesSheet
+83        FormatExportToTMS
 
-86        OpenOtherBooks
-87        PrepareScenarioDefinitionSheetForRelease
-88        PrepareForCalculation BankName, True, True, True
-89        With shBarChart.Range("SortBy")
-90            If .Value <> "THR 3Y" Then .Value = "THR 3Y"
-91        End With
-92        For Each ws In ThisWorkbook.Worksheets
-93            ws.Calculate        'Updates BubbleChart, BarChart
-94        Next ws
-95        ThisWorkbook.Windows(1).Activate
-96        Application.GoTo RangeFromSheet(shCreditUsage, "Filter1Value")
-97        JuliaLaunchForCayley
-98        RunCreditUsageSheet "Standard", True, True, True
-99        FormatCreditUsageSheet True
-100       ShowHidePFEData False
-101       ThisWorkbook.Protect , True, True
+84        OpenOtherBooks
+85        PrepareScenarioDefinitionSheetForRelease
+86        PrepareForCalculation BankName, True, True, True
+87        With shBarChart.Range("SortBy")
+88            If .Value <> "THR 3Y" Then .Value = "THR 3Y"
+89        End With
+90        For Each ws In ThisWorkbook.Worksheets
+91            ws.Calculate        'Updates BubbleChart, BarChart
+92        Next ws
+93        ThisWorkbook.Windows(1).Activate
+94        Application.GoTo RangeFromSheet(shCreditUsage, "Filter1Value")
+95        JuliaLaunchForCayley
+96        RunCreditUsageSheet "Standard", True, True, True
+97        FormatCreditUsageSheet True
+98        ShowHidePFEData False
+99        ThisWorkbook.Protect , True, True
 
-102       Exit Sub
+100       Exit Sub
 ErrHandler:
-103       SomethingWentWrong "#ReleaseCleanup (line " & CStr(Erl) & "): " & Err.Description & "!"
+101       SomethingWentWrong "#ReleaseCleanup (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Function SetCellForRelease(ws As Worksheet, RangeName As String, NewValue As Variant, ByRef ChangesMade)
@@ -365,7 +363,7 @@ Function ChooseAnchorObject() As Object
 
 10        Exit Function
 ErrHandler:
-11        Throw "#ChooseAnchorObject (line " & CStr(Erl) + "): " & Err.Description & "!"
+11        Throw "#ChooseAnchorObject (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -377,17 +375,20 @@ End Function
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub ShiftF9Response()
 1         On Error GoTo ErrHandler
+
 2         If ActiveSheet Is shCreditUsage Then
-3             MenuCreditUsageSheet "Calculate"
-4         ElseIf ActiveSheet Is shScenarioDefinition Then
-5             RefreshScenarioDefinition True, False
-6         Else
-7             SetKeys False 'If SetKeys is always being called when it needs to be we should never hit this line.
-8             ActiveSheet.Calculate
-9         End If
-10        Exit Sub
+3             If Not OtherBooksAreOpen(True, True, True) Then PleaseOpenOtherBooks
+4             MenuCreditUsageSheet "Calculate"
+5         ElseIf ActiveSheet Is shScenarioDefinition Then
+6             If Not OtherBooksAreOpen(True, True, True) Then PleaseOpenOtherBooks
+7             RefreshScenarioDefinition True, False
+8         Else
+9             SetKeys False 'If SetKeys is always being called when it needs to be we should never hit this line.
+10            ActiveSheet.Calculate
+11        End If
+12        Exit Sub
 ErrHandler:
-11        SomethingWentWrong "#ShiftF9Response (line " & CStr(Erl) + "): " & Err.Description & "!"
+13        SomethingWentWrong "#ShiftF9Response (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Sub F8Response()
@@ -417,7 +418,7 @@ Sub F8Response()
 
 23        Exit Sub
 ErrHandler:
-24        SomethingWentWrong "#F8Response (line " & CStr(Erl) + "): " & Err.Description & "!"
+24        SomethingWentWrong "#F8Response (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Sub SetKeys(SwitchOn As Boolean)
@@ -455,7 +456,7 @@ Sub SetKeys(SwitchOn As Boolean)
 
 19        Exit Sub
 ErrHandler:
-20        Throw "#SetKeys (line " & CStr(Erl) + "): " & Err.Description & "!"
+20        Throw "#SetKeys (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Sub testAMB()
@@ -463,7 +464,7 @@ Sub testAMB()
 2         AlignMenuButtons True
 3         Exit Sub
 ErrHandler:
-4         SomethingWentWrong "#testAMB (line " & CStr(Erl) + "): " & Err.Description & "!"
+4         SomethingWentWrong "#testAMB (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : AlignMenuButtons
@@ -604,9 +605,9 @@ Sub ShowVersionInfo()
 55            DataToShow = sArrayStack(DataToShow, sArrayRange(Component, Version, LastModified, Location))
 56        Next i
 
-57        Prompt = "Cayley2022 version information." + vbLf + vbLf + _
-              sJustifyArrayOfStrings(DataToShow, , , vbTab, , , True) + vbLf + vbLf + _
-              "Julia Status:" + vbLf + _
+57        Prompt = "Cayley2022 version information." & vbLf & vbLf & _
+              sJustifyArrayOfStrings(DataToShow, , , vbTab, , , True) & vbLf & vbLf & _
+              "Julia Status:" & vbLf & _
               JuliaStatus()
 
 58        If MsgBoxPlus(Prompt, vbInformation + vbOKCancel + vbDefaultButton2, "Cayley2022", "Copy to clipboard", "OK", , , 600) = vbOK Then
@@ -615,7 +616,7 @@ Sub ShowVersionInfo()
 
 61        Exit Sub
 ErrHandler:
-62        Throw "#ShowVersionInfo (line " & CStr(Erl) + "): " & Err.Description & "!"
+62        Throw "#ShowVersionInfo (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Function JuliaStatus()
@@ -626,23 +627,21 @@ Function JuliaStatus()
 
 4         Exit Function
 ErrHandler:
-5         JuliaStatus = "#JuliaStatus (line " & CStr(Erl) + "): " & Err.Description & "!"
+5         JuliaStatus = "#JuliaStatus (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
-
 
 Function CheckAddinVersion(AddinName As String, Optional MinimumVersionRequired As Long)
 
-          Dim HaveVersion As Long
           Dim ErrorDescription As String
-          Dim i As Long
+          Dim HaveVersion As Long
 1         On Error GoTo ErrHandler
 
 2         HaveVersion = RangeFromSheet(Application.Workbooks(AddinName).Worksheets("Audit"), "Headers").Cells(2, 1).Value
 3         If HaveVersion < MinimumVersionRequired Then
-4             ErrorDescription = "This is version " + Format(RangeFromSheet(shAudit, "Headers").Cells(2, 1).Value, "###,###") + " of " + ThisWorkbook.Name + ". It requires version " + _
-                  Format(MinimumVersionRequired, "###,###") + " of the Excel addin " + AddinName + ". However, you are using an older version (" + Format(HaveVersion, "###,###") + ") installed at " + _
-                  Application.Workbooks(AddinName).FullName + vbLf + vbLf + _
-                  "You probably need to re-install the Cayley software. Visit " + gGitHubRepo + " using GitHub account " + gGitHubAccount + ". You will need a password to access that site."
+4             ErrorDescription = "This is version " & Format(RangeFromSheet(shAudit, "Headers").Cells(2, 1).Value, "###,###") & " of " & ThisWorkbook.Name & ". It requires version " & _
+                  Format(MinimumVersionRequired, "###,###") & " of the Excel addin " & AddinName & ". However, you are using an older version (" & Format(HaveVersion, "###,###") & ") installed at " & _
+                  Application.Workbooks(AddinName).FullName & vbLf & vbLf & _
+                  "You probably need to re-install the Cayley software. Visit " & gGitHubRepo & " using GitHub account " & gGitHubAccount & ". You will need a password to access that site."
           
 5             Throw ErrorDescription
 
@@ -654,4 +653,17 @@ ErrHandler:
 End Function
 
 
+' -----------------------------------------------------------------------------------------------------------------------
+' Procedure  : SafeAppActivate
+' Author     : Philip Swannell
+' Date       : 23-Apr-2022
+' Purpose    : AppActivate Application.Caption sometimes fails, but we don't want an error to be thrown, so wrap with
+'              On Error Resume Next
+' -----------------------------------------------------------------------------------------------------------------------
+Sub SafeAppActivate(SheetToActivate As Worksheet)
+          Dim EN As Long
+1         On Error Resume Next
+          SheetToActivate.Activate
+2         AppActivate Application.Caption
+End Sub
 

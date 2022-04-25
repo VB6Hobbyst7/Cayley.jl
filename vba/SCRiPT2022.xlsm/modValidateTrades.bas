@@ -229,9 +229,9 @@ Function ValidateTrades(Trades, Optional ThrowOnError As Boolean = True, Optiona
 
 141           If ThisTradeType = "InterestRateSwap" Or ThisTradeType = "CrossCurrencySwap" Then
 142               Select Case CStr(Trades(i, gCN_LegType1))
-                      Case "Fixed", "Libor", "OIS"
+                      Case "Fixed", "IBOR", "RFR"
 143                   Case Else
-144                       STK.StackData "Invalid Leg Type 1 for trade " + ThisTradeID + ". It must must be a either Fixed, Libor or OIS"
+144                       STK.StackData "Invalid Leg Type 1 for trade " + ThisTradeID + ". It must must be a either Fixed, IBOR or RFR"
 145               End Select
 146           End If
 
@@ -273,9 +273,9 @@ Function ValidateTrades(Trades, Optional ThrowOnError As Boolean = True, Optiona
 181                   STK.StackData "Rate2 must be a number but is not a number for trade " + ThisTradeID
 182               End If
 183               Select Case CStr(Trades(i, gCN_LegType2))
-                      Case "Fixed", "Libor", "OIS"
+                      Case "Fixed", "IBOR", "RFR"
 184                   Case Else
-185                       STK.StackData "Invalid Leg Type 2 for trade " + ThisTradeID + ". It must must be a either Fixed, Libor or OIS"
+185                       STK.StackData "Invalid Leg Type 2 for trade " + ThisTradeID + ". It must must be a either Fixed, IBOR or RFR"
 186               End Select
 187           End If
 188           If ThisTradeType = "InterestRateSwap" Or ThisTradeType = "CrossCurrencySwap" Or ThisTradeType = "Swaption" Then

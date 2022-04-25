@@ -137,7 +137,7 @@ Function Broadcast2Args(CoreFunctionID As BroadcastFuncID, ByVal Arg1 As Variant
               'When adding cases, also edit the second Select Case statement
 3             Select Case CoreFunctionID
                   Case FuncIdFileCopy
-4                     Broadcast2Args = CoreFileCopy(CStr(Arg1), CStr(Arg2))
+4                     Broadcast2Args = CoreFileCopy(CStr(Arg1), CStr(Arg2), CBool(Arg3))
 5                 Case FuncIdFileMove
 6                     Broadcast2Args = CoreFileMove(CStr(Arg1), CStr(Arg2))
 7                 Case FuncIdFileRename
@@ -167,7 +167,7 @@ Function Broadcast2Args(CoreFunctionID As BroadcastFuncID, ByVal Arg1 As Variant
                   Case FuncIdFileCopy
 30                    For i = 1 To NR
 31                        For j = 1 To NC
-32                            Result(i, j) = CoreFileCopy(CStr(Arg1(i, j)), CStr(Arg2(i, j)))
+32                            Result(i, j) = CoreFileCopy(CStr(Arg1(i, j)), CStr(Arg2(i, j)), CBool(Arg3))
 33                        Next j
 34                    Next i
 35                Case FuncIdFileMove
@@ -185,7 +185,6 @@ Function Broadcast2Args(CoreFunctionID As BroadcastFuncID, ByVal Arg1 As Variant
 47                Case FuncIdFolderRename
 48                    For i = 1 To NR
 49                        For j = 1 To NC
-
 50                            Result(i, j) = CoreFolderRename(CStr(Arg1(i, j)), CStr(Arg2(i, j)))
 51                        Next j
 52                    Next i

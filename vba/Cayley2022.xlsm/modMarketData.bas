@@ -208,7 +208,7 @@ Sub FeedRatesFromTextFile()
 16        End If
 17        Exit Sub
 ErrHandler:
-18        SomethingWentWrong "#FeedRatesFromTextFile (line " & CStr(Erl) + "): " & Err.Description & "!"
+18        SomethingWentWrong "#FeedRatesFromTextFile (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 

@@ -751,7 +751,7 @@ Private Sub TestInputBoxPlus()
           Dim Res
 1         Res = InputBoxPlus("Grab a range", "Your text here", , , , , , , , , , , True)
 2         If Res <> False Then
-3             Application.GoTo ActiveSheet.Range(Res)
+3             Application.Goto ActiveSheet.Range(Res)
 4         End If
 End Sub
 ' -----------------------------------------------------------------------------------------------------------------------

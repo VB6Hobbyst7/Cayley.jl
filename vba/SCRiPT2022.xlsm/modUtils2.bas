@@ -94,8 +94,8 @@ Function SupportedIRLegTypes()
           Dim Res() As String
 1         ReDim Res(1 To 3, 1 To 1)
 2         Res(1, 1) = "Fixed"
-3         Res(2, 1) = "Libor"
-4         Res(3, 1) = "OIS"
+3         Res(2, 1) = "IBOR"
+4         Res(3, 1) = "RFR"
 5         SupportedIRLegTypes = Res
 End Function
 

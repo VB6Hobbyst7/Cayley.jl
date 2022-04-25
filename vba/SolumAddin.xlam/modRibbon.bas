@@ -712,6 +712,7 @@ Private Function XMLForSwitchBook() As String
           Dim supertipInstances As String
           Dim TheseObjs As Variant
           Dim xl As Application
+          Dim LWN As String
                   
 1         On Error GoTo ErrHandler
 2         Set SA = New clsStringAppend
@@ -738,101 +739,110 @@ Private Function XMLForSwitchBook() As String
 16        For Each xl In AllXLs
 17            i = i + 1
 18            For Each wb In xl.Workbooks
-19                NumToShow = NumToShow + 1
-20                If isBookHidden(wb) Then
-21                    ShowSeparators = True
-22                    STKH.Stack2D sArrayRange(wb.Name, i, LocalWorkbookName(wb))
-23                Else
-24                    STKV.Stack2D sArrayRange(wb.Name, i, LocalWorkbookName(wb))
-25                End If
-26            Next wb
-27        Next xl
-28        If ShowAddins Then
-29            Addins = WorkbookAndAddInList(2)
-30            If Not (IsEmpty(Addins)) Then
-31                ShowSeparators = True
-32                NumToShow = NumToShow + sNRows(Addins)
-33            End If
-34        End If
+19                LWN = wb.FullName
+20                On Error Resume Next
+                  'Not sure how robust LocalWorkbookName is, so ignore errors. PGS 25/4/2022
+21                LWN = LocalWorkbookName(wb)
+22                On Error GoTo ErrHandler
 
-35        ItemNum = 0
-36        If NumToShow > NumToShowLimit Then
+23                NumToShow = NumToShow + 1
+24                If isBookHidden(wb) Then
+25                    ShowSeparators = True
+26                    STKH.Stack2D sArrayRange(wb.Name, i, LWN)
+27                Else
+28                    STKV.Stack2D sArrayRange(wb.Name, i, LWN)
+29                End If
+30            Next wb
+31        Next xl
+32        If ShowAddins Then
+33            Addins = WorkbookAndAddInList(2)
+34            If Not (IsEmpty(Addins)) Then
+35                ShowSeparators = True
+36                NumToShow = NumToShow + sNRows(Addins)
+37            End If
+38        End If
+
+39        ItemNum = 0
+40        If NumToShow > NumToShowLimit Then
               Dim supertip As String
-37            ItemNum = ItemNum + 1
-38            supertip = """ A searchable list of the " + CStr(NumToShow) + " open workbooks. (Ctrl Shift B)"""
-39            SA.Append "<menuSeparator id=""MenuseparatorSearchBookNames"" title=""Searchable""/>" & vbLf
-40            ThisButton = "<button label=""" & IndexToAccelerator(ItemNum) & "Search..." & """ onAction=""TheRibbon_onAction"" id=""ActivateBook_" & CStr(ItemNum) & _
+41            ItemNum = ItemNum + 1
+42            supertip = """ A searchable list of the " + CStr(NumToShow) + " open workbooks. (Ctrl Shift B)"""
+43            SA.Append "<menuSeparator id=""MenuseparatorSearchBookNames"" title=""Searchable""/>" & vbLf
+44            ThisButton = "<button label=""" & IndexToAccelerator(ItemNum) & "Search..." & """ onAction=""TheRibbon_onAction"" id=""ActivateBook_" & CStr(ItemNum) & _
                   """ tag=""SwitchBook"" screentip=""Search"" supertip = " & supertip & " imageMso=""FindText""/>"
-41            SA.Append ThisButton & vbLf
-42            ShowSeparators = True
-43        End If
+45            SA.Append ThisButton & vbLf
+46            ShowSeparators = True
+47        End If
 
-44        For k = 1 To IIf(ShowAddins, 3, 2)
-45            If k = 1 Then
-46                TheseObjs = sSortedArray(STKV.Report)
-47                If ShowSeparators Then
-48                    If Not sIsErrorString(TheseObjs) Then
-49                        SA.Append "<menuSeparator id=""MenuseparatorVisibleBooks"" title=""Visible""/>" & vbLf
-50                    End If
-51                End If
-52            ElseIf k = 2 Then
-53                TheseObjs = sSortedArray(STKH.Report)
-54                If Not sIsErrorString(TheseObjs) Then
-55                    SA.Append "<menuSeparator id=""MenuseparatorHiddenBooks"" title=""Hidden""/>" & vbLf
-56                End If
-57            ElseIf k = 3 Then
-58                TheseObjs = WorkbookAndAddInList(2)
-59                TheseObjs = sArrayRange(TheseObjs, sReshape(1, sNRows(TheseObjs), 1))
-60                If Not IsEmpty(TheseObjs) Then
-61                    SA.Append "<menuSeparator id=""MenuseparatorAddins"" title=""Addins""/>" & vbLf
-62                End If
-63            End If
-64            If Not sIsErrorString(TheseObjs) And Not IsEmpty(TheseObjs) Then
-65                For i = 1 To sNRows(TheseObjs)
-66                    ItemNum = ItemNum + 1
+48        For k = 1 To IIf(ShowAddins, 3, 2)
+49            If k = 1 Then
+50                TheseObjs = sSortedArray(STKV.Report)
+51                If ShowSeparators Then
+52                    If Not sIsErrorString(TheseObjs) Then
+53                        SA.Append "<menuSeparator id=""MenuseparatorVisibleBooks"" title=""Visible""/>" & vbLf
+54                    End If
+55                End If
+56            ElseIf k = 2 Then
+57                TheseObjs = sSortedArray(STKH.Report)
+58                If Not sIsErrorString(TheseObjs) Then
+59                    SA.Append "<menuSeparator id=""MenuseparatorHiddenBooks"" title=""Hidden""/>" & vbLf
+60                End If
+61            ElseIf k = 3 Then
+62                TheseObjs = WorkbookAndAddInList(2)
+63                TheseObjs = sArrayRange(TheseObjs, sReshape(1, sNRows(TheseObjs), 1))
+64                If Not IsEmpty(TheseObjs) Then
+65                    SA.Append "<menuSeparator id=""MenuseparatorAddins"" title=""Addins""/>" & vbLf
+66                End If
+67            End If
+68            If Not sIsErrorString(TheseObjs) And Not IsEmpty(TheseObjs) Then
+69                For i = 1 To sNRows(TheseObjs)
+70                    ItemNum = ItemNum + 1
                       Dim AppNum As Long
                       Dim BookFullName As String
                       Dim BookName As String
-67                    BookName = TheseObjs(i, 1)
-68                    AppNum = TheseObjs(i, 2)
-69                    If AppNum = 1 Then
-70                        BookFullName = LocalWorkbookName(Application.Workbooks(BookName))
-71                    Else
-72                        BookFullName = TheseObjs(i, 3)
-73                    End If
-74                    ThisButton = "<button label=""" & IndexToAccelerator(ItemNum) & EscapeChars(BookName, True) & _
+71                    BookName = TheseObjs(i, 1)
+72                    AppNum = TheseObjs(i, 2)
+73                    If AppNum = 1 Then
+74                        BookFullName = Application.Workbooks(BookName).FullName
+75                        On Error Resume Next
+76                        BookFullName = LocalWorkbookName(Application.Workbooks(BookName))
+77                        On Error GoTo ErrHandler
+78                    Else
+79                        BookFullName = TheseObjs(i, 3)
+80                    End If
+81                    ThisButton = "<button label=""" & IndexToAccelerator(ItemNum) & EscapeChars(BookName, True) & _
                           IIf(AppNum = 1, vbNullString, "  " & String(AppNum - 1, "*")) & """ onAction=""TheRibbon_onAction"" id=""ActivateBook_" & CStr(ItemNum) & _
                           """ tag=""ActivateBook_" & CStr(AppNum) & "_" & EscapeChars(BookName, False) & """"
-75                    If AppNum = 1 Then
-76                        If Not ActiveWorkbook Is Nothing Then
-77                            If BookName = ActiveWorkbook.Name Then
-78                                ThisButton = ThisButton & " imageMso=""AcceptProposal"""
-79                            End If
-80                        End If
-81                    End If
-82                    supertip = vbNullString
-83                    If BookName <> BookFullName Then
-84                        If AppNum <> 1 Then
-85                            supertip = BookFullName + "&#13;&#10;" + String(50, "_") + "&#13;&#10;" + supertipInstances
-86                        Else
-87                            supertip = BookFullName
-88                        End If
-89                    ElseIf AppNum <> 1 Then
-90                        supertip = supertipInstances
-91                    End If
-92                    If supertip <> vbNullString Then
-93                        ThisButton = ThisButton & " screentip=""" & BookName & """ supertip=""" & supertip & """"
-94                    End If
-95                    ThisButton = ThisButton & "/>"
-96                    SA.Append ThisButton & vbLf
-97                Next i
-98            End If
-99        Next k
-100       SA.Append "</menu>"
-101       XMLForSwitchBook = SA.Report
-102       Exit Function
+82                    If AppNum = 1 Then
+83                        If Not ActiveWorkbook Is Nothing Then
+84                            If BookName = ActiveWorkbook.Name Then
+85                                ThisButton = ThisButton & " imageMso=""AcceptProposal"""
+86                            End If
+87                        End If
+88                    End If
+89                    supertip = vbNullString
+90                    If BookName <> BookFullName Then
+91                        If AppNum <> 1 Then
+92                            supertip = BookFullName + "&#13;&#10;" + String(50, "_") + "&#13;&#10;" + supertipInstances
+93                        Else
+94                            supertip = BookFullName
+95                        End If
+96                    ElseIf AppNum <> 1 Then
+97                        supertip = supertipInstances
+98                    End If
+99                    If supertip <> vbNullString Then
+100                       ThisButton = ThisButton & " screentip=""" & BookName & """ supertip=""" & supertip & """"
+101                   End If
+102                   ThisButton = ThisButton & "/>"
+103                   SA.Append ThisButton & vbLf
+104               Next i
+105           End If
+106       Next k
+107       SA.Append "</menu>"
+108       XMLForSwitchBook = SA.Report
+109       Exit Function
 ErrHandler:
-103       Throw "#XMLForSwitchBook (line " & CStr(Erl) + "): " & Err.Description & "!"
+110       Throw "#XMLForSwitchBook (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------

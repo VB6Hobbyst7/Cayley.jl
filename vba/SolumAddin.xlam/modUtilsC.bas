@@ -778,7 +778,7 @@ Sub JustifyText()
 
 62        If ShowPrompt Then
 63            Prompt = "Overwrite these cells?" + vbLf + vbLf + "(Ctrl Z to undo)"
-64            Application.GoTo TargetRange
+64            Application.Goto TargetRange
 65            If MsgBoxPlus(Prompt, vbQuestion + vbOKCancel, "Justify Text") <> vbOK Then Exit Sub
 66        End If
 67        Set SUH = CreateScreenUpdateHandler()

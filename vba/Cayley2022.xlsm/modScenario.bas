@@ -25,6 +25,7 @@ Sub WhoHasLinesFromButton()
           Dim Prompt As String
           Dim PromptArray
           Dim TradesScaleFactor As Double
+          Const ThrowErrors = False
 
 2         IncludeAssetClasses = RangeFromSheet(shCreditUsage, "IncludeAssetClasses", False, True, False, False, False)
 3         NumMCPaths = RangeFromSheet(shCreditUsage, "NumMCPaths", True, False, False, False, False).Value2
@@ -86,7 +87,7 @@ Sub WhoHasLinesFromButton()
 32        BuildModelsInJulia False, FxShock, FxVolShock
 
 33        WhoHasLines NumMCPaths, NumObservations, PortfolioAgeing, "", FxShock, FxVolShock, AllocationsByYear, _
-              FirstRow, LastRow, True, HedgeHorizon
+              FirstRow, LastRow, ThrowErrors, HedgeHorizon
 34        Exit Sub
 ErrHandler:
 35        SomethingWentWrong "#WhoHasLinesFromButton (line " & CStr(Erl) & "): " & Err.Description & "!"
@@ -212,51 +213,53 @@ Sub WhoHasLines(NumMCPaths As Long, NumObservations As Long, _
                       " " & ArrayToSort(i, 3) & _
                       IIf(ArrayToSort(i, 1), " Notional-based", IIf(ArrayToSort(i, 2), " Monte Carlo Historic Vol", " Monte Carlo Implied Vol")) & _
                       " " & ArrayToSort(i, 5)
-60                If gDebugMode Then Message = Message & " WorkingSetSize: " & Format(sExcelWorkingSetSize(), "###,###")
 
-61                StatusBarWrap Message
-62                Set D = New Dictionary
-63                t3 = sElapsedTime()
-64                Res = RunCreditUsageSheet("Solve345", ThrowErrors, False, False, D, Allocations)
-65                t4 = sElapsedTime()
+60                MessageLogWrite Message
+61                Set D = New Dictionary
+62                t3 = sElapsedTime()
+63                Res = RunCreditUsageSheet("Solve345", ThrowErrors, False, False, D, Allocations)
+64                t4 = sElapsedTime()
 
-66                If D.Exists("TradeSolveResult") Then
-67                    If D("TradeSolveResult") <> "OK" Then
-68                        Res = D("TradeSolveResult")
-69                    End If
-70                End If
+65                If D.Exists("TradeSolveResult") Then
+66                    If D("TradeSolveResult") <> "OK" Then
+67                        Res = D("TradeSolveResult")
+68                    End If
+69                End If
                                        
-71                With .Cells(RowToProcess, 2).Resize(1, HedgeHorizon)
-72                    If sIsErrorString(Res) Then
-73                        .Value = Res
-74                    ElseIf D.Exists("TradeHeadroom345") Then
-75                        .Value = sArrayTranspose(D("TradeHeadroom345"))
-76                    End If
-77                End With
+70                With .Cells(RowToProcess, 2).Resize(1, HedgeHorizon)
+71                    If sIsErrorString(Res) Then
+72                        .Value = Res
+73                    ElseIf D.Exists("TradeHeadroom345") Then
+74                        .Value = sArrayTranspose(D("TradeHeadroom345"))
+75                    End If
+76                End With
 
-78                .Cells(RowToProcess, HedgeHorizon + 3) = t4 - t3
-79                If D.Exists("PVUSD") Then
-80                    .Cells(RowToProcess, HedgeHorizon + 2) = D("PVUSD")
-81                Else
-82                    .Cells(RowToProcess, HedgeHorizon + 2) = "Cannot find key 'PVUSD' in results dictionary"
-83                End If
+77                .Cells(RowToProcess, HedgeHorizon + 3) = t4 - t3
+78                If D.Exists("PVUSD") Then
+79                    .Cells(RowToProcess, HedgeHorizon + 2) = D("PVUSD")
+80                Else
+81                    .Cells(RowToProcess, HedgeHorizon + 2) = "Cannot find key 'PVUSD' in results dictionary"
+82                End If
 
-84            Next i
+83            Next i
 
-85        End With
-86        StatusBarWrap False
+84        End With
+85        TheBank = ""
 
-87        Set RangeToAutoFit = Application.Union(TheRange, _
+86        Set RangeToAutoFit = Application.Union(TheRange, _
               Range(shWhoHasLines.Range("Time_of_run").offset(0, -1), _
               shWhoHasLines.Range("LastRunLast_row_to_run")))
-88        RangeToAutoFit.Columns.AutoFit
-89        t2 = sElapsedTime()
-90        If gDebugMode Then Debug.Print "Time in WhoHasLines", t2 - t1
-91        Exit Sub
+87        RangeToAutoFit.Columns.AutoFit
+88        t2 = sElapsedTime()
+89        Exit Sub
 ErrHandler:
-92        CopyOfErr = "#WhoHasLines (line " & CStr(Erl) & "): " & Err.Description & "!"
-93        StatusBarWrap False
-94        Throw CopyOfErr
+90        CopyOfErr = "#WhoHasLines (line " & CStr(Erl) & "): " & Err.Description
+91        If TheBank <> "" Then
+92            CopyOfErr = CopyOfErr & " (bank being processed = " & TheBank & ")!"
+93        Else
+94            CopyOfErr = CopyOfErr & "!"
+95        End If
+96        Throw CopyOfErr
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -308,7 +311,7 @@ Sub AmendWhoHasLinesTable(HedgeHorizon As Long)
 29        End If
 30        Exit Sub
 ErrHandler:
-31        Throw "#AmendWhoHasLinesTable (line " & CStr(Erl) + "): " & Err.Description & "!"
+31        Throw "#AmendWhoHasLinesTable (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Sub Test_ExecuteTrades()
@@ -362,7 +365,7 @@ Sub Test_ExecuteTrades()
 
 23        Exit Sub
 ErrHandler:
-24        SomethingWentWrong "#Test_ExecuteTrades (line " & CStr(Erl) + "): " & Err.Description & "!"
+24        SomethingWentWrong "#Test_ExecuteTrades (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -410,33 +413,33 @@ Function ExecuteTrades(DealDate As Long, Counterparties As Variant, ByVal CCY1 A
 2         NumTrades = sNRows(Ccy2Notionals)
 3         NumTradesToWrite = (IIf(ForwardsRatio <> 0, 1, 0) + IIf(CallRatio <> 0, 1, 0) + IIf(PutRatio <> 0, 1, 0)) * NumTrades
 
-4         CCY1_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), CCY1), _
-              IIf(PutRatio = 0, CreateMissing(), CCY1), _
-              IIf(CallRatio = 0, CreateMissing(), CCY1))
+4         CCY1_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), CCY1), _
+              IIf(PutRatio = 0, createmissing(), CCY1), _
+              IIf(CallRatio = 0, createmissing(), CCY1))
 
-5         CCY2_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), CCY2), _
-              IIf(PutRatio = 0, CreateMissing(), CCY2), _
-              IIf(CallRatio = 0, CreateMissing(), CCY2))
+5         CCY2_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), CCY2), _
+              IIf(PutRatio = 0, createmissing(), CCY2), _
+              IIf(CallRatio = 0, createmissing(), CCY2))
 
-6         ProductType_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), sReshape("FXForward", NumTrades, 1)), _
-              IIf(PutRatio = 0, CreateMissing(), sReshape("FXOption", NumTrades, 1)), _
-              IIf(CallRatio = 0, CreateMissing(), sReshape("FXOption", NumTrades, 1)))
+6         ProductType_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), sReshape("FXForward", NumTrades, 1)), _
+              IIf(PutRatio = 0, createmissing(), sReshape("FXOption", NumTrades, 1)), _
+              IIf(CallRatio = 0, createmissing(), sReshape("FXOption", NumTrades, 1)))
               
-7         PutCall_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), sReshape(CreateMissing(), NumTrades, 1)), _
-              IIf(PutRatio = 0, CreateMissing(), sArrayConcatenate("PUT ", CCY1)), _
-              IIf(CallRatio = 0, CreateMissing(), sArrayConcatenate("CALL ", CCY1)))
+7         PutCall_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), sReshape(createmissing(), NumTrades, 1)), _
+              IIf(PutRatio = 0, createmissing(), sArrayConcatenate("PUT ", CCY1)), _
+              IIf(CallRatio = 0, createmissing(), sArrayConcatenate("CALL ", CCY1)))
 
-8         BuySell_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), sReshape(IIf(ForwardsRatio < 0, "Sell", "Buy"), NumTrades, 1)), _
-              IIf(PutRatio = 0, CreateMissing(), sReshape(IIf(PutRatio < 0, "Sell", "Buy"), NumTrades, 1)), _
-              IIf(CallRatio = 0, CreateMissing(), sReshape(IIf(CallRatio < 0, "Sell", "Buy"), NumTrades, 1)))
+8         BuySell_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), sReshape(IIf(ForwardsRatio < 0, "Sell", "Buy"), NumTrades, 1)), _
+              IIf(PutRatio = 0, createmissing(), sReshape(IIf(PutRatio < 0, "Sell", "Buy"), NumTrades, 1)), _
+              IIf(CallRatio = 0, createmissing(), sReshape(IIf(CallRatio < 0, "Sell", "Buy"), NumTrades, 1)))
 
-9         Ccy2Notionals_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), sArrayMultiply(Ccy2Notionals, ForwardsRatio)), _
-              IIf(PutRatio = 0, CreateMissing(), sArrayMultiply(Ccy2Notionals, PutRatio)), _
-              IIf(CallRatio = 0, CreateMissing(), sArrayMultiply(Ccy2Notionals, CallRatio)))
+9         Ccy2Notionals_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), sArrayMultiply(Ccy2Notionals, ForwardsRatio)), _
+              IIf(PutRatio = 0, createmissing(), sArrayMultiply(Ccy2Notionals, PutRatio)), _
+              IIf(CallRatio = 0, createmissing(), sArrayMultiply(Ccy2Notionals, CallRatio)))
 
-10        Counterparties_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), Counterparties), _
-              IIf(PutRatio = 0, CreateMissing(), Counterparties), _
-              IIf(CallRatio = 0, CreateMissing(), Counterparties))
+10        Counterparties_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), Counterparties), _
+              IIf(PutRatio = 0, createmissing(), Counterparties), _
+              IIf(CallRatio = 0, createmissing(), Counterparties))
 
           'Prevent coding error.
 11        If GetItem(UnshockedModelBareBones, "fxshock") <> 1 Then Throw "Model must be passed in unshocked state"
@@ -464,13 +467,13 @@ Function ExecuteTrades(DealDate As Long, Counterparties As Variant, ByVal CCY1 A
 26        TradeIDs = sGrid(FirstTradeID, FirstTradeID + NumTradesToWrite - 1, CLng(NumTradesToWrite))
 27        TradeIDs = sArrayConcatenate("FT", TradeIDs)
 
-28        Maturities_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), Maturities), _
-              IIf(PutRatio = 0, CreateMissing(), Maturities), _
-              IIf(CallRatio = 0, CreateMissing(), Maturities))
+28        Maturities_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), Maturities), _
+              IIf(PutRatio = 0, createmissing(), Maturities), _
+              IIf(CallRatio = 0, createmissing(), Maturities))
 
-29        Strikes_Out = Interleave(IIf(ForwardsRatio = 0, CreateMissing(), Forwards), _
-              IIf(PutRatio = 0, CreateMissing(), sArrayAdd(Forwards, PutStrikeOffset)), _
-              IIf(CallRatio = 0, CreateMissing(), sArrayAdd(Forwards, CallStrikeOffset)))
+29        Strikes_Out = Interleave(IIf(ForwardsRatio = 0, createmissing(), Forwards), _
+              IIf(PutRatio = 0, createmissing(), sArrayAdd(Forwards, PutStrikeOffset)), _
+              IIf(CallRatio = 0, createmissing(), sArrayAdd(Forwards, CallStrikeOffset)))
 
 30        Ccy1Notionals_Out = sArrayDivide(Ccy2Notionals_Out, Strikes_Out)
 31        Ccy1Notionals_Out = sArrayMultiply(Ccy1Notionals_Out, -1)
@@ -730,7 +733,9 @@ Function AllocateTradesToBanks(ByVal Amount1Y, ByVal Amount2Y, ByVal Amount3Y, B
 
 63        Exit Function
 ErrHandler:
-64        Throw "#AllocateTradesToBanks (line " & CStr(Erl) & "): " & Err.Description & "!"
+64        Stop
+65        Resume
+66        Throw "#AllocateTradesToBanks (line " & CStr(Erl) & "): " & Err.Description & "!"
    End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -797,6 +802,7 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
           Dim HistoryStart As Long
           Dim ScenarioResults
           Dim ScenarioResultsHeaders
+          Dim SheetToActivate As Worksheet
           Dim ShocksDerivedFrom As String
           Dim ThisDealDate As Long
           Dim TimeEnd As Variant
@@ -813,13 +819,13 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
           Dim TotalsDone
 
 1         On Error GoTo ErrHandler
-2         If gDebugMode Then Debug.Print "RunScenario Start", Now
 
-3         Set SUH = CreateScreenUpdateHandler()
-4         Set SPH = CreateSheetProtectionHandler(shScenarioDefinition)
-5         Set SPH2 = CreateSheetProtectionHandler(shCreditUsage)
-6         Set SPH3 = CreateSheetProtectionHandler(shFutureTrades)
-7         Set SPH4 = CreateSheetProtectionHandler(shScenarioResults)
+2         Set SUH = CreateScreenUpdateHandler()
+3         Set SPH = CreateSheetProtectionHandler(shScenarioDefinition)
+4         Set SPH2 = CreateSheetProtectionHandler(shCreditUsage)
+5         Set SPH3 = CreateSheetProtectionHandler(shFutureTrades)
+6         Set SPH4 = CreateSheetProtectionHandler(shScenarioResults)
+7         Set SheetToActivate = ActiveSheet
 
 8         RefreshScenarioDefinition True        'Reads current spot levels so that shocks are correctly calibrated, also does validation
 9         If SaveDefinition Then
@@ -924,19 +930,22 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
 69            If MsgBoxPlus(Prompt, vbOKCancel + vbQuestion + vbDefaultButton2, "Run Scenario", , , , , 600) <> vbOK Then Exit Function
 70        End If
 
-71        ClearFutureTrades
+71        ShowFileInSnakeTail , True
+72        Application.StatusBar = "The scenario is running. Progress is shown in the SnakeTail application."
 
-72        With RangeFromSheet(shScenarioDefinition, "ScenarioDefinition")
-73            ScenDefnHeaders = sArrayTranspose(.Rows(1).Value)
-74            ScenarioDefinition = .offset(1).Resize(.Rows.Count - 1)
-75        End With
+73        ClearFutureTrades
+
+74        With RangeFromSheet(shScenarioDefinition, "ScenarioDefinition")
+75            ScenDefnHeaders = sArrayTranspose(.Rows(1).Value)
+76            ScenarioDefinition = .offset(1).Resize(.Rows.Count - 1)
+77        End With
 
           ' ScenarioResultsHeaders = sTokeniseString("1Y Traded,2Y Traded,3Y Traded,4Y Traded,5Y Traded,1Y capacity,2Y capacity,3Y capacity,4Y capacity,5Y capacity,USDPVAllTrades")
-76        ScenarioResultsHeaders = sArrayStack(sArrayConcatenate(sIntegers(HedgeHorizon), "Y Traded"), _
+78        ScenarioResultsHeaders = sArrayStack(sArrayConcatenate(sIntegers(HedgeHorizon), "Y Traded"), _
               sArrayConcatenate(sIntegers(HedgeHorizon), "Y capacity"), _
               "USDPVAllTrades")
 
-77        ScenarioResults = sReshape(Empty, sNRows(ScenarioDefinition), sNRows(ScenarioResultsHeaders))
+79        ScenarioResults = sReshape(Empty, sNRows(ScenarioDefinition), sNRows(ScenarioResultsHeaders))
 
           Dim cnr_10YC
           Dim cnr_10YT
@@ -961,66 +970,68 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
           
           Dim cnr_PVUSD
           
-78        cnr_1YT = ThrowIfError(sMatch("1Y Traded", ScenarioResultsHeaders))
-79        cnr_2YT = ThrowIfError(sMatch("2Y Traded", ScenarioResultsHeaders))
-80        cnr_3YT = ThrowIfError(sMatch("3Y Traded", ScenarioResultsHeaders))
-81        cnr_4YT = ThrowIfError(sMatch("4Y Traded", ScenarioResultsHeaders))
-82        cnr_5YT = ThrowIfError(sMatch("5Y Traded", ScenarioResultsHeaders))
-83        If HedgeHorizon >= 6 Then cnr_6YT = ThrowIfError(sMatch("6Y Traded", ScenarioResultsHeaders))
-84        If HedgeHorizon >= 7 Then cnr_7YT = ThrowIfError(sMatch("7Y Traded", ScenarioResultsHeaders))
-85        If HedgeHorizon >= 8 Then cnr_8YT = ThrowIfError(sMatch("8Y Traded", ScenarioResultsHeaders))
-86        If HedgeHorizon >= 9 Then cnr_9YT = ThrowIfError(sMatch("9Y Traded", ScenarioResultsHeaders))
-87        If HedgeHorizon >= 10 Then cnr_10YT = ThrowIfError(sMatch("10Y Traded", ScenarioResultsHeaders))
+80        cnr_1YT = ThrowIfError(sMatch("1Y Traded", ScenarioResultsHeaders))
+81        cnr_2YT = ThrowIfError(sMatch("2Y Traded", ScenarioResultsHeaders))
+82        cnr_3YT = ThrowIfError(sMatch("3Y Traded", ScenarioResultsHeaders))
+83        cnr_4YT = ThrowIfError(sMatch("4Y Traded", ScenarioResultsHeaders))
+84        cnr_5YT = ThrowIfError(sMatch("5Y Traded", ScenarioResultsHeaders))
+85        If HedgeHorizon >= 6 Then cnr_6YT = ThrowIfError(sMatch("6Y Traded", ScenarioResultsHeaders))
+86        If HedgeHorizon >= 7 Then cnr_7YT = ThrowIfError(sMatch("7Y Traded", ScenarioResultsHeaders))
+87        If HedgeHorizon >= 8 Then cnr_8YT = ThrowIfError(sMatch("8Y Traded", ScenarioResultsHeaders))
+88        If HedgeHorizon >= 9 Then cnr_9YT = ThrowIfError(sMatch("9Y Traded", ScenarioResultsHeaders))
+89        If HedgeHorizon >= 10 Then cnr_10YT = ThrowIfError(sMatch("10Y Traded", ScenarioResultsHeaders))
 
-88        cnr_1YC = ThrowIfError(sMatch("1Y capacity", ScenarioResultsHeaders))
-89        cnr_2YC = ThrowIfError(sMatch("2Y capacity", ScenarioResultsHeaders))
-90        cnr_3YC = ThrowIfError(sMatch("3Y capacity", ScenarioResultsHeaders))
-91        cnr_4YC = ThrowIfError(sMatch("4Y capacity", ScenarioResultsHeaders))
-92        cnr_5YC = ThrowIfError(sMatch("5Y capacity", ScenarioResultsHeaders))
-93        If HedgeHorizon >= 6 Then cnr_6YC = ThrowIfError(sMatch("6Y capacity", ScenarioResultsHeaders))
-94        If HedgeHorizon >= 7 Then cnr_7YC = ThrowIfError(sMatch("7Y capacity", ScenarioResultsHeaders))
-95        If HedgeHorizon >= 8 Then cnr_8YC = ThrowIfError(sMatch("8Y capacity", ScenarioResultsHeaders))
-96        If HedgeHorizon >= 9 Then cnr_9YC = ThrowIfError(sMatch("9Y capacity", ScenarioResultsHeaders))
-97        If HedgeHorizon >= 10 Then cnr_10YC = ThrowIfError(sMatch("10Y capacity", ScenarioResultsHeaders))
+90        cnr_1YC = ThrowIfError(sMatch("1Y capacity", ScenarioResultsHeaders))
+91        cnr_2YC = ThrowIfError(sMatch("2Y capacity", ScenarioResultsHeaders))
+92        cnr_3YC = ThrowIfError(sMatch("3Y capacity", ScenarioResultsHeaders))
+93        cnr_4YC = ThrowIfError(sMatch("4Y capacity", ScenarioResultsHeaders))
+94        cnr_5YC = ThrowIfError(sMatch("5Y capacity", ScenarioResultsHeaders))
+95        If HedgeHorizon >= 6 Then cnr_6YC = ThrowIfError(sMatch("6Y capacity", ScenarioResultsHeaders))
+96        If HedgeHorizon >= 7 Then cnr_7YC = ThrowIfError(sMatch("7Y capacity", ScenarioResultsHeaders))
+97        If HedgeHorizon >= 8 Then cnr_8YC = ThrowIfError(sMatch("8Y capacity", ScenarioResultsHeaders))
+98        If HedgeHorizon >= 9 Then cnr_9YC = ThrowIfError(sMatch("9Y capacity", ScenarioResultsHeaders))
+99        If HedgeHorizon >= 10 Then cnr_10YC = ThrowIfError(sMatch("10Y capacity", ScenarioResultsHeaders))
 
-98        cnr_PVUSD = ThrowIfError(sMatch("USDPVAllTrades", ScenarioResultsHeaders))
+100       cnr_PVUSD = ThrowIfError(sMatch("USDPVAllTrades", ScenarioResultsHeaders))
 
-99        RangeFromSheet(shCreditUsage, "PortfolioAgeing").Value = 0
-100       RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
-101       RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = 0
-102       RangeFromSheet(shCreditUsage, "FilterBy1").Value = "Counterparty Parent"
+101       RangeFromSheet(shCreditUsage, "PortfolioAgeing").Value = 0
+102       RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
+103       RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = 0
+104       RangeFromSheet(shCreditUsage, "FilterBy1").Value = "Counterparty Parent"
 
           Dim cnd_AvEDSTraded
           Dim cnd_FxShock
           Dim cnd_FxVolShock
           Dim cnd_Months
           Dim cnd_ReplenishmentAmount
-103       cnd_Months = ThrowIfError(sMatch("Months", ScenDefnHeaders))
-104       cnd_FxShock = ThrowIfError(sMatch("FxShock", ScenDefnHeaders))
-105       cnd_FxVolShock = ThrowIfError(sMatch("FxVolShock", ScenDefnHeaders))
-106       cnd_ReplenishmentAmount = ThrowIfError(sMatch("ReplenishmentAmount", ScenDefnHeaders))
-107       cnd_AvEDSTraded = sMatch("AvEDSTraded", ScenDefnHeaders)
+105       cnd_Months = ThrowIfError(sMatch("Months", ScenDefnHeaders))
+106       cnd_FxShock = ThrowIfError(sMatch("FxShock", ScenDefnHeaders))
+107       cnd_FxVolShock = ThrowIfError(sMatch("FxVolShock", ScenDefnHeaders))
+108       cnd_ReplenishmentAmount = ThrowIfError(sMatch("ReplenishmentAmount", ScenDefnHeaders))
+109       cnd_AvEDSTraded = sMatch("AvEDSTraded", ScenDefnHeaders)
 
-108       AllocationsArray = ParseAllocation(AllocationByYear)
+110       AllocationsArray = ParseAllocation(AllocationByYear)
 
-109       Application.GoTo shCreditUsage.Cells(1, 1)
-110       For i = 1 To sNRows(ScenarioDefinition)
-111           RefreshScreen
-112           FxShock = ScenarioDefinition(i, cnd_FxShock)
-113           FxVolShock = ScenarioDefinition(i, cnd_FxVolShock)
-114           ThisDealDate = Application.WorksheetFunction.EDate(AnchorDate, ScenarioDefinition(i, cnd_Months))
-115           PortfolioAgeing = (ThisDealDate - AnchorDate) / 365
+111       Application.GoTo shCreditUsage.Cells(1, 1)
+112       For i = 1 To sNRows(ScenarioDefinition)
+113           RefreshScreen
+114           FxShock = ScenarioDefinition(i, cnd_FxShock)
+115           FxVolShock = ScenarioDefinition(i, cnd_FxVolShock)
+116           ThisDealDate = Application.WorksheetFunction.EDate(AnchorDate, ScenarioDefinition(i, cnd_Months))
+117           PortfolioAgeing = (ThisDealDate - AnchorDate) / 365
 
-116           AvEDSTraded = ScenarioDefinition(i, cnd_AvEDSTraded)
+118           AvEDSTraded = ScenarioDefinition(i, cnd_AvEDSTraded)
 
-117           If StatusBarPrePrefix = "" Then
-118               StatusBarPrefix = "RunScenario Month " & CStr(i) & " of " & CStr(N) & " "
-119           Else
-120               StatusBarPrefix = StatusBarPrePrefix & "Month " & CStr(i) & " of " & CStr(N) & " "
-121           End If
+119           If StatusBarPrePrefix = "" Then
+120               StatusBarPrefix = "RunScenario Month " & CStr(i) & " of " & CStr(N) & " "
+121           Else
+122               StatusBarPrefix = StatusBarPrePrefix & "Month " & CStr(i) & " of " & CStr(N) & " "
+123           End If
 
-122           WhoHasLines NumMCPaths, NumObservations, PortfolioAgeing, StatusBarPrefix, FxShock, FxVolShock, AllocationByYear
-123           UpdateLinesHistory i, FxShock, FxVolShock, PortfolioAgeing
+              Const ThrowErrors As Boolean = True
+
+124           WhoHasLines NumMCPaths, NumObservations, PortfolioAgeing, StatusBarPrefix, FxShock, FxVolShock, AllocationByYear, , , ThrowErrors
+125           UpdateLinesHistory i, FxShock, FxVolShock, PortfolioAgeing
 
               'Madness having 10 variables rather than one vector variable. TODO fix this!
               Dim Amount10Y As Double
@@ -1041,78 +1052,78 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
               Dim MaturityLabels
 
               'Code below implements "Catch up" when we have previously not been able to get enough hedges on...
-124           Amount1Y = 0: Amount2Y = 0: Amount3Y = 0: Amount4Y = 0: Amount5Y = 0: Amount6Y = 0: Amount7Y = 0: Amount8Y = 0: Amount9Y = 0: Amount10Y = 0
-125           For j = 1 To i
-126               Amount1Y = Amount1Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(1, 1)
-127               Amount2Y = Amount2Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(2, 1)
-128               Amount3Y = Amount3Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(3, 1)
-129               Amount4Y = Amount4Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(4, 1)
-130               Amount5Y = Amount5Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(5, 1)
-131               If HedgeHorizon >= 6 Then Amount6Y = Amount6Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(6, 1)
-132               If HedgeHorizon >= 7 Then Amount7Y = Amount7Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(7, 1)
-133               If HedgeHorizon >= 8 Then Amount8Y = Amount8Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(8, 1)
-134               If HedgeHorizon >= 9 Then Amount9Y = Amount9Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(9, 1)
-135               If HedgeHorizon >= 10 Then Amount10Y = Amount10Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(10, 1)
+126           Amount1Y = 0: Amount2Y = 0: Amount3Y = 0: Amount4Y = 0: Amount5Y = 0: Amount6Y = 0: Amount7Y = 0: Amount8Y = 0: Amount9Y = 0: Amount10Y = 0
+127           For j = 1 To i
+128               Amount1Y = Amount1Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(1, 1)
+129               Amount2Y = Amount2Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(2, 1)
+130               Amount3Y = Amount3Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(3, 1)
+131               Amount4Y = Amount4Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(4, 1)
+132               Amount5Y = Amount5Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(5, 1)
+133               If HedgeHorizon >= 6 Then Amount6Y = Amount6Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(6, 1)
+134               If HedgeHorizon >= 7 Then Amount7Y = Amount7Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(7, 1)
+135               If HedgeHorizon >= 8 Then Amount8Y = Amount8Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(8, 1)
+136               If HedgeHorizon >= 9 Then Amount9Y = Amount9Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(9, 1)
+137               If HedgeHorizon >= 10 Then Amount10Y = Amount10Y + ScenarioDefinition(j, cnd_ReplenishmentAmount) * AllocationsArray(10, 1)
 
-136               If j < i Then
-137                   Amount1Y = Amount1Y - ScenarioResults(j, cnr_1YT)
-138                   Amount2Y = Amount2Y - ScenarioResults(j, cnr_2YT)
-139                   Amount3Y = Amount3Y - ScenarioResults(j, cnr_3YT)
-140                   Amount4Y = Amount4Y - ScenarioResults(j, cnr_4YT)
-141                   Amount5Y = Amount5Y - ScenarioResults(j, cnr_5YT)
-142                   If HedgeHorizon >= 6 Then Amount6Y = Amount6Y - ScenarioResults(j, cnr_6YT)
-143                   If HedgeHorizon >= 7 Then Amount7Y = Amount7Y - ScenarioResults(j, cnr_7YT)
-144                   If HedgeHorizon >= 8 Then Amount8Y = Amount8Y - ScenarioResults(j, cnr_8YT)
-145                   If HedgeHorizon >= 9 Then Amount9Y = Amount9Y - ScenarioResults(j, cnr_9YT)
-146                   If HedgeHorizon >= 10 Then Amount10Y = Amount10Y - ScenarioResults(j, cnr_10YT)
-147               End If
-148           Next j
+138               If j < i Then
+139                   Amount1Y = Amount1Y - ScenarioResults(j, cnr_1YT)
+140                   Amount2Y = Amount2Y - ScenarioResults(j, cnr_2YT)
+141                   Amount3Y = Amount3Y - ScenarioResults(j, cnr_3YT)
+142                   Amount4Y = Amount4Y - ScenarioResults(j, cnr_4YT)
+143                   Amount5Y = Amount5Y - ScenarioResults(j, cnr_5YT)
+144                   If HedgeHorizon >= 6 Then Amount6Y = Amount6Y - ScenarioResults(j, cnr_6YT)
+145                   If HedgeHorizon >= 7 Then Amount7Y = Amount7Y - ScenarioResults(j, cnr_7YT)
+146                   If HedgeHorizon >= 8 Then Amount8Y = Amount8Y - ScenarioResults(j, cnr_8YT)
+147                   If HedgeHorizon >= 9 Then Amount9Y = Amount9Y - ScenarioResults(j, cnr_9YT)
+148                   If HedgeHorizon >= 10 Then Amount10Y = Amount10Y - ScenarioResults(j, cnr_10YT)
+149               End If
+150           Next j
 
-149           AllocateTradesToBanks Amount1Y, Amount2Y, Amount3Y, Amount4Y, Amount5Y, _
+151           AllocateTradesToBanks Amount1Y, Amount2Y, Amount3Y, Amount4Y, Amount5Y, _
                   Amount6Y, Amount7Y, Amount8Y, Amount9Y, Amount10Y, HedgeHorizon, _
                   Counterparties, CCY1, CCY2, Ccy2Notional, MaturityLabels, TotalsDone, _
                   TotalAvailableAfterAllocation, NumTradesDone
 
-150           ScenarioResults(i, cnr_1YT) = TotalsDone(1, 1)
-151           ScenarioResults(i, cnr_2YT) = TotalsDone(1, 2)
-152           ScenarioResults(i, cnr_3YT) = TotalsDone(1, 3)
-153           ScenarioResults(i, cnr_4YT) = TotalsDone(1, 4)
-154           ScenarioResults(i, cnr_5YT) = TotalsDone(1, 5)
-155           If HedgeHorizon >= 6 Then ScenarioResults(i, cnr_6YT) = TotalsDone(1, 6)
-156           If HedgeHorizon >= 7 Then ScenarioResults(i, cnr_7YT) = TotalsDone(1, 7)
-157           If HedgeHorizon >= 8 Then ScenarioResults(i, cnr_8YT) = TotalsDone(1, 8)
-158           If HedgeHorizon >= 9 Then ScenarioResults(i, cnr_9YT) = TotalsDone(1, 9)
-159           If HedgeHorizon >= 10 Then ScenarioResults(i, cnr_10YT) = TotalsDone(1, 10)
+152           ScenarioResults(i, cnr_1YT) = TotalsDone(1, 1)
+153           ScenarioResults(i, cnr_2YT) = TotalsDone(1, 2)
+154           ScenarioResults(i, cnr_3YT) = TotalsDone(1, 3)
+155           ScenarioResults(i, cnr_4YT) = TotalsDone(1, 4)
+156           ScenarioResults(i, cnr_5YT) = TotalsDone(1, 5)
+157           If HedgeHorizon >= 6 Then ScenarioResults(i, cnr_6YT) = TotalsDone(1, 6)
+158           If HedgeHorizon >= 7 Then ScenarioResults(i, cnr_7YT) = TotalsDone(1, 7)
+159           If HedgeHorizon >= 8 Then ScenarioResults(i, cnr_8YT) = TotalsDone(1, 8)
+160           If HedgeHorizon >= 9 Then ScenarioResults(i, cnr_9YT) = TotalsDone(1, 9)
+161           If HedgeHorizon >= 10 Then ScenarioResults(i, cnr_10YT) = TotalsDone(1, 10)
 
-160           ScenarioResults(i, cnr_1YC) = TotalAvailableAfterAllocation(1, 1)
-161           ScenarioResults(i, cnr_2YC) = TotalAvailableAfterAllocation(1, 2)
-162           ScenarioResults(i, cnr_3YC) = TotalAvailableAfterAllocation(1, 3)
-163           ScenarioResults(i, cnr_4YC) = TotalAvailableAfterAllocation(1, 4)
-164           ScenarioResults(i, cnr_5YC) = TotalAvailableAfterAllocation(1, 5)
-165           If HedgeHorizon >= 6 Then ScenarioResults(i, cnr_6YC) = TotalAvailableAfterAllocation(1, 6)
-166           If HedgeHorizon >= 7 Then ScenarioResults(i, cnr_7YC) = TotalAvailableAfterAllocation(1, 7)
-167           If HedgeHorizon >= 8 Then ScenarioResults(i, cnr_8YC) = TotalAvailableAfterAllocation(1, 8)
-168           If HedgeHorizon >= 9 Then ScenarioResults(i, cnr_9YC) = TotalAvailableAfterAllocation(1, 9)
-169           If HedgeHorizon >= 10 Then ScenarioResults(i, cnr_10YC) = TotalAvailableAfterAllocation(1, 10)
+162           ScenarioResults(i, cnr_1YC) = TotalAvailableAfterAllocation(1, 1)
+163           ScenarioResults(i, cnr_2YC) = TotalAvailableAfterAllocation(1, 2)
+164           ScenarioResults(i, cnr_3YC) = TotalAvailableAfterAllocation(1, 3)
+165           ScenarioResults(i, cnr_4YC) = TotalAvailableAfterAllocation(1, 4)
+166           ScenarioResults(i, cnr_5YC) = TotalAvailableAfterAllocation(1, 5)
+167           If HedgeHorizon >= 6 Then ScenarioResults(i, cnr_6YC) = TotalAvailableAfterAllocation(1, 6)
+168           If HedgeHorizon >= 7 Then ScenarioResults(i, cnr_7YC) = TotalAvailableAfterAllocation(1, 7)
+169           If HedgeHorizon >= 8 Then ScenarioResults(i, cnr_8YC) = TotalAvailableAfterAllocation(1, 8)
+170           If HedgeHorizon >= 9 Then ScenarioResults(i, cnr_9YC) = TotalAvailableAfterAllocation(1, 9)
+171           If HedgeHorizon >= 10 Then ScenarioResults(i, cnr_10YC) = TotalAvailableAfterAllocation(1, 10)
 
-170           If NumTradesDone > 0 Then
-171               TradeHeadroomInBillions = sSumOfNums(TotalAvailableAfterAllocation) / 1000000000#
-172               SetOptionsStrategy TradeHeadroomInBillions, i, ForwardsRatio, PutRatio, CallRatio, _
+172           If NumTradesDone > 0 Then
+173               TradeHeadroomInBillions = sSumOfNums(TotalAvailableAfterAllocation) / 1000000000#
+174               SetOptionsStrategy TradeHeadroomInBillions, i, ForwardsRatio, PutRatio, CallRatio, _
                       PutStrikeOffset, CallStrikeOffset, StrategySwitchPoints, dForwardsRatio, dPutRatio, _
                       dCallRatio, dPutStrikeOffset, dCallStrikeOffset
-173               ExecuteTrades ThisDealDate, Counterparties, CCY1, CCY2, Ccy2Notional, MaturityLabels, _
+175               ExecuteTrades ThisDealDate, Counterparties, CCY1, CCY2, Ccy2Notional, MaturityLabels, _
                       FxShock, AvEDSTraded, dForwardsRatio, dPutRatio, dCallRatio, dPutStrikeOffset, _
                       dCallStrikeOffset, ModelName, PortfolioAgeing, ModelBareBones
-174           End If
+176           End If
               Dim PVUSD
 
-175           PVUSD = sColumnSum(sColumnFromTable(RangeFromSheet(shWhoHasLines, "TheTable"), "PVUSD").Value)(1, 1)
-176           ScenarioResults(i, cnr_PVUSD) = PVUSD
-177       Next i
+177           PVUSD = sColumnSum(sColumnFromTable(RangeFromSheet(shWhoHasLines, "TheTable"), "PVUSD").Value)(1, 1)
+178           ScenarioResults(i, cnr_PVUSD) = PVUSD
+179       Next i
 
-178       TimeEnd = Now()
+180       TimeEnd = Now()
 
-179       RefreshScenarioResultsSheet shScenarioResults, ScenDefnHeaders, ScenarioDefinition, ScenarioResultsHeaders, _
+181       RefreshScenarioResultsSheet shScenarioResults, ScenDefnHeaders, ScenarioDefinition, ScenarioResultsHeaders, _
               ScenarioResults, "Not yet saved to file", ShocksDerivedFrom, HistoryStart, HistoryEnd, BaseSpot, BaseVol, _
               ForwardsRatio, PutRatio, CallRatio, PutStrikeOffset, CallStrikeOffset, StrategySwitchPoints, _
               AllocationByYear, ModelType, NumMCPaths, NumObservations, FilterBy2, Filter2Value, _
@@ -1120,35 +1131,34 @@ Function RunScenario(SilentMode As Boolean, StatusBarPrePrefix As String, ModelN
               TimeEnd, ComputerName, UseSpeedGrid, SpeedGridWidth, HighFxSpeed, LowFxSpeed, VaryGridWidth, _
               SpeedGridBaseVol, AnnualReplenishment, ScenarioDescription, HedgeHorizon
 
-180       If SaveResults Then
-181           FileName = RangeFromSheet(shConfig, "ScenarioResultsDirectory")
-182           If Right(FileName, 1) <> "\" Then FileName = FileName & "\"
-183           ThrowIfError sCreateFolder(FileName)
-184           FileName = FileName + ScenarioDescriptionToFileName(RangeFromSheet(shScenarioDefinition, "ScenarioDescription"), "srf")
-185           SaveScenarioResultsFile FileName, ""
-186       End If
+182       If SaveResults Then
+183           FileName = RangeFromSheet(shConfig, "ScenarioResultsDirectory")
+184           If Right(FileName, 1) <> "\" Then FileName = FileName & "\"
+185           ThrowIfError sCreateFolder(FileName)
+186           FileName = FileName + ScenarioDescriptionToFileName(RangeFromSheet(shScenarioDefinition, "ScenarioDescription"), "srf")
+187           SaveScenarioResultsFile FileName, ""
+188       End If
 
 Cleanup:
-187       InCleanUp = True
-188       RangeFromSheet(shCreditUsage, "FxShock").Value = 1
-189       RangeFromSheet(shCreditUsage, "FxVolShock").Value = 1
-190       RangeFromSheet(shCreditUsage, "PortfolioAgeing").Value = 0
-191       RangeFromSheet(shCreditUsage, "IncludeFutureTrades").Value = False
-192       ClearoutResults
-193       StatusBarWrap False
-194       If gDebugMode Then Debug.Print "RunScenario End", Now
-195       RangeFromSheet(shScenarioResults, "TimeEnd").Value = Now()
-196       RunScenario = IIf(CopyOfErr = "", "OK", CopyOfErr)
-197       Exit Function
+189       InCleanUp = True
+190       RangeFromSheet(shCreditUsage, "FxShock").Value = 1
+191       RangeFromSheet(shCreditUsage, "FxVolShock").Value = 1
+192       RangeFromSheet(shCreditUsage, "PortfolioAgeing").Value = 0
+193       RangeFromSheet(shCreditUsage, "IncludeFutureTrades").Value = False
+194       ClearoutResults
+195       Application.StatusBar = False
+196       RangeFromSheet(shScenarioResults, "TimeEnd").Value = Now()
+197       SafeAppActivate SheetToActivate
+198       RunScenario = IIf(CopyOfErr = "", "OK", CopyOfErr)
+199       Exit Function
 ErrHandler:
-198       CopyOfErr = "#RunScenario (line " & CStr(Erl) & "): " & Err.Description & "!"
-199       If gDebugMode Then Debug.Print Now, CopyOfErr
-200       If SilentMode Then        'Calling from RunManyScenarios
-201           RunScenario = CopyOfErr
-202       Else
-203           SomethingWentWrong "#RunScenario (line " & CStr(Erl) & "): " & Err.Description & "!"
-204           If Not InCleanUp Then GoTo Cleanup
-205       End If
+200       CopyOfErr = "#RunScenario (line " & CStr(Erl) & "): " & Err.Description & "!"
+201       If SilentMode Then        'Calling from RunManyScenarios
+202           RunScenario = CopyOfErr
+203       Else
+204           SomethingWentWrong "#RunScenario (line " & CStr(Erl) & "): " & Err.Description & "!"
+205           If Not InCleanUp Then GoTo Cleanup
+206       End If
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1725,7 +1735,7 @@ Function CleanUpPromptArray(ByVal PromptArray, Optional WithAreYouSure As Boolea
 20            For i = 1 To sNRows(Result)
 21                Select Case Result(i, 1)
                       Case "FxShock", "FxVolShock", "PortfolioAgeing", "TradesScaleFactor", "LinesScaleFactor"
-22                        Result(i, 2) = CStr(Result(i, 2)) + "                               <-- ARE YOU SURE?"
+22                        Result(i, 2) = CStr(Result(i, 2)) & "                               <-- ARE YOU SURE?"
 23                End Select
 
 24            Next i
@@ -2333,7 +2343,7 @@ Sub RefreshScenarioDefinition(DoFullValidation As Boolean, Optional DoDrillDown 
 37            If SpeedGridBaseVol < 0 Then Throw "SpeedGridBaseVol must be positve"
 38            AnnualReplenishment = RangeFromSheet(ws, "AnnualReplenishment", True, False, False, False, False)
 39            If AnnualReplenishment < 0 Then Throw "AnnualReplenishment must be positive"
-40            If ShocksDerivedFrom <> "History" Then Throw "When UseSpeedGid is TRUE, ShocksDerivedFrom must be 'History'"
+40            If ShocksDerivedFrom <> "History" Then Throw "When UseSpeedGid is TRUE, ShocksDerivedFrom must be 'History'", True
 41        End If
 
 42        If DoFullValidation Then

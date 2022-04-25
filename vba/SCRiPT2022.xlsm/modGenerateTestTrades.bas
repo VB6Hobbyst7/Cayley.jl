@@ -157,7 +157,7 @@ Sub GenerateTestSwaps()
 9                     For Each Ccy1 In Array("EUR")
 10                        For Each Notional1 In Array(10000000, 100.5)
 11                            For Each Rate1 In Array(0.01, 0)
-12                                For Each LegType1 In Array("Fixed", "Libor", "OIS")
+12                                For Each LegType1 In Array("Fixed", "IBOR", "RFR")
 13                                    If LegType1 = "Fixed" Then
 14                                        DCTs = AllDCTs
 15                                    Else
@@ -171,7 +171,7 @@ Sub GenerateTestSwaps()
 23                                                Ccy2 = Ccy1
 24                                                Notional2 = Notional1
 25                                                Rate2 = Choose((i Mod 2) + 1, 0.01, 0)
-26                                                LegType2 = Choose((i Mod 3) + 1, "Fixed", "Libor", "OIS")
+26                                                LegType2 = Choose((i Mod 3) + 1, "Fixed", "IBOR", "RFR")
 27                                                Freq2 = Choose((i Mod 3) + 1, "Annual", "Semi annual", "Quarterly", "Monthly")
 28                                                If LegType2 = "Fixed" Then
 29                                                    DCT2 = AllDCTs((i Mod 8) + 1, 1)

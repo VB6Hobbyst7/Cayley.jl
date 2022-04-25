@@ -491,12 +491,13 @@ Sub ShowFileInSnakeTail(Optional ByVal FileName As String, Optional ThrowIfNoExe
 17        ElseIf sFileExists(SnakeTail_B) Then
 18            Shell DQ + SnakeTail_B + DQ + " " + DQ + FileName + DQ, vbNormalFocus
 19        ElseIf ThrowIfNoExe Then
-20            Throw "Cannot find SnakeTail executable. Locations searched:" + vbLf + SnakeTail + vbLf + SnakeTail_B + vbLf + SnakeTail + vbLf + "Please install from http://snakenest.com/snaketail/"
+20            Throw "Cannot find SnakeTail executable at locations:" + vbLf + vbLf + SnakeTail + vbLf + SnakeTail_B + vbLf + vbLf + "Please install SnakeTail from http://snakenest.com/snaketail/"
 21        End If
 22        Exit Sub
 ErrHandler:
 23        Throw "#ShowFileInSnakeTail (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
+
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : NonStringToString
 ' Author    : Philip Swannell

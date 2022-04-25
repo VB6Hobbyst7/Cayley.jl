@@ -1152,44 +1152,72 @@ End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure  : LocalWorkbookName
-' Author     : Philip Swannell
-' Date       : 12-Jan-2019
-' Purpose    : Convert wb.FullName to local directory rather than https://. Works for OneDrive files, and also for OneDrive for business files
-'              though confusingly, wb.FullName is already local for such files
+' Author     : Adapted from https://stackoverflow.com/questions/46346567/thisworkbook-fullname-returns-a-url-after-syncing-with-onedrive-i-want-the-file/67697487#67697487
+' Date       : 22-Apr-2022
+' Purpose    : Return the address on the local PC of a file that may be on OneDrive
 ' -----------------------------------------------------------------------------------------------------------------------
-Function LocalWorkbookName(ByRef wb As Excel.Workbook) As String
-        
-          Dim i As Long
-          Dim j As Long
-          Dim OneDrivePath As String
-          Dim ShortName As String
-          
+Function LocalWorkbookName(wb As Workbook) As String
+          ' Set default return
 1         On Error GoTo ErrHandler
-2         If InStr(1, wb.FullName, "https://", vbTextCompare) > 0 Then
-          
-3             ShortName = Replace(wb.FullName, "/", "\")
-              
-4             For i = 1 To 4
-5                 ShortName = Mid$(ShortName, InStr(ShortName, "\") + 1)
-6             Next
-              
-7             For j = 1 To 3
-8                 OneDrivePath = Environ$(Choose(j, "OneDrive", "OneDriveCommercial", "OneDriveConsumer"))
-9                 If Len(OneDrivePath) > 0 Then
-10                    LocalWorkbookName = OneDrivePath & "\" & ShortName
-11                    If sFileExists(LocalWorkbookName) Then
-12                        Exit Function
-13                    End If
-14                End If
-15            Next j
-          
-16        End If
-          
-17        LocalWorkbookName = wb.FullName
+          Static Memoize As Dictionary
 
-18        Exit Function
+2         LocalWorkbookName = wb.FullName
+3         If InStr(1, LocalWorkbookName, "https://", vbTextCompare) = 0 Then
+4             Exit Function
+5         End If
+          'Use a dictionary to memoize the result since execution takes 0.1 to 0.2 seconds
+6         If Memoize Is Nothing Then Set Memoize = New Dictionary
+7         If Memoize.Exists(LocalWorkbookName) Then
+8             LocalWorkbookName = Memoize(LocalWorkbookName)
+9             Exit Function
+10        End If
+          
+          Const HKEY_CURRENT_USER = &H80000001
+
+          Dim strValue As String
+          
+11        Dim objReg As Object: Set objReg = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\default:StdRegProv")
+12        Dim strRegPath As String: strRegPath = "Software\SyncEngines\Providers\OneDrive\"
+          Dim arrSubKeys() As Variant
+13        objReg.EnumKey HKEY_CURRENT_USER, strRegPath, arrSubKeys
+          
+          Dim varKey As Variant
+14        For Each varKey In arrSubKeys
+              ' check if this key has a value named "UrlNamespace", and save the value to strValue
+15            objReg.getStringValue HKEY_CURRENT_USER, strRegPath & varKey, "UrlNamespace", strValue
+          
+              ' If the namespace is in FullName, then we know we have a URL and need to get the path on disk
+16            If InStr(wb.FullName, strValue) > 0 Then
+                  Dim strTemp As String
+                  Dim strCID As String
+                  Dim strMountpoint As String
+                  
+                  ' Get the mount point for OneDrive
+17                objReg.getStringValue HKEY_CURRENT_USER, strRegPath & varKey, "MountPoint", strMountpoint
+                  
+                  ' Get the CID
+18                objReg.getStringValue HKEY_CURRENT_USER, strRegPath & varKey, "CID", strCID
+                  
+                  ' Add a slash, if the CID returned something
+19                If strCID <> vbNullString Then
+20                    strCID = "/" & strCID
+21                End If
+
+                  ' strip off the namespace and CID
+22                strTemp = Right(wb.FullName, Len(wb.FullName) - Len(strValue & strCID))
+                  
+                  ' replace all forward slashes with backslashes
+23                LocalWorkbookName = strMountpoint & Replace(strTemp, "/", "\")
+
+24                Memoize.Add wb.FullName, LocalWorkbookName
+
+25                Exit Function
+26            End If
+27        Next
+
+28        Exit Function
 ErrHandler:
-19        Throw "#LocalWorkbookName (line " & CStr(Erl) + "): " & Err.Description & "!"
+29        Throw "#LocalWorkbookName (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 'For use by sFileSave and other functions

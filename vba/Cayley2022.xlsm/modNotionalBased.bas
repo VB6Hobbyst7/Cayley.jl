@@ -46,16 +46,16 @@ Function NotionalBasedByFilters(FilterBy1, Filter1Value, FilterBy2, Filter2Value
               IncludeFutureTrades, PortfolioAgeing, True, Numeraire, IncludeFxTrades, _
               IncludeRatesTrades, TradesScaleFactor, CurrenciesToInclude, False, TC, twb, fts, AnchorDate)
 6         If sNRows(TradesJuliaFormat) > 1 Then
-7             TradePVs = PortfolioValueHW(TradesJuliaFormat, ModelName, BaseCCY, True)
+7             TradePVs = PortfolioValueHW(TradesJuliaFormat, ModelName, BaseCCY, True, True)
 8         Else
-9             TradePVs = CreateMissing()
+9             TradePVs = createmissing()
 10        End If
 
 11        If IncludeExtraTrades Then
 12            ExtraTradesJuliaFormat = ConstructExtraTrades(ExtraTradesAre, ModelBareBones, _
                   ExtraTradeAmounts, ExtraTradeLabels, False)
               'TODO should not the PV of the extra trades always be zero??? PGS 17 Jan 2022
-13            ExtraTradePVs = PortfolioValueHW(ExtraTradesJuliaFormat, ModelName, BaseCCY, True)
+13            ExtraTradePVs = PortfolioValueHW(ExtraTradesJuliaFormat, ModelName, BaseCCY, True, True)
 14            TradePVs = Concatenate1DArrays(TradePVs, ExtraTradePVs)
 15        End If
 
@@ -268,133 +268,139 @@ Function NotionalBasedFromTrades(ByVal BaseCCY As String, FxNotionalPercentages,
 111               PayCurrency = TradesArray(i + 1, cn_PayCurrency)
 112               ReceiveNotional = TradesArray(i + 1, cn_ReceiveNotional)
 113               PayNotional = TradesArray(i + 1, cn_PayNotional)
-114               ThisPV = TradePVs(k)
 
-115               Widths(k, 1) = (EndDate - AnchorDate) / 365
+                  'PGS 22/4/2022, trying to track down bug...
+114               If Not IsNumber(TradePVs(k)) Then
+115                   Throw "Element " & CStr(k) & " of variable TradePVs is not a number, instead it is a " & TypeName(TradePVs(k)) & " with value:" & vbLf & vbLf & CStr(TradePVs(k))
+116               End If
 
-116               Select Case ValuationFunction
+117               ThisPV = TradePVs(k)
+
+118               Widths(k, 1) = (EndDate - AnchorDate) / 365
+
+119               Select Case ValuationFunction
 
                       Case "FxForward", "CrossCurrencySwap", "FxForwardStrip"
 
-117                       If ValuationFunction = "FxForwardStrip" Then
+120                       If ValuationFunction = "FxForwardStrip" Then
                               'We assume that this is a booking of an FxSwap, so there should be two elements encoded in the trades Dates, ReceiveNotionals and PayNotionals attributes
-118                           ParseFxForwardStripAsFxSwap CStr(TradesArray(i + 1, cn_Dates)), _
+121                           ParseFxForwardStripAsFxSwap CStr(TradesArray(i + 1, cn_Dates)), _
                                   CStr(TradesArray(i + 1, cn_ReceiveNotionals)), _
                                   CStr(TradesArray(i + 1, cn_PayNotionals)), _
                                   EndDate, ReceiveNotional, PayNotional
-119                       End If
+122                       End If
 
-120                       If PayCurrency = BaseCCY Then
-121                           ThisBaseCCyNotional = PayNotional
-122                       ElseIf ReceiveCurrency = BaseCCY Then
-123                           ThisBaseCCyNotional = ReceiveNotional
-124                       Else
+123                       If PayCurrency = BaseCCY Then
+124                           ThisBaseCCyNotional = PayNotional
+125                       ElseIf ReceiveCurrency = BaseCCY Then
+126                           ThisBaseCCyNotional = ReceiveNotional
+127                       Else
                               Dim PrefCcy As String
-125                           PrefCcy = PreferredCcy(ReceiveCurrency, PayCurrency, BaseCCY)
-126                           If PrefCcy = PayCurrency Then
-127                               ThisBaseCCyNotional = PayNotional * _
+128                           PrefCcy = PreferredCcy(ReceiveCurrency, PayCurrency, BaseCCY)
+129                           If PrefCcy = PayCurrency Then
+130                               ThisBaseCCyNotional = PayNotional * _
                                       MyFxPerBaseCcy(PrefCcy, BaseCCY, ModelBareBones)
-128                           ElseIf PrefCcy = ReceiveCurrency Then
-129                               ThisBaseCCyNotional = ReceiveNotional * _
+131                           ElseIf PrefCcy = ReceiveCurrency Then
+132                               ThisBaseCCyNotional = ReceiveNotional * _
                                       MyFxPerBaseCcy(PrefCcy, BaseCCY, ModelBareBones)
-130                           Else
-131                               Throw "Assertion failed."
-132                           End If
-133                       End If
-134                       ThisNotionalPercentage = FirstElementOf(sInterp(FxNPLeftCol, FxNPRightCol, _
+133                           Else
+134                               Throw "Assertion failed."
+135                           End If
+136                       End If
+137                       ThisNotionalPercentage = FirstElementOf(sInterp(FxNPLeftCol, FxNPRightCol, _
                               Widths(k, 1), NPInterpMethod, "FF"))
-135                       NotionalsForCap(k, 1) = Abs(ThisBaseCCyNotional)
-136                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * Abs(ThisBaseCCyNotional)
-137                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
-138                   Case "FxOption"
-139                       Ccy = TradesArray(i + 1, cn_Currency)
-140                       Notional = TradesArray(i + 1, cn_Notional)
+138                       NotionalsForCap(k, 1) = Abs(ThisBaseCCyNotional)
+139                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * Abs(ThisBaseCCyNotional)
+140                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
+141                   Case "FxOption"
+142                       Ccy = TradesArray(i + 1, cn_Currency)
+143                       Notional = TradesArray(i + 1, cn_Notional)
 
-141                       ThisBaseCCyNotional = Notional * MyFxPerBaseCcy(Ccy, BaseCCY, ModelBareBones)
+144                       ThisBaseCCyNotional = Notional * MyFxPerBaseCcy(Ccy, BaseCCY, ModelBareBones)
                           ' Short option positions do count for Notional Cap.
-142                       NotionalsForCap(k, 1) = Abs(ThisBaseCCyNotional)
-143                       If Notional < 0 Then        'Bank is short the option so no credit risk
-144                           ThisBaseCCyNotional = 0
-145                       End If
-146                       ThisNotionalPercentage = FirstElementOf(sInterp(FxNPLeftCol, FxNPRightCol, _
+145                       NotionalsForCap(k, 1) = Abs(ThisBaseCCyNotional)
+146                       If Notional < 0 Then        'Bank is short the option so no credit risk
+147                           ThisBaseCCyNotional = 0
+148                       End If
+149                       ThisNotionalPercentage = FirstElementOf(sInterp(FxNPLeftCol, FxNPRightCol, _
                               Widths(k, 1), NPInterpMethod, "FF"))
-147                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * ThisBaseCCyNotional
-148                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
-149                   Case "InterestRateSwap"
+150                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * ThisBaseCCyNotional
+151                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
+152                   Case "InterestRateSwap"
                           'Cope with amortising trades by (usually conservative) choice of first notional
-150                       Ccy = TradesArray(i + 1, cn_ReceiveCurrency)
-151                       Notional = TradesArray(i + 1, cn_ReceiveNotional)
-152                       If cn_ReceiveAmortNotionals <> 0 Then
-153                           If VarType(TradesArray(i + 1, cn_ReceiveAmortNotionals)) = vbString Then
-154                               Notional = CDbl(sStringBetweenStrings(TradesArray(i + 1, cn_ReceiveAmortNotionals), , ";"))
-155                           End If
-156                       End If
+153                       Ccy = TradesArray(i + 1, cn_ReceiveCurrency)
+154                       Notional = TradesArray(i + 1, cn_ReceiveNotional)
+155                       If cn_ReceiveAmortNotionals <> 0 Then
+156                           If VarType(TradesArray(i + 1, cn_ReceiveAmortNotionals)) = vbString Then
+157                               Notional = CDbl(sStringBetweenStrings(TradesArray(i + 1, cn_ReceiveAmortNotionals), , ";"))
+158                           End If
+159                       End If
 
-157                       If Ccy = BaseCCY Then
-158                           ThisBaseCCyNotional = Abs(Notional)
-159                       Else
-160                           ThisBaseCCyNotional = Abs(Notional) * MyFxPerBaseCcy(Ccy, BaseCCY, ModelBareBones)
-161                       End If
-162                       NotionalsForCap(k, 1) = ThisBaseCCyNotional
+160                       If Ccy = BaseCCY Then
+161                           ThisBaseCCyNotional = Abs(Notional)
+162                       Else
+163                           ThisBaseCCyNotional = Abs(Notional) * MyFxPerBaseCcy(Ccy, BaseCCY, ModelBareBones)
+164                       End If
+165                       NotionalsForCap(k, 1) = ThisBaseCCyNotional
                           Dim MatchID
                           Dim yArray
-163                       MatchID = sMatch(Ccy, RatesNPHeaders)
-164                       If Not IsNumber(MatchID) Then
-165                           MatchID = sMatch("Other", RatesNPHeaders)
-166                       End If
-167                       yArray = sSubArray(RatesNotionalPercentages, 2, MatchID, , 1)
-168                       ThisNotionalPercentage = FirstElementOf(sInterp(RatesNPLeftCol, yArray, _
+166                       MatchID = sMatch(Ccy, RatesNPHeaders)
+167                       If Not IsNumber(MatchID) Then
+168                           MatchID = sMatch("Other", RatesNPHeaders)
+169                       End If
+170                       yArray = sSubArray(RatesNotionalPercentages, 2, MatchID, , 1)
+171                       ThisNotionalPercentage = FirstElementOf(sInterp(RatesNPLeftCol, yArray, _
                               Widths(k, 1), NPInterpMethod, "FF"))
-169                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * ThisBaseCCyNotional
-170                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
-171                   Case Else
-172                       Throw "ValuationFunction (" & ValuationFunction & ") not handled"
-173               End Select
+172                       Heights(k, 1) = ThisPV + ThisNotionalPercentage * ThisBaseCCyNotional
+173                       If Heights(k, 1) < 0 Then Heights(k, 1) = 0
+174                   Case Else
+175                       Throw "ValuationFunction (" & ValuationFunction & ") not handled"
+176               End Select
 
-174           Next i
-175       Next j
+177           Next i
+178       Next j
 
-176       If WhatToReturn = "NotionalsForCap" Then
-177           NotionalBasedFromTrades = NotionalsForCap
-178           Exit Function
-179       ElseIf WhatToReturn = "TotalNotionalForCap" Then
-180           NotionalBasedFromTrades = sColumnSum(NotionalsForCap)(1, 1)
+179       If WhatToReturn = "NotionalsForCap" Then
+180           NotionalBasedFromTrades = NotionalsForCap
 181           Exit Function
-182       End If
+182       ElseIf WhatToReturn = "TotalNotionalForCap" Then
+183           NotionalBasedFromTrades = sColumnSum(NotionalsForCap)(1, 1)
+184           Exit Function
+185       End If
 
           Dim LineUseAtObservationDates
           Dim LookupArray
           Dim MaxDate
           Dim ObservationDates
           Dim ObservationTimes
-183       ObservationTimes = sGrid(0, TimeEnd, 1 + TimeEnd / TimeGap)
-184       ObservationDates = sArrayAdd(AnchorDate, sArrayMultiply(ObservationTimes, 365))
+186       ObservationTimes = sGrid(0, TimeEnd, 1 + TimeEnd / TimeGap)
+187       ObservationDates = sArrayAdd(AnchorDate, sArrayMultiply(ObservationTimes, 365))
 
-185       If NumTrades > 0 Then
-186           LookupArray = sArrayRange(Widths, Heights)
-187           LookupArray = sSortMerge(LookupArray, 1, 2, "Sum")
-188           MaxDate = sColumnMax(Widths)(1, 1)
-189           LookupArray = sArrayStack(LookupArray, sArrayRange(MaxDate + 0.1, 0))
-190           For i = sNRows(LookupArray) - 1 To 1 Step -1
-191               LookupArray(i, 2) = LookupArray(i, 2) + LookupArray(i + 1, 2)
-192           Next i
-193           LineUseAtObservationDates = ThrowIfError(sInterp(sSubArray(LookupArray, 1, 1, , 1), _
+188       If NumTrades > 0 Then
+189           LookupArray = sArrayRange(Widths, Heights)
+190           LookupArray = sSortMerge(LookupArray, 1, 2, "Sum")
+191           MaxDate = sColumnMax(Widths)(1, 1)
+192           LookupArray = sArrayStack(LookupArray, sArrayRange(MaxDate + 0.1, 0))
+193           For i = sNRows(LookupArray) - 1 To 1 Step -1
+194               LookupArray(i, 2) = LookupArray(i, 2) + LookupArray(i + 1, 2)
+195           Next i
+196           LineUseAtObservationDates = ThrowIfError(sInterp(sSubArray(LookupArray, 1, 1, , 1), _
                   sSubArray(LookupArray, 1, 2, , 1), ObservationTimes, "FlatToRight", "FF"))
-194       Else
-195           LineUseAtObservationDates = sReshape(0, sNRows(ObservationDates), 1)
-196       End If
+197       Else
+198           LineUseAtObservationDates = sReshape(0, sNRows(ObservationDates), 1)
+199       End If
 
-197       If WhatToReturn = "3Cols" Then
-198           NotionalBasedFromTrades = sArrayRange(ObservationDates, ObservationTimes, LineUseAtObservationDates)
-199       ElseIf WhatToReturn = "LineUse" Then
-200           NotionalBasedFromTrades = LineUseAtObservationDates
-201       Else
-202           Throw "Unrecognised value for WhatToReturn"
-203       End If
+200       If WhatToReturn = "3Cols" Then
+201           NotionalBasedFromTrades = sArrayRange(ObservationDates, ObservationTimes, LineUseAtObservationDates)
+202       ElseIf WhatToReturn = "LineUse" Then
+203           NotionalBasedFromTrades = LineUseAtObservationDates
+204       Else
+205           Throw "Unrecognised value for WhatToReturn"
+206       End If
 
-204       Exit Function
+207       Exit Function
 ErrHandler:
-205       Throw "#NotionalBasedFromTrades (line " & CStr(Erl) & "): " & Err.Description & "!"
+208       Throw "#NotionalBasedFromTrades (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -410,14 +416,14 @@ Private Sub ParseFxForwardStripAsFxSwap(Dates As String, ReceiveNotionals As Str
 1         On Error GoTo ErrHandler
 2         NumForwards = Len(Dates) - Len(Replace(Dates, ";", "")) + 1
 3         If NumForwards <> 2 Then
-4             Throw "FxForwardStrip must contain 2 FxForward trades (i.e. represent an Fx Swap) but trade contains " + CStr(NumForwards) + " FxForward trades"
+4             Throw "FxForwardStrip must contain 2 FxForward trades (i.e. represent an Fx Swap) but trade contains " & CStr(NumForwards) & " FxForward trades"
 5         End If
 6         EndDate = CDate(Mid(Dates, InStrRev(Dates, ";") + 1))
 7         ReceiveNotional = CDbl(Mid(ReceiveNotionals, InStrRev(ReceiveNotionals, ";") + 1))
 8         PayNotional = CDbl(Mid(PayNotionals, InStrRev(PayNotionals, ";") + 1))
 9         Exit Sub
 ErrHandler:
-10        Throw "#ParseFxForwardStripAsFxSwap (line " & CStr(Erl) + "): " & Err.Description & "!"
+10        Throw "#ParseFxForwardStripAsFxSwap (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------

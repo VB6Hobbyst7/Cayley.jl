@@ -30,7 +30,7 @@ Sub FeedRatesFromBloomberg()
           Const chFeedInflation = "Inflation swaps"
           Const chFeedInflationHistoricSets = "Inflation Historic Sets"
           Dim ButtonClicked As String
-          Dim CopyOferr As String
+          Dim CopyOfErr As String
           Dim DoBasis As Boolean
           Dim DoCredit As Boolean
           Dim DoFx As Boolean
@@ -46,7 +46,7 @@ Sub FeedRatesFromBloomberg()
 1         On Error GoTo ErrHandler
 GoBack:
 2         FirstChoice = ShowOptionButtonDialog(sArrayStack(chLive, chCoB), Title, TopText1, FirstChoice, , , "Apply random adjustments", gApplyRandomAdjustments, , "&Next >", , "&Cancel", ButtonClicked1)
-3         If ButtonClicked1 <> "Next >" Then GoTo earlyexit
+3         If ButtonClicked1 <> "Next >" Then GoTo earlyExit
 
 4         TheRateCategories = sArrayStack(chFeedFx, chFeedSwapRates, chFeedXccyBasis, chFeedIRVol, chFeedCDS, chFeedInflation, chFeedInflationHistoricSets)
 5         If FirstChoice = chLive Then
@@ -56,7 +56,7 @@ GoBack2:
 8             Live = False
 9             AsOfDate = GetCOBDate(ButtonClicked)
 10            If ButtonClicked = "< Back" Then GoTo GoBack
-11            If AsOfDate = 0 Then GoTo earlyexit
+11            If AsOfDate = 0 Then GoTo earlyExit
 12        End If
 GoBack3:
 13        SecondChoice = ShowMultipleChoiceDialog(TheRateCategories, SecondChoice, Title, TopText2, , , "< &Back", "&Cancel", False, "&Next >", ButtonClicked)
@@ -68,7 +68,7 @@ GoBack3:
 19            End If
 20        End If
 
-21        If sIserrorString(SecondChoice) Then GoTo earlyexit
+21        If sIsErrorString(SecondChoice) Then GoTo earlyExit
 
 22        DoFx = IsNumber(sMatch(chFeedFx, SecondChoice))
 23        DoSwaps = IsNumber(sMatch(chFeedSwapRates, SecondChoice))
@@ -79,7 +79,7 @@ GoBack3:
 28        DoInflationSets = IsNumber(sMatch(chFeedInflationHistoricSets, SecondChoice))
 
 29        TopText3 = "Feed " + IIf(Live, "live rates for:", "close of business rates for " + Format(AsOfDate, "d-mmm-yyyy")) + vbLf + _
-                     sConcatenateStrings(SecondChoice, vbLf) + vbLf + vbLf + "Choose currencies"
+              sConcatenateStrings(SecondChoice, vbLf) + vbLf + vbLf + "Choose currencies"
 
 30        Set STK = CreateStacker()
 
@@ -93,21 +93,22 @@ GoBack3:
 37            sheetList = sSortedArray(STK.report)
 38            ThirdChoice = ShowMultipleChoiceDialog(sheetList, ThirdChoice, Title, TopText3, , , "< &Back", "&Cancel", False, "&OK", ButtonClicked)
 39            If ButtonClicked = "< Back" Then GoTo GoBack3
-40            If sIserrorString(ThirdChoice) Then GoTo earlyexit
+40            If sIsErrorString(ThirdChoice) Then GoTo earlyExit
 41        Else
 42            ThirdChoice = Empty
 43        End If
 
 44        FeedAllRatesAllSheets Live, AsOfDate, ThirdChoice, DoFx, DoSwaps, DoBasis, DoSwaptions, DoCredit, DoInflation, DoInflationSets
 
-earlyexit:
+earlyExit:
 45        Application.Cursor = xlDefault
 
 46        Exit Sub
 ErrHandler:
-47        CopyOferr = "#FeedRatesFromBloomberg (line " & CStr(Erl) + "): " & Err.Description & "!"
+47        CopyOfErr = "#FeedRatesFromBloomberg (line " & CStr(Erl) + "): " & Err.Description & "!"
 48        Application.Cursor = xlDefault
-49        SomethingWentWrong CopyOferr
+49        SomethingWentWrong CopyOfErr
 End Sub
+
 
 

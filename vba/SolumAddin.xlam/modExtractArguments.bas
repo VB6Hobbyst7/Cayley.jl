@@ -26,12 +26,12 @@ Sub ExtractArguments()
 6         ThrowIfError ArgumentList
 7         NumArgs = UBound(ArgumentList, 1) - LBound(ArgumentList, 1) + 1
 8         Set TargetCells = ActiveCell.Offset(1).Resize(NumArgs, 2)
-9         Application.GoTo TargetCells
+9         Application.Goto TargetCells
 
 10        If NumBlanksInRange(TargetCells.Columns(1)) <> NumArgs Then
-11            Application.GoTo TargetCells.Columns(1)
+11            Application.Goto TargetCells.Columns(1)
 12            If MsgBoxPlus("Overwrite these cells?", vbYesNo, MSGBOXTITLE) <> vbYes Then Exit Sub
-13            Application.GoTo TargetCells
+13            Application.Goto TargetCells
 14        End If
 
 15        TargetCells.Columns(1).Value = ArgumentList

@@ -294,14 +294,14 @@ End Sub
 ' TargetFile: Full name (with path) of the target destination.  Can be an array, in which case
 '             SourceFile must be an array of the same dimensions.
 ' -----------------------------------------------------------------------------------------------------------------------
-Function sFileCopy(ByVal SourceFile As Variant, ByVal TargetFile As Variant)
+Function sFileCopy(ByVal SourceFile As Variant, ByVal TargetFile As Variant, Optional OverwriteReadOnlyFiles As Boolean)
 Attribute sFileCopy.VB_Description = "Copies a named file (or files) from one location to another, overwriting if the target already exists. If the copy process fails, then an error string is returned."
 Attribute sFileCopy.VB_ProcData.VB_Invoke_Func = " \n26"
 1         If FunctionWizardActive() Then
 2             sFileCopy = "#Disabled in Function Dialog!"
 3             Exit Function
 4         End If
-5         sFileCopy = Broadcast2Args(FuncIdFileCopy, SourceFile, TargetFile)
+5         sFileCopy = Broadcast2Args(FuncIdFileCopy, SourceFile, TargetFile, OverwriteReadOnlyFiles)
 End Function
 
 Function sFileCopySkip(ByVal SourceFile As Variant, ByVal TargetFile As Variant, NumLinesToSkip, Optional Unicode = False)

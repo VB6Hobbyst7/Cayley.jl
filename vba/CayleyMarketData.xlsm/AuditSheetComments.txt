@@ -1,4 +1,12 @@
 Version	Date	Time	Author	Comment
+253	24-Apr-2022	15:42	Philip Swannell	Deleted method IAmCompatibleWithCayleyForJulia.
+252	23-Apr-2022	17:08	Philip Swannell	Removed two calls to DoEvents.
+251	23-Apr-2022	17:04	Philip Swannell	More fixes to the fat-finger snafu.
+250	23-Apr-2022	16:48	Philip Swannell	Arrgh. Release 241 had a "fat-finger" error where all capital `E`s in the VBA code were changed to lower case `e`s. That broke only "case-sensitive code" such as code to feed from Bloomberg. Corrected using data from CodeBackups folders.
+249	23-Apr-2022	15:13	Philip Swannell	Less instrumentation in SaveDataFromMarketWorkbookToFile.
+248	22-Apr-2022	16:00	Philip Swannell	StatusBarWrap --> MessageLogWrite.
+247	20-Apr-2022	12:06	Philip Swannell	For USD, set FloatingLegType to IBOR.
+246	19-Apr-2022	19:14	Philip Swannell	Removed text accidentally left on the worksheet USD.
 245	14-Apr-2022	18:41	Philip Swannell	Changes for LiborTransition: JSON file written by SaveDataFromMarketWorkbookToFile contains new elements:<LF>1) SwapRates_CCY has new element FloatingLegType which is a vector whose elements are either "RFR" or "IBOR".<LF>2) XccyBasisSpreads_CCY similarly has two new elements FloatingLegType1 and FloatingLegType2.
 244	14-Apr-2022	16:37	Philip Swannell	Reinstated VBProject password.
 243	14-Apr-2022	15:10	Philip Swannell	Work around for the "All macros may be disabled" errors. See module modDisabledMacrosWorkAround.

@@ -12,7 +12,7 @@ Sub TestSaveDataFromMarketWorkbookToFile()
 1         On Error GoTo ErrHandler
 
 2         tic
-3         ThrowIferror SaveDataFromMarketWorkbookToFile(ThisWorkbook, FileName, sArrayStack("EUR", "USD", "GBP"), "EUR", sArrayStack(gSeLF, "BARC_GB_LON"), 3)
+3         ThrowIfError SaveDataFromMarketWorkbookToFile(ThisWorkbook, FileName, sArrayStack("EUR", "USD", "GBP"), "EUR", sArrayStack(gSELF, "BARC_GB_LON"), 3)
 4         toc "SaveDataFromMarketWorkbookToFile"
 
 5         ShowFileInTexteditor FileName
@@ -22,17 +22,6 @@ ErrHandler:
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
-' Procedure  : IAmCompatibleWithCayleyForJulia
-' Author     : Philip Swannell
-' Date       : 17-Jan-2022
-' Purpose    : To help with version management. All too likely that out-of-date market data wotkbook is deployed
-' Parameters :
-' -----------------------------------------------------------------------------------------------------------------------
-Function IAmCompatibleWithCayleyForJulia()
-    IAmCompatibleWithCayleyForJulia = True
-End Function
-
-' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure  : SaveDataFromMarketWorkbookToFile
 ' Author     : Philip Swannell
 ' Date       : 26-Jan-2018
@@ -40,7 +29,7 @@ End Function
 '              If there's an error the function returns an error string - so we may call via Application.Run
 ' Parameters :
 '  MarketWb           : A "market data workbook" such as this one.
-'  FileName           : Name, with path, of the file to be created. existing file of that name is overwritten.
+'  FileName           : Name, with path, of the file to be created. Existing file of that name is overwritten.
 '  CCys               : Columm array of currencies - 3-letter ISO codes as usual.
 '  Numeraire          : The Numeraire of the multi currency Hull White Model that R will use.
 '  Credits            : A column array of credits - must be a subset of the left column of data held on the Credit sheet of the MDWb
@@ -64,76 +53,73 @@ Function SaveDataFromMarketWorkbookToFile(MarketWb As Workbook, FileName As Stri
 1         On Error GoTo ErrHandler
 2         OldSaved = ThisWorkbook.Saved
 
-3         StatusBarWrap "SaveDataFromMarketWorkbookToFile STARTING"
+3         Set SUH = CreateScreenUpdateHandler()
 
-4         Set SUH = CreateScreenUpdateHandler()
-
-5         If Not (IsEmpty(InflationIndices) Or IsMissing(InflationIndices)) Then
-6             Force2DArray InflationIndices
-7             For Each InflationIndex In InflationIndices
-8                 If Not IsInCollection(MarketWb.Worksheets, CStr(InflationIndex)) Then Throw "The market data workbook must have a sheet called '" + CStr(InflationIndex) + "' with market data for the inflation index " + CStr(InflationIndex), True
-9                 If Not IsInflationSheet(ThisWorkbook.Worksheets(InflationIndex)) Then Throw "Unexpected error: Method 'IsInflationSheet' returns FALSe for the worksheet '" + InflationIndex + "' of workbook '" + MarketWb.Name + "'"
+4         If Not (IsEmpty(InflationIndices) Or IsMissing(InflationIndices)) Then
+5             Force2DArray InflationIndices
+6             For Each InflationIndex In InflationIndices
+7                 If Not IsInCollection(MarketWb.Worksheets, CStr(InflationIndex)) Then Throw "The market data workbook must have a sheet called '" + CStr(InflationIndex) + "' with market data for the inflation index " + CStr(InflationIndex), True
+8                 If Not IsInflationSheet(ThisWorkbook.Worksheets(InflationIndex)) Then Throw "Unexpected error: Method 'IsInflationSheet' returns FALSE for the worksheet '" + InflationIndex + "' of workbook '" + MarketWb.Name + "'"
                   Dim ThisBaseCurrency As String
-10                ThisBaseCurrency = sVLookup("BaseCurrency", MarketWb.Worksheets(CStr(InflationIndex)).Range("Parameters").Value)
-11                If Not IsNumber(sMatch(ThisBaseCurrency, CCys)) Then
-12                    CCys = sArrayStack(CCys, ThisBaseCurrency)
-13                End If
-14            Next
-15        End If
+9                 ThisBaseCurrency = sVLookup("BaseCurrency", MarketWb.Worksheets(CStr(InflationIndex)).Range("Parameters").Value)
+10                If Not IsNumber(sMatch(ThisBaseCurrency, CCys)) Then
+11                    CCys = sArrayStack(CCys, ThisBaseCurrency)
+12                End If
+13            Next
+14        End If
 
-16        HideUnhideSheets MarketWb, sArrayStack(Numeraire, CCys), Numeraire, InflationIndices
+15        HideUnhideSheets MarketWb, sArrayStack(Numeraire, CCys), Numeraire, InflationIndices
 
-17        DCT.Add "AnchorDate", sFormatDate(RangeFromSheet(shConfig, "AnchorDate", True, False, False, False, False).Value2, "YYYY-MM-DD")
-18        DCT.Add "Currencies", To1D(CCys)
-19        If IsEmpty(Credits) Or IsMissing(Credits) Or IsNull(Credits) Then
-20            Credits = Null
-21            DCT.Add "Credits", Credits
-22        Else
-23            Force2DArray Credits
-24            DCT.Add "Credits", To1D(Credits)
-25        End If
+16        DCT.Add "AnchorDate", sFormatDate(RangeFromSheet(shConfig, "AnchorDate", True, False, False, False, False).Value2, "YYYY-MM-DD")
+17        DCT.Add "Currencies", To1D(CCys)
+18        If IsEmpty(Credits) Or IsMissing(Credits) Or IsNull(Credits) Then
+19            Credits = Null
+20            DCT.Add "Credits", Credits
+21        Else
+22            Force2DArray Credits
+23            DCT.Add "Credits", To1D(Credits)
+24        End If
 
-26        If IsEmpty(InflationIndices) Or IsMissing(InflationIndices) Or IsNull(InflationIndices) Then InflationIndices = Null Else InflationIndices = To1D(InflationIndices)
-27        DCT.Add "Inflations", InflationIndices
-28        DCT.Add "Numeraire", RangeFromSheet(shConfig, "Numeraire", False, True, False, False, False).Value
-29        DCT.Add "CollateralCcy", RangeFromSheet(shConfig, "CollateralCcy", False, True, False, False, False).Value
-30        DCT.Add "SigmaStep", RangeFromSheet(shConfig, "SigmaStep", True, False, False, False, False).Value
-31        DCT.Add "TStar", RangeFromSheet(shConfig, "TStar", True, False, False, False, False).Value
-32        DCT.Add "HWRevert", RangeFromSheet(shConfig, "HWRevert", True, False, False, False, False).Value
+25        If IsEmpty(InflationIndices) Or IsMissing(InflationIndices) Or IsNull(InflationIndices) Then InflationIndices = Null Else InflationIndices = To1D(InflationIndices)
+26        DCT.Add "Inflations", InflationIndices
+27        DCT.Add "Numeraire", RangeFromSheet(shConfig, "Numeraire", False, True, False, False, False).Value
+28        DCT.Add "CollateralCcy", RangeFromSheet(shConfig, "CollateralCcy", False, True, False, False, False).Value
+29        DCT.Add "SigmaStep", RangeFromSheet(shConfig, "SigmaStep", True, False, False, False, False).Value
+30        DCT.Add "TStar", RangeFromSheet(shConfig, "TStar", True, False, False, False, False).Value
+31        DCT.Add "HWRevert", RangeFromSheet(shConfig, "HWRevert", True, False, False, False, False).Value
 
-33        SaveFxDataToDictionary CCys, Numeraire, MarketWb, FxVolHandling, DCT
+32        SaveFxDataToDictionary CCys, Numeraire, MarketWb, FxVolHandling, DCT
 
-34        SaveCorrelationsToDictionary CCys, InflationIndices, Numeraire, MarketWb, DCT
+33        SaveCorrelationsToDictionary CCys, InflationIndices, Numeraire, MarketWb, DCT
 
-35        For Each Ccy In CCys
-36            If Not IsInCollection(MarketWb.Worksheets, UCase(Ccy)) Then Throw "The market data workbook must have a sheet called '" + UCase(Ccy) + "' with market data for " + UCase(Ccy), True
-37            SaveCurrencySheetToDictionary MarketWb.Worksheets(UCase(CStr(Ccy))), CStr(Ccy), DCT
-38        Next
+34        For Each Ccy In CCys
+35            If Not IsInCollection(MarketWb.Worksheets, UCase(Ccy)) Then Throw "The market data workbook must have a sheet called '" + UCase(Ccy) + "' with market data for " + UCase(Ccy), True
+36            SaveCurrencySheetToDictionary MarketWb.Worksheets(UCase(CStr(Ccy))), CStr(Ccy), DCT
+37        Next
 
-          'even if there are no credit curves to save, we still save funding spreads
-39        SaveCreditDataToDictionary MarketWb, DCT, Credits
+          'Even if there are no credit curves to save, we still save funding spreads
+38        SaveCreditDataToDictionary MarketWb, DCT, Credits
 
-40        If Not (IsEmpty(InflationIndices) Or IsMissing(InflationIndices) Or IsNull(InflationIndices)) Then
-41            For Each InflationIndex In InflationIndices
-42                SaveInflationSheetToDictionary MarketWb.Worksheets(CStr(InflationIndex)), DCT
-43            Next
-44        End If
+39        If Not (IsEmpty(InflationIndices) Or IsMissing(InflationIndices) Or IsNull(InflationIndices)) Then
+40            For Each InflationIndex In InflationIndices
+41                SaveInflationSheetToDictionary MarketWb.Worksheets(CStr(InflationIndex)), DCT
+42            Next
+43        End If
 
-45        DataToWrite = ConvertToJson(DCT, 3, AS_RowByRow)
+44        DataToWrite = ConvertToJson(DCT, 3, AS_RowByRow)
 
-46        ThrowIferror sFileSave(FileName, DataToWrite, "")
-47        SaveDataFromMarketWorkbookToFile = FileName
-48        StatusBarWrap "SaveDataFromMarketWorkbookToFile FINISHED"
+45        ThrowIfError sFileSave(FileName, DataToWrite, "")
+46        SaveDataFromMarketWorkbookToFile = FileName
 
-49        If OldSaved Then
-50            If Not ThisWorkbook.Saved Then
-51                ThisWorkbook.Saved = True
-52            End If
-53        End If
+47        If OldSaved Then
+48            If Not ThisWorkbook.Saved Then
+49                ThisWorkbook.Saved = True
+50            End If
+51        End If
 
-54        Exit Function
+52        Exit Function
 ErrHandler:
-55        SaveDataFromMarketWorkbookToFile = "#SaveDataFromMarketWorkbookToFile (line " & CStr(Erl) + "): " & Err.Description & "!"
+53        SaveDataFromMarketWorkbookToFile = "#SaveDataFromMarketWorkbookToFile (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -178,37 +164,37 @@ Private Sub SaveCurrencySheetToDictionary(ws As Worksheet, CurrencyCode As Strin
 13        Set XccyBasisSpreadsRange = sExpandDown(RangeFromSheet(ws, "XccyBasisSpreadsInit"))
 14        FloatingLegType = ws.Range("FloatingLegType").Value
 
-19        CheckSwapsData CurrencyCode, SwapsRange.Value2, SwapsData, SwapsRange.Rows(0).Value, FloatingLegType
-20        For i = 1 To sNCols(SwapsData)
-21            SwapRatesDict.Add SwapsData(1, i), To1D(sSubArray(SwapsData, 2, i, , 1))
-22        Next i
-23        DCT.Add "SwapRates_" & CurrencyCode, SwapRatesDict
+15        CheckSwapsData CurrencyCode, SwapsRange.Value2, SwapsData, SwapsRange.Rows(0).Value, FloatingLegType
+16        For i = 1 To sNCols(SwapsData)
+17            SwapRatesDict.Add SwapsData(1, i), To1D(sSubArray(SwapsData, 2, i, , 1))
+18        Next i
+19        DCT.Add "SwapRates_" & CurrencyCode, SwapRatesDict
 
-24        CheckXccyBasisSpreadsData CurrencyCode, XccyBasisSpreadsRange.Value2, XccyBasisSpreadsData, RangeFromSheet(ws, "Spread_is_on", False, True, False, False, False), FloatingLegType1, FloatingLegType2
-25        For i = 1 To sNCols(XccyBasisSpreadsData)
-26            XccyBasisSpreadsDict.Add XccyBasisSpreadsData(1, i), To1D(sSubArray(XccyBasisSpreadsData, 2, i, , 1))
-27        Next i
-28        DCT.Add "XccyBasisSpreads_" & CurrencyCode, XccyBasisSpreadsDict
+20        CheckXccyBasisSpreadsData CurrencyCode, XccyBasisSpreadsRange.Value2, XccyBasisSpreadsData, RangeFromSheet(ws, "Spread_is_on", False, True, False, False, False), FloatingLegType1, FloatingLegType2
+21        For i = 1 To sNCols(XccyBasisSpreadsData)
+22            XccyBasisSpreadsDict.Add XccyBasisSpreadsData(1, i), To1D(sSubArray(XccyBasisSpreadsData, 2, i, , 1))
+23        Next i
+24        DCT.Add "XccyBasisSpreads_" & CurrencyCode, XccyBasisSpreadsDict
 
-29        Set VolDataRange = Range(RangeFromSheet(ws, "VolInit"), RangeFromSheet(ws, "VolInit").End(xlDown).End(xlToRight))
-30        With VolDataRange
-31            CheckVolData CurrencyCode, .Offset(-1, -1).Resize(.Rows.Count + 1, .Columns.Count + 1).Value2
-32        End With
-33        VolParameters = RangeFromSheet(ws, "SwaptionVolParameters").Value
-34        CheckVolParameters CurrencyCode, VolParameters
+25        Set VolDataRange = Range(RangeFromSheet(ws, "VolInit"), RangeFromSheet(ws, "VolInit").End(xlDown).End(xlToRight))
+26        With VolDataRange
+27            CheckVolData CurrencyCode, .Offset(-1, -1).Resize(.Rows.Count + 1, .Columns.Count + 1).Value2
+28        End With
+29        VolParameters = RangeFromSheet(ws, "SwaptionVolParameters").Value
+30        CheckVolParameters CurrencyCode, VolParameters
 
-35        VolDict.Add "FixedFrequency", sParseFrequencyString(sVLookup("FixedFrequency", VolParameters), True, True)
-36        VolDict.Add "FloatingFrequency", sParseFrequencyString(sVLookup("FloatingFrequency", VolParameters), True, True)
-37        VolDict.Add "FixedDCT", sParseDCT(sVLookup("FixedDCT", VolParameters), True, True)
-38        VolDict.Add "FloatingDCT", sParseDCT(sVLookup("FloatingDCT", VolParameters), True, True)
-39        VolDict.Add "xlabels", To1D(VolDataRange.Columns(0).Value)
-40        VolDict.Add "ylabels", To1D(VolDataRange.Rows(0).Value)
-41        VolDict.Add "data", VolDataRange.Value
-42        DCT.Add "SwaptionVols_" & CurrencyCode, VolDict
-43        Exit Sub
-44        Exit Sub
+31        VolDict.Add "FixedFrequency", sParseFrequencyString(sVLookup("FixedFrequency", VolParameters), True, True)
+32        VolDict.Add "FloatingFrequency", sParseFrequencyString(sVLookup("FloatingFrequency", VolParameters), True, True)
+33        VolDict.Add "FixedDCT", sParseDCT(sVLookup("FixedDCT", VolParameters), True, True)
+34        VolDict.Add "FloatingDCT", sParseDCT(sVLookup("FloatingDCT", VolParameters), True, True)
+35        VolDict.Add "xlabels", To1D(VolDataRange.Columns(0).Value)
+36        VolDict.Add "ylabels", To1D(VolDataRange.Rows(0).Value)
+37        VolDict.Add "data", VolDataRange.Value
+38        DCT.Add "SwaptionVols_" & CurrencyCode, VolDict
+39        Exit Sub
+40        Exit Sub
 ErrHandler:
-45        Throw "#SaveCurrencySheetToDictionary (line " & CStr(Erl) + "): " & Err.Description & "!"
+41        Throw "#SaveCurrencySheetToDictionary (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -261,7 +247,7 @@ Private Sub SaveCorrelationsToDictionary(ByVal RequiredCcys, ByVal RequiredInfla
 11        Set ws = MarketBook.Worksheets(SheetName)
 12        ws.Calculate
 13        If Not IsInCollection(ws.Names, "HistCorrMatrix") Then Throw "Connot find named range HistCorrMatrix on sheet HistoricalCorr of market data workbook"
-14        Set R = sexpandRightDown(RangeFromSheet(ws, "HistCorrMatrix"))
+14        Set R = sExpandRightDown(RangeFromSheet(ws, "HistCorrMatrix"))
 15        rValue = R.Value
 16        If Not sArraysNearlyIdentical(rValue, sArrayTranspose(rValue)) Then Throw "Range HistCorrMatrix on sheet " + SheetName + " of the market data workbook contains data that's not symmetric"
 
@@ -314,7 +300,7 @@ Private Sub SaveCreditDataToDictionary(MarketWb As Workbook, DCT As Dictionary, 
           Dim BlankLevels() As Double
           Dim BlankTenures() As String
           Dim CurveDct As Dictionary
-          Dim entireRange As Range
+          Dim EntireRange As Range
           Dim i As Long
           Dim j As Long
           Dim MatchIDs As Variant
@@ -339,8 +325,8 @@ Private Sub SaveCreditDataToDictionary(MarketWb As Workbook, DCT As Dictionary, 
 3         Set shCDS = MarketWb.Worksheets("Credit")
 4         shCDS.Calculate
 
-5         Set entireRange = CDSRange(shCDS)
-6         With entireRange
+5         Set EntireRange = CDSRange(shCDS)
+6         With EntireRange
 7             Set SourceTenures = .Cells(1, 4).Resize(1, .Columns.Count - 3)
 8             Set SourceCounterparties = .Cells(2, 1).Resize(.Rows.Count - 1)
 9             Set SourceFundingSpreads = .Cells(2, 2).Resize(.Rows.Count - 1)
@@ -353,8 +339,8 @@ Private Sub SaveCreditDataToDictionary(MarketWb As Workbook, DCT As Dictionary, 
           Dim Names
           Dim Spreads
 13        Names = SourceCounterparties.Value
-14        MatchID = sMatch(gSeLF, Names)
-15        If Not IsNumber(MatchID) Then Throw ("Cannot find '" + gSeLF + "' in list of credits on sheet " + shCredit.Name)
+14        MatchID = sMatch(gSELF, Names)
+15        If Not IsNumber(MatchID) Then Throw ("Cannot find '" + gSELF + "' in list of credits on sheet " + shCredit.Name)
 16        Spreads = SourceFundingSpreads.Value
 17        If Not IsNumber(Spreads(MatchID, 1)) Then Spreads(MatchID, 1) = 0
 18        For i = 1 To sNRows(Spreads)
@@ -388,7 +374,7 @@ Private Sub SaveCreditDataToDictionary(MarketWb As Workbook, DCT As Dictionary, 
 41            ThisRecovery = SourceRecoveries(ThisRowNum, 1)
 42            NumGood = 0
 43            If Not IsNumber(ThisFundingSpread) Then
-44                If ThisCounterParty = gSeLF Then
+44                If ThisCounterParty = gSELF Then
 45                    ThisFundingSpread = 0
 46                Else
 47                    Throw "Invalid funding spread for counterparty '" + ThisCounterParty + "'"
@@ -490,7 +476,7 @@ Private Function SaveFxDataToDictionary(TheCcys As Variant, Numeraire As String,
 26        Set shFx = MarketWb.Worksheets(SheetName)
 27        shFx.Calculate
 
-28        Set RawDataRange = sexpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft"))
+28        Set RawDataRange = sExpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft"))
 29        NumPoints = RawDataRange.Columns.Count - 2
 30        DataDescription = "range " + Replace(RawDataRange.Address, "$", "") + " of sheet '" + RawDataRange.Parent.Name + "' of workbook '" + RawDataRange.Parent.Parent.Name + "'"
 
@@ -564,7 +550,7 @@ Private Function SaveFxDataToDictionary(TheCcys As Variant, Numeraire As String,
 
 85        If WriteFxVolHistoric Then
               'Although we only show 1 column on the sheet for the historical vols we "stretch" to the same number of columns as the market vols
-86            Set RawDataRange2 = sexpandRightDown(RangeFromSheet(shFx, "HistoricFxVolsTopLeft"))
+86            Set RawDataRange2 = sExpandRightDown(RangeFromSheet(shFx, "HistoricFxVolsTopLeft"))
 87            With RawDataRange2
 88                xlabelsHistoric = To1D(.Rows(0).Offset(, 1).Resize(, .Columns.Count - 1))
 89            End With
@@ -625,7 +611,7 @@ Private Sub SaveInflationSheetToDictionary(ws As Worksheet, DCT As Dictionary)
           Dim VolDict As New Dictionary
 
           Dim AnchorDate As Long
-          Dim effectiveDateMethod As String
+          Dim EffectiveDateMethod As String
           Dim HistoricSets()
           Dim IndexName As String
           Dim InflationParameters
@@ -650,7 +636,7 @@ Private Sub SaveInflationSheetToDictionary(ws As Worksheet, DCT As Dictionary)
 12            ParamsDict.Add InflationParameters(i, 1), InflationParameters(i, 2)
 13        Next i
 14        CurveDict.Add "Parameters", ParamsDict
-15        effectiveDateMethod = ParamsDict("effectiveDate")
+15        EffectiveDateMethod = ParamsDict("EffectiveDate")
 16        LagMethod = ParamsDict("LagMethod")
 17        AnchorDate = RangeFromSheet(shConfig, "AnchorDate")
 
@@ -658,7 +644,7 @@ Private Sub SaveInflationSheetToDictionary(ws As Worksheet, DCT As Dictionary)
 19        CheckZCInflationSwapsData IndexName, ZCSwapsRange.Value, ZCSwapsData
 20        CurveDict.Add "xlabels", To1D(ZCSwapsRange.Columns(1).Value)
 21        CurveDict.Add "data", To1D(ZCSwapsRange.Columns(2).Value)
-22        CheckHistoricInflation sExpandDown(ws.Range("HistoricDataInit")), HistoricSets, AnchorDate    ', effectiveDateMethod, IndexName
+22        CheckHistoricInflation sExpandDown(ws.Range("HistoricDataInit")), HistoricSets, AnchorDate    ', EffectiveDateMethod, IndexName
 23        For i = 2 To sNRows(HistoricSets)
 24            HistoricSets(i, 1) = Format(HistoricSets(i, 1), "yyyy-mm-dd")
 25        Next i
@@ -690,14 +676,14 @@ End Sub
 Private Function CheckInflationParameters(R As Range, ByRef DataToSave As Variant)
 
           Dim BaseCurrency
-          Dim effectiveDate
+          Dim EffectiveDate
           Dim ErrString
           Dim HistoricalVol
           Dim HistoricalVolSA
           Dim LagMethod
 
 1         On Error GoTo ErrHandler
-2         ErrString = "error in range 'Parameters' on worksheet '" + R.Parent.Name + "' in workbook '" + R.Parent.Parent.Name + "' "
+2         ErrString = "Error in range 'Parameters' on worksheet '" + R.Parent.Name + "' in workbook '" + R.Parent.Parent.Name + "' "
 
 3         BaseCurrency = sVLookup("BaseCurrency", R.Value)
 4         If CStr(BaseCurrency) = "#Not found!" Then
@@ -713,11 +699,11 @@ Private Function CheckInflationParameters(R As Range, ByRef DataToSave As Varian
 13            Throw ErrString + "LagMethod '" + LagMethod + "' is not valid. Allowed values are :" + sTokeniseString(sSupportedInflationLagMethods(), ", ")
 14        End If
 
-15        effectiveDate = sVLookup("effectiveDate", R.Value)
-16        If CStr(effectiveDate) = "#Not found!" Then
-17            Throw ErrString + "Label 'effectiveDate' not found in left column (i.e. in range " + Replace(R.Columns(1).Address, "$", "")
-18        ElseIf Not IsNumber(sMatch(effectiveDate, sSupportedInflationeffectiveDates())) Then
-19            Throw ErrString + "effectiveDate '" + effectiveDate + "' is not valid. Allowed values are :" + sTokeniseString(sSupportedInflationeffectiveDates(), ", ")
+15        EffectiveDate = sVLookup("EffectiveDate", R.Value)
+16        If CStr(EffectiveDate) = "#Not found!" Then
+17            Throw ErrString + "Label 'EffectiveDate' not found in left column (i.e. in range " + Replace(R.Columns(1).Address, "$", "")
+18        ElseIf Not IsNumber(sMatch(EffectiveDate, sSupportedInflationEffectiveDates())) Then
+19            Throw ErrString + "EffectiveDate '" + EffectiveDate + "' is not valid. Allowed values are :" + sTokeniseString(sSupportedInflationEffectiveDates(), ", ")
 20        End If
 
 21        HistoricalVol = sVLookup("HistoricalVol", R.Value)
@@ -747,7 +733,7 @@ End Function
 ' Date      : 26-Apr-2017
 ' Purpose   : Validation for data saved as Historic Sets on an inflation sheet
 ' -----------------------------------------------------------------------------------------------------------------------
-Private Function CheckHistoricInflation(R As Range, ByRef DataToSave(), AnchorDate As Long)    ', effectiveDateMethod As String, Index As String)
+Private Function CheckHistoricInflation(R As Range, ByRef DataToSave(), AnchorDate As Long)    ', EffectiveDateMethod As String, Index As String)
 
           Dim Data As Variant
           Dim ErrString As String
@@ -756,7 +742,7 @@ Private Function CheckHistoricInflation(R As Range, ByRef DataToSave(), AnchorDa
           Dim NR As Long
 
 1         On Error GoTo ErrHandler
-2         ErrString = "error in data for historic inflation sets on worksheet '" + R.Parent.Name + "' in workbook '" + R.Parent.Parent.Name + "'"
+2         ErrString = "Error in data for historic inflation sets on worksheet '" + R.Parent.Name + "' in workbook '" + R.Parent.Parent.Name + "'"
 
 3         If R.Columns.Count <> 3 Then Throw ErrString + " data has " + CStr(R.Columns.Count) + " columns, but should have 3"
 4         If R.Cells(0, 1).Value <> "Year" Then Throw ErrString + ". Header at cell " + Replace(R.Cells(0, 1).Address, "$", "") + " should read 'Year'"
@@ -785,7 +771,7 @@ Private Function CheckHistoricInflation(R As Range, ByRef DataToSave(), AnchorDa
           'For US Release dates see:
           'https://www.bls.gov/schedule/news_release/cpi.htm
           'Between 14th and 18th of month?
-          'For euro Release dates see
+          'For Euro Release dates see
           ' http://ec.europa.eu/eurostat/documents/272892/272971/HICP+Flash+estimate+release+calendar/a5b6c5bd-f3fe-4980-8b94-3433b689b26e
           'or from http://ec.europa.eu/eurostat/news/release-calendar
           'Between 16th and 22nd?
@@ -811,14 +797,14 @@ Private Function CheckHistoricInflation(R As Range, ByRef DataToSave(), AnchorDa
 29        MonthDiff = 12 * LastYIs + LastMIs - (12 * LastYShouldBe + LastMShouldBe)
 
 30        Select Case MonthDiff
-          Case Is >= 1
-31            If (MonthDiff = 1 And Day(AnchorDate) < 10) Or MonthDiff > 1 Then
-32                Throw "There appear to be too many sets entered in the Historic sets range of the worksheet '" + R.Parent.Name + "' of the market data workbook ('" + R.Parent.Parent.Name + "'). The last row should be for " + Format(DateSerial(LastYShouldBe, LastMShouldBe, 1), "mmm yyyy") + " but instead it's for " + Format(DateSerial(LastYIs, LastMIs, 1), "mmm yyyy")
-33            End If
-34        Case Is <= -1
-35            If (MonthDiff = -1 And Day(AnchorDate) > 23) Or MonthDiff < -1 Then
-36                Throw "There appear to be too few sets entered in the Historic sets range of the worksheet '" + R.Parent.Name + "' of the market data workbook ('" + R.Parent.Parent.Name + "'). The last row should be for " + Format(DateSerial(LastYShouldBe, LastMShouldBe, 1), "mmm yyyy") + " but instead it's for " + Format(DateSerial(LastYIs, LastMIs, 1), "mmm yyyy")
-37            End If
+              Case Is >= 1
+31                If (MonthDiff = 1 And Day(AnchorDate) < 10) Or MonthDiff > 1 Then
+32                    Throw "There appear to be too many sets entered in the Historic sets range of the worksheet '" + R.Parent.Name + "' of the market data workbook ('" + R.Parent.Parent.Name + "'). The last row should be for " + Format(DateSerial(LastYShouldBe, LastMShouldBe, 1), "mmm yyyy") + " but instead it's for " + Format(DateSerial(LastYIs, LastMIs, 1), "mmm yyyy")
+33                End If
+34            Case Is <= -1
+35                If (MonthDiff = -1 And Day(AnchorDate) > 23) Or MonthDiff < -1 Then
+36                    Throw "There appear to be too few sets entered in the Historic sets range of the worksheet '" + R.Parent.Name + "' of the market data workbook ('" + R.Parent.Parent.Name + "'). The last row should be for " + Format(DateSerial(LastYShouldBe, LastMShouldBe, 1), "mmm yyyy") + " but instead it's for " + Format(DateSerial(LastYIs, LastMIs, 1), "mmm yyyy")
+37                End If
 38        End Select
 
           Dim RDotV As Variant
@@ -863,7 +849,7 @@ Private Function CheckSeasonalAdjustments(R As Range, ByRef SeasonalAdjustments 
 
 12        If Abs(Sum) > 0.000000001 Then
 13            Throw "12 numbers in the right column of the range 'SeasonalAdjustments' (" + _
-                    Replace(R.Columns(2).Address, "$", "") + ") on " + SheetFullName + " should sum to zero, but their sum is " + CStr(Sum)
+                  Replace(R.Columns(2).Address, "$", "") + ") on " + SheetFullName + " should sum to zero, but their sum is " + CStr(Sum)
 14        End If
 15        SeasonalAdjustments = R.Columns(2).Value2
 
@@ -999,9 +985,9 @@ Private Function CheckTenureString(TenureString As Variant) As Boolean
 1         On Error GoTo ErrHandler
 2         If VarType(TenureString) <> vbString Then Exit Function
 3         Select Case Right(TenureString, 1)
-          Case "M", "Y", "W", "D"
-4         Case Else
-5             Exit Function
+              Case "M", "Y", "W", "D"
+4             Case Else
+5                 Exit Function
 6         End Select
 7         If Not IsNumeric(Left(TenureString, Len(TenureString) - 1)) Then Exit Function
 8         CheckTenureString = True
@@ -1161,9 +1147,9 @@ Private Sub CheckXccyBasisSpreadsData(CurrencyCode As String, InputData, ByRef O
           Dim ColNo As Long
           Dim i As Long
           Dim k As Long
+          Dim NR As Long
           Dim SDCTS
           Dim Tmp As Variant
-          Dim NR As Long
 1         On Error GoTo ErrHandler
           Dim Headers(1 To 1, 1 To 9)
 2         Headers(1, 1) = "Tenors": Headers(1, 2) = "Rates": Headers(1, 3) = "Freq1": Headers(1, 4) = "DCT1": Headers(1, 5) = "Freq2": Headers(1, 6) = "DCT2": Headers(1, 7) = "SpreadIsOn"
@@ -1220,9 +1206,10 @@ Function CDSRange(shCDS As Worksheet) As Range
           Dim NumCols As Long
 1         On Error GoTo ErrHandler
 2         NumCols = RangeFromSheet(shCDS, "CDSTickersTopLeft").Column - RangeFromSheet(shCDS, "CDSTopLeft").Column
-3         Set CDSRange = sexpandRightDown(RangeFromSheet(shCDS, "CDSTopLeft")).Resize(, NumCols)
+3         Set CDSRange = sExpandRightDown(RangeFromSheet(shCDS, "CDSTopLeft")).Resize(, NumCols)
 4         Exit Function
 ErrHandler:
 5         Throw "#CDSRange (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
+
 

@@ -12,7 +12,7 @@ Option Explicit
 Function PortfolioValueFromFilters(BaseCCY As String, FilterBy1, Filter1Value, FilterBy2, Filter2Value, _
           IncludeFutureTrades As Boolean, IncludeAssetClasses As String, PortfolioAgeing As Double, _
           TradesScaleFactor As Double, CurrenciesToInclude As String, ModelName As String, _
-          TC As TradeCount, ProductCreditLimits As String, twb As Workbook, AnchorDate As Date)
+          TC As TradeCount, ProductCreditLimits As String, twb As Workbook, AnchorDate As Date, ThrowOnError As Boolean)
           
           Dim FlipTrades As Boolean
           Dim Numeraire As String
@@ -36,7 +36,7 @@ Function PortfolioValueFromFilters(BaseCCY As String, FilterBy1, Filter1Value, F
 7         If NumTrades = 0 Then
 8             PortfolioValueFromFilters = 0
 9         Else
-10            PortfolioValueFromFilters = PortfolioValueHW(TheTrades, ModelName, BaseCCY)
+10            PortfolioValueFromFilters = PortfolioValueHW(TheTrades, ModelName, BaseCCY, False, ThrowOnError)
 11        End If
 
 12        Exit Function
@@ -51,29 +51,26 @@ End Function
 ' Purpose   : Wrap Julia function valueportfolio. Returns a vector of trade values with embedded error strings where
 '             trades are not possible to value.
 ' -----------------------------------------------------------------------------------------------------------------------
-Function PortfolioValueHW(TheTrades, ModelName, ReportCurrency, Optional ReturnVector As Boolean = False)
+Function PortfolioValueHW(TheTrades, ModelName, ReportCurrency, ReturnVector As Boolean, ThrowOnError As Boolean)
           Dim Expression As String
-          Dim ThrowOnError As Boolean
           Dim TradeFile As String
           Dim TradeFileX As String
 
 1         On Error GoTo ErrHandler
 
-2         ThrowOnError = Not (ReturnVector)
-3         TradeFile = LocalTemp() & "CayleyTrades2.csv"
-4         TradeFileX = MorphSlashes(TradeFile, UseLinux())
+2         TradeFile = LocalTemp() & "CayleyTrades2.csv"
+3         TradeFileX = MorphSlashes(TradeFile, UseLinux())
 
-5         ThrowIfError sCSVWrite(TheTrades, TradeFile)
-6         Expression = "Cayley.valueportfolio(" & ModelName & ",""" & TradeFileX & """, 0.0,""" & _
+4         ThrowIfError sCSVWrite(TheTrades, TradeFile)
+5         Expression = "Cayley.valueportfolio(" & ModelName & ",""" & TradeFileX & """, 0.0,""" & _
               ReportCurrency & """," & LCase(ThrowOnError) & "," & LCase(ReturnVector) & "," & LCase(gUseThreads) & ")"
               
-7         If gDebugMode Then Debug.Print (Expression)
-8         PortfolioValueHW = JuliaEvalVBA(Expression)
-9         If VarType(PortfolioValueHW) = vbString Then Throw PortfolioValueHW
+6         PortfolioValueHW = JuliaEvalVBA(Expression)
+7         If VarType(PortfolioValueHW) = vbString Then Throw PortfolioValueHW
 
-10        Exit Function
+8         Exit Function
 ErrHandler:
-11        Throw "#PortfolioValueHW (line " & CStr(Erl) & "): " & Err.Description & "!"
+9         Throw "#PortfolioValueHW (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------

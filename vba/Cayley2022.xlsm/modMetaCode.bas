@@ -68,6 +68,6 @@ Function RefactorCode(ByVal ExistingCode, ByVal SearchFors, ByVal ReplaceWiths)
 
 25        Exit Function
 ErrHandler:
-26        RefactorCode = "#RefactorCode (line " & CStr(Erl) + "): " & Err.Description & "!"
+26        RefactorCode = "#RefactorCode (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 

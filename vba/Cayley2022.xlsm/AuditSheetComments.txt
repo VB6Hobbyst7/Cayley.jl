@@ -1,4 +1,39 @@
 Version	Date	Time	Author	Comment
+746	24-Apr-2022	15:43	Philip Swannell	Change in Export to TMS functionality: The name of the sub-folder to which files are exported is now set from the date on which the run is executed rather than the "RUNDATE" embedded in the Solum.out file. I think the latter would be confusing.
+745	24-Apr-2022	13:47	Philip Swannell	Calls to sFileCopy now set argument OverwriteReadOnlyFiles to True. Requires SolumAddin 2336.
+744	24-Apr-2022	13:45	Philip Swannell	Ran MZTools Clean Project.
+743	24-Apr-2022	12:56	Philip Swannell	Released with "interesting comparison" on ScenarioCompare worksheet.
+742	23-Apr-2022	20:06	Philip Swannell	Fixed typos in cell comments.
+741	23-Apr-2022	19:55	Philip Swannell	Work on the "Export to TMS" functionality: Improved error messages, improved help in text box, fixed bug that only the first of many scenarios was run.
+740	23-Apr-2022	17:22	Philip Swannell	Release with "Full cleanup".
+739	23-Apr-2022	17:11	Philip Swannell	Bumped gMinimumMarketDataWorkbookVersion to 252.
+738	23-Apr-2022	15:14	Philip Swannell	Bumped minimum version numbers.
+737	23-Apr-2022	15:10	Philip Swannell	Changes on ToDo worksheet.
+736	23-Apr-2022	15:03	Philip Swannell	Added method SafeAppActivate to switch focus back to Excel.
+735	23-Apr-2022	11:52	Philip Swannell	Removed menu item "Print Charts", was hanging Excel and pretty useless.
+734	23-Apr-2022	11:42	Philip Swannell	Updated text box on sheet ExportToTMS.
+733	23-Apr-2022	11:38	Philip Swannell	MZTools etc.
+732	23-Apr-2022	11:34	Philip Swannell	Removed constant gDebugMode.
+731	23-Apr-2022	10:54	Philip Swannell	Reduced use of StatusBarWrap - intention is to never use during long-running processes, as it's unreliable.
+730	23-Apr-2022	10:42	Philip Swannell	Tweaks to methods OtherBooksAreOpen and PleaseOpenOtherBooks.
+729	23-Apr-2022	09:17	Philip Swannell	Bumped minimum version numbers.
+728	23-Apr-2022	09:14	Philip Swannell	Use & rather than + for string concatenation.
+727	23-Apr-2022	08:34	Philip Swannell	Improved error handling by passing Boolean ThrowOnError down the call stack for better control of when it's acceptable to have error strings embedded in vector of trade values.
+726	22-Apr-2022	20:06	Philip Swannell	Bumped gMinimumSolumSCRiPTUtilsVersion to 262
+725	22-Apr-2022	19:56	Philip Swannell	Re-release.
+724	22-Apr-2022	19:54	Philip Swannell	Method PortfolioValueHW changed to always pass throwonerror as True to Julia. It's better to see errors early rather than to have to handle a vector return that might contain error strings.
+723	22-Apr-2022	18:25	Philip Swannell	Defensive coding in method NotionalBasedFromTrades - hunting for bug seen by Cedrick.
+722	22-Apr-2022	16:25	Philip Swannell	When method RunScenarios calls method WhoHasLines, now pass ThrowError as True. Upshot is that we will see meaningful error message rather than simply "Type Mismatch" later in the code, as reported by Cedrick.
+721	22-Apr-2022	16:08	Philip Swannell	Method RunThisAtTopOfCallStack now calls Application.StatusBar = False.
+720	22-Apr-2022	15:55	Philip Swannell	Re-wrote method CopyChart, which was failing on my test PC with Excel 2013 (Paste method of Worksheet class failed).
+719	20-Apr-2022	22:39	Philip Swannell	Tweaks to method ReleaseCleanup.
+718	20-Apr-2022	22:35	Philip Swannell	Updates to DoDo sheet.
+717	20-Apr-2022	22:30	Philip Swannell	Re-ran Table.
+716	20-Apr-2022	20:42	Philip Swannell	Table and BubbleChart: improved handling of banks for which an FxBreakeven does not exist.
+715	20-Apr-2022	19:50	Philip Swannell	Long running operations (Scenarios, Table, ExportToTMS) now no longer use the Excel status bar. Why? StatusBar does not work without calling Application.DoEvents, but Application.DoEvents seems to have been the cause of all the "Excel is hanging" woes, by sometimes taking minutes rather than milliseconds to execute. We now use SnakeTail instead and SnakeTail must be installed, else scenarios etc. fail with an error message requesting that SnakeTail be installed.
+714	20-Apr-2022	16:40	Philip Swannell	Changes to BubbleChart following demo to Airbus - may need more tweaking.
+713	20-Apr-2022	15:57	Philip Swannell	Change to double-click handler for TradesScaleFactor following demo to Airbus.
+712	20-Apr-2022	12:47	Philip Swannell	Improved error message from LoadTradesFromTextFiles.
 711	14-Apr-2022	19:08	Philip Swannell	Bumped gMinimumMarketDataWorkbookVersion to 245.
 710	08-Apr-2022	16:47	Philip Swannell	Upped minimum versions for the addins (2319 & 260)
 709	07-Apr-2022	18:48	Philip Swannell	Added method CheckAddinVersion. Called (twice) from method RunThisAtTopOfCallStack.

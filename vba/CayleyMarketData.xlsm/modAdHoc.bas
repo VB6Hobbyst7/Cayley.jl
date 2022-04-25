@@ -7,11 +7,6 @@ Attribute VB_Name = "modAdHoc"
 ' -----------------------------------------------------------------------------------------------------------------------
 Option Explicit
 
-
-
-
-
-
 Sub MoreAmendments()
           Dim SPH As clsSheetProtectionHandler
           Dim ws As Worksheet
@@ -20,13 +15,13 @@ Sub MoreAmendments()
 3             If IsCurrencySheet(ws) Then
 4                 Set SPH = CreateSheetProtectionHandler(ws)
 
-13                FormatCurrencySheet ws, False, Empty
+5                 FormatCurrencySheet ws, False, Empty
 
-14            End If
-15        Next
-16        Exit Sub
+6             End If
+7         Next
+8         Exit Sub
 ErrHandler:
-17        SomethingWentWrong "#MoreAmendments (line " & CStr(Erl) + "): " & Err.Description & "!"
+9         SomethingWentWrong "#MoreAmendments (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
 
 Sub ShuffleSwapColsOnAllSheets()
@@ -55,7 +50,7 @@ Sub ShuffleSwapCols(ws As Worksheet)
 6         NewData = ShuffleHeaders(Target.Value, sArrayRange("Tenor", "Rate", "FixFreq", "FixDCT", "FloatFreq", "FloatDCT", "BloombergCode"))
 
 7         Set SPH = CreateSheetProtectionHandler(ws)
-8         Target.Value = sArrayexcelString(NewData)
+8         Target.Value = sArrayExcelString(NewData)
 9         Target.HorizontalAlignment = xlHAlignCenter
 10        FormatCurrencySheet ws, False, Empty
 

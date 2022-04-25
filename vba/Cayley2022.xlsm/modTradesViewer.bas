@@ -452,7 +452,7 @@ Sub ShowTrades()
 
 76        If WithValues Then
 
-77            OurValues = ThrowIfError(PortfolioValueHW(TradesJuliaFormat, ShockedModelName, "EUR", True))
+77            OurValues = ThrowIfError(PortfolioValueHW(TradesJuliaFormat, ShockedModelName, "EUR", True, False))
 78            OurValues = OneDToTwoD(OurValues)
 
 79            If Choice = chExtraTrades Then

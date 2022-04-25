@@ -94,7 +94,7 @@ ResumeHere:
               Dim ws As Worksheet
 8             For Each ws In wb.Worksheets
 9                 If ws.Visible = xlSheetVisible Then
-10                    Application.GoTo ws.Cells(1, 1)
+10                    Application.Goto ws.Cells(1, 1)
 11                    ActiveWindow.DisplayGridlines = False
 12                    ActiveWindow.DisplayHeadings = False
 13                End If
@@ -103,7 +103,7 @@ ResumeHere:
               'Make the leftmost tab active
 16            For i = 1 To wb.Worksheets.Count
 17                If wb.Worksheets(i).Visible = xlSheetVisible Then
-18                    Application.GoTo wb.Worksheets(i).Cells(1, 1)
+18                    Application.Goto wb.Worksheets(i).Cells(1, 1)
 19                    Exit For
 20                End If
 21            Next i

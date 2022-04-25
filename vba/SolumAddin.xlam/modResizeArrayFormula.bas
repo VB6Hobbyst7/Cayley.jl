@@ -369,7 +369,7 @@ ResumeAfterSecondSendKeys:
 
           'Handle the view port, but ignore errors as unimportant.
 192       On Error Resume Next
-193       Application.GoTo ActiveSheet.Range(m_VisibleRangeAddress)
+193       Application.Goto ActiveSheet.Range(m_VisibleRangeAddress)
 194       m_NewRange.Select
 195       On Error GoTo ErrHandler
 
@@ -414,7 +414,7 @@ ErrHandler:
 222           End If
 223           With m_CurrentRange.Parent
 224               If m_TempCellsAddress <> vbNullString Then .Range(m_TempCellsAddress).ClearContents
-225               Application.GoTo .Range(m_VisibleRangeAddress)
+225               Application.Goto .Range(m_VisibleRangeAddress)
 226           End With
 227           If Not m_RangeToSelectAfterError Is Nothing Then
 228               m_RangeToSelectAfterError.Select

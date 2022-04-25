@@ -47,8 +47,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 5         RunThisAtTopOfCallStack
 
 6         If Not OtherBooksAreOpen(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen) Then
-              'Opening workbooks from inside a double-click event works really badly perhaps because Excel events can't be switched off?
-7             Throw "The Trades files, the Market Data workbook and the Lines workbook must all be open before you can use the this worksheet.", True
+7             PleaseOpenOtherBooks
 8         End If
 
 9         Set LinesBook = OpenLinesWorkbook(True, False)
@@ -175,71 +174,82 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 113                   SafeSetCellValue2 Target, CStr(Res)
 114               End If
 115               GoTo EarlyExit
-116           Case SafeRangeAddress(Me, "LinesScaleFactor"), SafeRangeAddress(Me, "TradesScaleFactor")
+116           Case SafeRangeAddress(Me, "LinesScaleFactor")
 117               Alternatives = sArrayStack(1, 1.2, 1.4, 1.6, 1.8, 2)
 118               Res = ShowCommandBarPopup(Alternatives, , , UCase(CStr(Target.Value)), AnchorObject)
 119               If Res <> "#Cancel!" Then
 120                   SafeSetCellValue2 Target, CStr(Res)
 121               End If
 122               GoTo EarlyExit
-123           Case SafeRangeAddress(Me, "FxShock"), SafeRangeAddress(Me, "FxVolShock")
-124               Alternatives = sArrayStack(0.8, 0.9, 1, 1.1, 1.2)
-125           Case SafeRangeAddress(Me, "PortfolioAgeing")
-126               Alternatives = sArrayStack(0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5)
-127           Case SafeRangeAddress(Me, "IncludeAssetClasses")
-128               Alternatives = sArrayStack("Rates and Fx", "Fx", "Rates")
-129           Case Else
-130               Cancel = False
+123           Case SafeRangeAddress(Me, "TradesScaleFactor")
+                  Const Scale0 As String = "0 (Like cancelling all trades)"
+                  Const ScaleM1 As String = "-1 (Flips trade direction, so shows PFE from Airbus perspective)"
+124               Alternatives = sArrayStack(ScaleM1, Scale0, 0.5, 1, 1.5, 2)
+125               Res = ShowCommandBarPopup(Alternatives, , , UCase(CStr(Target.Value)), AnchorObject)
+126               If Res = Scale0 Then Res = 0
+127               If Res = ScaleM1 Then Res = -1
+128               If Res <> "#Cancel!" Then
+129                   SafeSetCellValue2 Target, CStr(Res)
+130               End If
 131               GoTo EarlyExit
-132       End Select
+132           Case SafeRangeAddress(Me, "FxShock"), SafeRangeAddress(Me, "FxVolShock")
+133               Alternatives = sArrayStack(0.8, 0.9, 1, 1.1, 1.2)
+134           Case SafeRangeAddress(Me, "PortfolioAgeing")
+135               Alternatives = sArrayStack(0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5)
+136           Case SafeRangeAddress(Me, "IncludeAssetClasses")
+137               Alternatives = sArrayStack("Rates and Fx", "Fx", "Rates")
+138           Case Else
+139               Cancel = False
+140               GoTo EarlyExit
+141       End Select
 
-133       If UseRegEx Then
-134           If Target.Address = RangeFromSheet(Me, "Filter2Value").Address Then
-135               AttributeName = RangeFromSheet(Me, "FilterBy2").Value
-136           Else
-137               AttributeName = RangeFromSheet(Me, "FilterBy1").Value
-138           End If
+142       If UseRegEx Then
+143           If Target.Address = RangeFromSheet(Me, "Filter2Value").Address Then
+144               AttributeName = RangeFromSheet(Me, "FilterBy2").Value
+145           Else
+146               AttributeName = RangeFromSheet(Me, "FilterBy1").Value
+147           End If
 
-139           Res = ShowRegularExpressionDialog(IIf(CStr(Target.Value) = "None", "", Target.Value), _
+148           Res = ShowRegularExpressionDialog(IIf(CStr(Target.Value) = "None", "", Target.Value), _
                   AttributeName, Alternatives, AnchorObject, "Filter Trades", _
                   "Include trades for which:", False, RegKey, True)
-140           If Res = "#User Cancel!" Then GoTo EarlyExit
-141           SafeSetCellValue2 Target, CStr(Res)
-142           GoTo EarlyExit
-143       End If
+149           If Res = "#User Cancel!" Then GoTo EarlyExit
+150           SafeSetCellValue2 Target, CStr(Res)
+151           GoTo EarlyExit
+152       End If
 
-144       If sNRows(Alternatives) < 20 Then
-145           Res = ShowCommandBarPopup(Alternatives, , , CStr(Target.Value), AnchorObject)
-146           If Res = "#Cancel!" Then GoTo EarlyExit
-147           If AmPickingBank Then Res = AnnotateBankNames(Res, False, LinesBook, False)
-148           SafeSetCellValue2 Target, CStr(Res)
-149           If RegKey <> "" Then
-150               AddFilterToMRU RegKey, CStr(Res)
-151           End If
+153       If sNRows(Alternatives) < 20 Then
+154           Res = ShowCommandBarPopup(Alternatives, , , CStr(Target.Value), AnchorObject)
+155           If Res = "#Cancel!" Then GoTo EarlyExit
+156           If AmPickingBank Then Res = AnnotateBankNames(Res, False, LinesBook, False)
+157           SafeSetCellValue2 Target, CStr(Res)
+158           If RegKey <> "" Then
+159               AddFilterToMRU RegKey, CStr(Res)
+160           End If
 
-152           Application.GoTo Target
+161           Application.GoTo Target
 
-153       Else
-154           Alternatives = sArrayMakeText(Alternatives)
-155           Res = ShowSingleChoiceDialog(Alternatives, , , , , , , Target.offset(0, 1), , "PFE Calculator")
-156           If Not IsEmpty(Res) Then
-157               If AmPickingBank Then Res = AnnotateBankNames(Res, False, LinesBook, False)
+162       Else
+163           Alternatives = sArrayMakeText(Alternatives)
+164           Res = ShowSingleChoiceDialog(Alternatives, , , , , , , Target.offset(0, 1), , "PFE Calculator")
+165           If Not IsEmpty(Res) Then
+166               If AmPickingBank Then Res = AnnotateBankNames(Res, False, LinesBook, False)
 
-158               SafeSetCellValue2 Target, CStr(Res)
-159               If RegKey <> "" Then
-160                   AddFilterToMRU RegKey, CStr(Res)
-161               End If
+167               SafeSetCellValue2 Target, CStr(Res)
+168               If RegKey <> "" Then
+169                   AddFilterToMRU RegKey, CStr(Res)
+170               End If
 
-162           End If
-163       End If
+171           End If
+172       End If
 
 EarlyExit:
-164       Set LinesBook = Nothing
-165       AddFilters
+173       Set LinesBook = Nothing
+174       AddFilters
 
-166       Exit Sub
+175       Exit Sub
 ErrHandler:
-167       SomethingWentWrong "#Worksheet_BeforeDoubleClick (line " & CStr(Erl) & "): " & Err.Description & "!", vbInformation, "Worksheet_BeforeDoubleClick"
+176       SomethingWentWrong "#Worksheet_BeforeDoubleClick (line " & CStr(Erl) & "): " & Err.Description & "!", vbInformation, "Worksheet_BeforeDoubleClick"
 End Sub
 
 Function SafeRangeAddress(ws As Worksheet, RangeName As String)

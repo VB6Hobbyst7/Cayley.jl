@@ -102,16 +102,16 @@ Function SetBooleans(IncludeAssetClasses As String, ProductCreditLimits As Strin
 18                IncludeRatesTrades = False
 19                CalcByProduct = False
 20                If Not IncludeFxTrades Then
-21                    Throw "For this bank, ProductCreditLimits entered in the lines workbook is '" + _
-                          ProductCreditLimits + "' and therefore the credit limits (also entered in the " + _
-                          "lines workbook) are assumed to be for the bank's Fx book only." + vbLf + vbLf + "So IncludeAssetClasses " + _
-                          "cannot take the value '" + IncludeAssetClasses + "' because then there " & _
+21                    Throw "For this bank, ProductCreditLimits entered in the lines workbook is '" & _
+                          ProductCreditLimits & "' and therefore the credit limits (also entered in the " & _
+                          "lines workbook) are assumed to be for the bank's Fx book only." & vbLf & vbLf & "So IncludeAssetClasses " & _
+                          "cannot take the value '" & IncludeAssetClasses & "' because then there " & _
                           "will definitely be no Fx trades to count against the credit limits.", True
 22                ElseIf ExtraTradesAreRates Then
-23                    Throw "For this bank, ProductCreditLimits entered in the lines workbook is '" + _
-                          ProductCreditLimits + "' and therefore the credit limits (also entered in the " + _
-                          "lines workbook) are assumed to be for the bank's Fx book only." + vbLf + vbLf + "So ExtraTradesAre " + _
-                          "cannot take the value '" + ExtraTradesAre + "' because those are Rates trades which the " + _
+23                    Throw "For this bank, ProductCreditLimits entered in the lines workbook is '" & _
+                          ProductCreditLimits & "' and therefore the credit limits (also entered in the " & _
+                          "lines workbook) are assumed to be for the bank's Fx book only." & vbLf & vbLf & "So ExtraTradesAre " & _
+                          "cannot take the value '" & ExtraTradesAre & "' because those are Rates trades which the " & _
                           "bank trades under a separate limit", True
 24                End If
                   
@@ -162,7 +162,7 @@ Sub ValidateCreditInputs(ShortfallOrQuantie As String, CreditLimits, CreditInter
 
 19        Exit Sub
 ErrHandler:
-20        Throw "#ValidateCreditInputs (line " & CStr(Erl) + "): " & Err.Description & "!"
+20        Throw "#ValidateCreditInputs (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -242,9 +242,9 @@ Function HeadroomSolverFromFilters(FilterBy1, Filter1Value, FilterBy2, Filter2Va
 28        Else
 29            Horizon = "[1"
 30            For i = 2 To sNRows(UnitHedgeAmounts)
-31                Horizon = Horizon + "," + CStr(i)
+31                Horizon = Horizon & "," & CStr(i)
 32            Next i
-33            Horizon = Horizon + "]"
+33            Horizon = Horizon & "]"
 34        End If
 
 35        Expression = "Cayley." & JuliaFunction & "(" & ModelName & ",""" & ExistingTradesFileX & """,""" & _
@@ -256,21 +256,19 @@ Function HeadroomSolverFromFilters(FilterBy1, Filter1Value, FilterBy2, Filter2Va
               
           Dim ResultFromJulia
               
-36        If gDebugMode Then Debug.Print Expression
+36        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
 
-37        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
-
-38        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
+37        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
         
-39        NotionalCapApplies = GetItem(ResultFromJulia, "notionalcapapplies")
-40        PFEProfileWithoutET = GetItem(ResultFromJulia, "pfeprofilewithoutet")
-41        PFEProfileWithET = GetItem(ResultFromJulia, "pfeprofilewithet")
+38        NotionalCapApplies = GetItem(ResultFromJulia, "notionalcapapplies")
+39        PFEProfileWithoutET = GetItem(ResultFromJulia, "pfeprofilewithoutet")
+40        PFEProfileWithET = GetItem(ResultFromJulia, "pfeprofilewithet")
 
-42        HeadroomSolverFromFilters = GetItem(ResultFromJulia, "multiple")
+41        HeadroomSolverFromFilters = GetItem(ResultFromJulia, "multiple")
 
-43        Exit Function
+42        Exit Function
 ErrHandler:
-44        HeadroomSolverFromFilters = "#HeadroomSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
+43        HeadroomSolverFromFilters = "#HeadroomSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -327,20 +325,18 @@ Function FxSolverFromFilters(FilterBy1, Filter1Value, FilterBy2, Filter2Value, I
               CStr(PFEPercentile) & "," & LCase(CStr(IsShortfall)) & "," & LCase(CalcByProduct) & _
               "," & LCase(gUseThreads) & ")"
 
-13        If gDebugMode Then Debug.Print Expression
+13        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
 
-14        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
-
-15        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
+14        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
         
-16        PFEProfileUnshockedFx = GetItem(ResultFromJulia, "pfeprofileunshockedfx")
-17        PFEProfileShockedFx = GetItem(ResultFromJulia, "pfeprofileshockedfx")
-18        FxSolverFromFilters = GetItem(ResultFromJulia, "multiple")
-19        FxRoot = GetItem(ResultFromJulia, "fxroot")
+15        PFEProfileUnshockedFx = GetItem(ResultFromJulia, "pfeprofileunshockedfx")
+16        PFEProfileShockedFx = GetItem(ResultFromJulia, "pfeprofileshockedfx")
+17        FxSolverFromFilters = GetItem(ResultFromJulia, "multiple")
+18        FxRoot = GetItem(ResultFromJulia, "fxroot")
 
-20        Exit Function
+19        Exit Function
 ErrHandler:
-21        FxSolverFromFilters = "#FxSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
+20        FxSolverFromFilters = "#FxSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
 27    End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -394,20 +390,18 @@ Function FxVolSolverFromFilters(FilterBy1, Filter1Value, FilterBy2, Filter2Value
               CStr(PFEPercentile) & "," & LCase(CStr(IsShortfall)) & "," & LCase(CalcByProduct) & _
               "," & LCase(gUseThreads) & ")"
 
-13        If gDebugMode Then Debug.Print Expression
+13        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
 
-14        Assign ResultFromJulia, JuliaEvalWrapper(Expression, ModelName)
-
-15        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
+14        If VarType(ResultFromJulia) = vbString Then Throw ResultFromJulia
         
-16        PFEProfileUnshockedFx = GetItem(ResultFromJulia, "pfeprofileunshockedfx")
-17        PFEProfileShockedFx = GetItem(ResultFromJulia, "pfeprofileshockedfx")
-18        FxVolRoot = GetItem(ResultFromJulia, "fxvolroot")
-19        FxVolSolverFromFilters = GetItem(ResultFromJulia, "multiple")
+15        PFEProfileUnshockedFx = GetItem(ResultFromJulia, "pfeprofileunshockedfx")
+16        PFEProfileShockedFx = GetItem(ResultFromJulia, "pfeprofileshockedfx")
+17        FxVolRoot = GetItem(ResultFromJulia, "fxvolroot")
+18        FxVolSolverFromFilters = GetItem(ResultFromJulia, "multiple")
 
-20        Exit Function
+19        Exit Function
 ErrHandler:
-21        FxVolSolverFromFilters = "#FxVolSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
+20        FxVolSolverFromFilters = "#FxVolSolverFromFilters (line " & CStr(Erl) & "): " & Err.Description & "!"
 27    End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -450,11 +444,10 @@ Function PFEProfileHW(Model As String, NumberOfSims As Long, ByVal TheTrades As 
               CStr(TimeGap) & "," & CStr(TimeEnd) & "," & CStr(PFEPercentile) & "," & LCase(CStr(IsShortfall)) & _
               "," & LCase(CStr(gUseThreads)) & ",""" & UCase(ReportCurrency) & """," & LCase(CalcByProduct) & ")"
 
-16        If gDebugMode Then Debug.Print Expression
-17        PFEProfileHW = JuliaEvalWrapper(Expression, Model)
-18        Exit Function
+16        PFEProfileHW = JuliaEvalWrapper(Expression, Model)
+17        Exit Function
 ErrHandler:
-19        PFEProfileHW = "#PFEProfileHW (line " & CStr(Erl) & "): " & Err.Description & "!"
+18        PFEProfileHW = "#PFEProfileHW (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------

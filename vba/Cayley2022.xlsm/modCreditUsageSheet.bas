@@ -43,9 +43,7 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
           Const chShowExtraTrades = "Show current ""E&Xtra Trades"" in Julia format"
           Const FidShowExtraTrades = 0
           
-          Const chPrint = "&Print Charts..."
-          Const chPaste = "Paste C&harts to new workbook..."
-          Const FidPrint = 4
+          Const chPaste = "&Paste Charts to new workbook..."
           Const FidPaste = 422
           Dim Allocations As Variant
           Dim chOpenLines As String
@@ -74,7 +72,7 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
 3         RunThisAtTopOfCallStack
 
 4         OBAO = OtherBooksAreOpen(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen)
-          
+                   
 5         If TradesBookIsOpen Then
 6             TWIOOD = TradesWorkbookIsOutOfDate()
 7         End If
@@ -83,8 +81,8 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
 
 9         If Choice = "" Then        'Build the menu
 10            chOpenOthers = NameForOpenOthers(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen, True)
-11            FidOpenOthers = IIf(IsMissing(chOpenOthers), CreateMissing(), 23)
-12            EnableOpenOthers = IIf(IsMissing(chOpenOthers), CreateMissing(), True)
+11            FidOpenOthers = IIf(IsMissing(chOpenOthers), createmissing(), 23)
+12            EnableOpenOthers = IIf(IsMissing(chOpenOthers), createmissing(), True)
               
 13            If TradesBookIsOpen Then
 14                If TWIOOD Then
@@ -117,7 +115,7 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
 
 40            TheChoices = sArrayStack(chFeedRates, chRebuildModel, "--" & chCalc, chSolveTHR, chSolveTHR2, _
                   chSolveTHR3, chSolveFxHR, chSolveFxVolHR, "--" & chShowTrades, _
-                  chPrint, chPaste, "--" & chOpenTrades, _
+                   chPaste, "--" & chOpenTrades, _
                   chOpenLines, chOpenMarket, chOpenOthers)
 41            AdvancedChoices = sArrayRange("--&Developer Tools", _
                   sArrayStack(chVersionInfo, "--" & chCreateSystemImage, chLaunchJuliaWithoutSystemImage, "--" & chShowExtraTrades))
@@ -125,12 +123,12 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
 
 43            FaceIDs = sArrayStack(FidFeedRates, FidRebuildModel, FidCalc, FidSolveTHR, FidSolveTHR2, _
                   FidSolveTHR3, FidSolveFxHR, FidSolveFxVolHR, FidShowTrades, _
-                  FidPrint, FidPaste, FidOpenTrades, _
+                   FidPaste, FidOpenTrades, _
                   FidOpenLines, FidOpenMarket, FidOpenOthers, FidVersionInfo, FidCreateSystemImage, _
                   FidLaunchJuliaWithoutSystemImage, FidShowExtraTrades)
                   
 44            EnableFlags = sArrayStack(OBAO, OBAO, OBAO, OBAO, OBAO, OBAO, OBAO, OBAO, _
-                  OBAO, OBAO, OBAO, True, True, True, EnableOpenOthers, sReshape(True, sNRows(AdvancedChoices), 1))
+                  OBAO, OBAO, True, True, True, EnableOpenOthers, sReshape(True, sNRows(AdvancedChoices), 1))
 
 45            Choice = ShowCommandBarPopup(TheChoices, FaceIDs, EnableFlags, , ChooseAnchorObject())
 46        End If
@@ -192,51 +190,47 @@ Sub MenuCreditUsageSheet(Optional ByVal Choice As String)
 96            Case Unembellish(chOpenMarket)
 97                Activate = IIf(MarketBookIsOpen, True, IsShiftKeyDown())
 98                OpenMarketWorkbook Not (Activate), Activate
-99            Case Unembellish(chPrint)
+99            Case Unembellish(chPaste)
 100               JuliaLaunchForCayley
-101               PrintCharts True
-102           Case Unembellish(chPaste)
+101               PasteCharts
+102           Case Unembellish(chShowTrades), "ShowTrades"
 103               JuliaLaunchForCayley
-104               PrintCharts False
-105           Case Unembellish(chShowTrades), "ShowTrades"
-106               JuliaLaunchForCayley
-107               ShowTrades
-108           Case Unembellish(chCreateSystemImage)
-109               JuliaCreateSystemImage True, UseLinux()
-110           Case Unembellish(chLaunchJuliaWithoutSystemImage)
-111               LaunchJuliaWithoutSystemImage
-112           Case Unembellish(chShowExtraTrades)
-113               JuliaLaunchForCayley
-114               ShowExtraTrades
-115           Case Unembellish(chVersionInfo)
-116               ShowVersionInfo
-117           Case Else
-118               Throw "Unrecognised choice: " & Choice
-119       End Select
+104               ShowTrades
+105           Case Unembellish(chCreateSystemImage)
+106               JuliaCreateSystemImage True, UseLinux()
+107           Case Unembellish(chLaunchJuliaWithoutSystemImage)
+108               LaunchJuliaWithoutSystemImage
+109           Case Unembellish(chShowExtraTrades)
+110               JuliaLaunchForCayley
+111               ShowExtraTrades
+112           Case Unembellish(chVersionInfo)
+113               ShowVersionInfo
+114           Case Else
+115               Throw "Unrecognised choice: " & Choice
+116       End Select
 
           'Final tidy up - and we really want protection on the CreditUsage sheet to be on. _
            It's too easy for the user to make inadvertant changes.
-120       If Not ActiveSheet Is Nothing Then
-121           If ActiveSheet Is shCreditUsage Then
-122               UnselectChart
-123               FormatCreditUsageSheet True
-124           End If
-125       End If
+117       If Not ActiveSheet Is Nothing Then
+118           If ActiveSheet Is shCreditUsage Then
+119               UnselectChart
+120               FormatCreditUsageSheet True
+121           End If
+122       End If
 
           Dim TimingMessage As String
-126       If Choice = chCalc Then
-127           Choice = "Calculate PFE"
-128       Else
-129           Choice = Replace(Choice, "...", "")
-130       End If
-131       TimingMessage = "Time to " & Choice & ": " & _
+123       If Choice = chCalc Then
+124           Choice = "Calculate PFE"
+125       Else
+126           Choice = Replace(Choice, "...", "")
+127       End If
+128       TimingMessage = "Time to " & Choice & ": " & _
               Format(sElapsedTime() - g_StartRunCreditUsageSheet, "0.00") & " seconds"
-132       If gDebugMode Then Debug.Print TimingMessage
-133       TemporaryMessage TimingMessage, , False
+129       TemporaryMessage TimingMessage, , False
 
-134       Exit Sub
+130       Exit Sub
 ErrHandler:
-135       SomethingWentWrong "#MenuCreditUsageSheet (line " & CStr(Erl) & "): " & Err.Description & "!", , "Cayley"
+131       SomethingWentWrong "#MenuCreditUsageSheet (line " & CStr(Erl) & "): " & Err.Description & "!", , "Cayley"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -742,250 +736,252 @@ Private Function RunCreditUsageSheetCore(Mode As String, FilterBy1 As String, Fi
 
           'FxShocks are different from when the variables BaseUSD, BaseEUR, EURUSD were populated so re-populate...
 233       If Mode = "SolveFx" Then
-234           If BaseCCY = "EUR" Then
-235               BaseUSD = MyFxPerBaseCcy(BaseCCY, "USD", gModel_CM) * Multiple
-236           End If
-237           If BaseCCY <> "EUR" Then
-238               BaseEUR = MyFxPerBaseCcy(BaseCCY, "EUR", gModel_CM) / Multiple
-239           End If
-240           EURUSD = GetItem(gModel_CM, "EURUSD") * Multiple
-241       End If
+234           If Not sIsErrorString(SolveResult) Then
+235               If BaseCCY = "EUR" Then
+236                   BaseUSD = MyFxPerBaseCcy(BaseCCY, "USD", gModel_CM) * Multiple
+237               End If
+238               If BaseCCY <> "EUR" Then
+239                   BaseEUR = MyFxPerBaseCcy(BaseCCY, "EUR", gModel_CM) / Multiple
+240               End If
+241               EURUSD = GetItem(gModel_CM, "EURUSD") * Multiple
+242           End If
+243       End If
 
-242       If Not IsNB Then
-243           If sNCols(PFEToDisplay) >= 3 Then
-244               PVBase = PFEToDisplay(1, 3)        'No point in calculating again, but we have to be careful that the PV we extract from the t=0 PFE graph _
+244       If Not IsNB Then
+245           If sNCols(PFEToDisplay) >= 3 Then
+246               PVBase = PFEToDisplay(1, 3)        'No point in calculating again, but we have to be careful that the PV we extract from the t=0 PFE graph _
                                                       is correct - e.g. does not include ExtraTrades (though such trades are meant to have zero PV).
 
-245               PVEUR = PVBase * BaseEUR
-246               PVUSD = PVBase * BaseUSD
-247           ElseIf sIsErrorString(PFEToDisplay) Then
-248               PVBase = FirstElementOf(PFEToDisplay): PVEUR = PVBase: PVUSD = PVBase
-249           Else
-250               PVBase = "#Unknown error!": PVEUR = PVBase: PVUSD = PVBase
-251           End If
-252       Else
-253           PVBase = FirstElementOf(PortfolioValueFromFilters(BaseCCY, FilterBy1, Filter1Value, FilterBy2, Filter2Value, IncludeFutureTrades, IncludeAssetClasses, _
-                  PortfolioAgeing, TradesScaleFactor, CurrenciesToInclude, ModelName, TC2, ProductCreditLimits, twb, AnchorDate))
-254           If IsNumber(PVBase) Then
-255               PVEUR = PVBase * BaseEUR
-256               PVUSD = PVBase * BaseUSD
-257           Else
-258               PVEUR = PVBase
-259               PVUSD = PVBase
-260           End If
-261       End If
+247               PVEUR = PVBase * BaseEUR
+248               PVUSD = PVBase * BaseUSD
+249           ElseIf sIsErrorString(PFEToDisplay) Then
+250               PVBase = FirstElementOf(PFEToDisplay): PVEUR = PVBase: PVUSD = PVBase
+251           Else
+252               PVBase = "#Unknown error!": PVEUR = PVBase: PVUSD = PVBase
+253           End If
+254       Else
+255           PVBase = FirstElementOf(PortfolioValueFromFilters(BaseCCY, FilterBy1, Filter1Value, FilterBy2, Filter2Value, IncludeFutureTrades, IncludeAssetClasses, _
+                  PortfolioAgeing, TradesScaleFactor, CurrenciesToInclude, ModelName, TC2, ProductCreditLimits, twb, AnchorDate, True))
+256           If IsNumber(PVBase) Then
+257               PVEUR = PVBase * BaseEUR
+258               PVUSD = PVBase * BaseUSD
+259           Else
+260               PVEUR = PVBase
+261               PVUSD = PVBase
+262           End If
+263       End If
 
-262       DictAdd ResultsDict, "Success", Success
-263       DictAdd ResultsDict, "PVBase", PVBase
-264       DictAdd ResultsDict, "PVEUR", PVEUR
-265       DictAdd ResultsDict, "PVUSD", PVUSD
-266       DictAdd ResultsDict, "NumTrades", TC.NumIncluded
-267       DictAdd ResultsDict, "NumTradesExcluded", TC.NumExcluded
-268       DictAdd ResultsDict, "FxShock", FxShock
-269       DictAdd ResultsDict, "FxVolShock", FxVolShock
-270       DictAdd ResultsDict, "MinHeadroomOverFirstN", MinHeadroomOverFirstN
-271       DictAdd ResultsDict, "MaxPFEByYear", MaxPFEByYear
-272       If Mode = "Solve1to5" Then
-273           DictAdd ResultsDict, "TradeSolveResult", TradeSolveResult
-274           DictAdd ResultsDict, "TradeHeadroom", TradeHeadroom
-275       ElseIf Mode = "Solve345" Then
-276           DictAdd ResultsDict, "TradeSolveResult", TradeSolveResult
-277           DictAdd ResultsDict, "TradeHeadroom345", TradeHeadroom345
-278       ElseIf Mode = "SolveFx" Then
-279           DictAdd ResultsDict, "FxSolveResult", FxSolveResult
-280           DictAdd ResultsDict, "FxRoot", FxRoot
-281       ElseIf Mode = "SolveFxVol" Then
-282           DictAdd ResultsDict, "FxVolSolveResult", FxVolSolveResult
-283           DictAdd ResultsDict, "FxVolRoot", FxVolRoot
-284       End If
-285       DictAdd ResultsDict, "MinHeadroomOverFirstNUSD", sArrayMultiply(MinHeadroomOverFirstN, BaseUSD)
+264       DictAdd ResultsDict, "Success", Success
+265       DictAdd ResultsDict, "PVBase", PVBase
+266       DictAdd ResultsDict, "PVEUR", PVEUR
+267       DictAdd ResultsDict, "PVUSD", PVUSD
+268       DictAdd ResultsDict, "NumTrades", TC.NumIncluded
+269       DictAdd ResultsDict, "NumTradesExcluded", TC.NumExcluded
+270       DictAdd ResultsDict, "FxShock", FxShock
+271       DictAdd ResultsDict, "FxVolShock", FxVolShock
+272       DictAdd ResultsDict, "MinHeadroomOverFirstN", MinHeadroomOverFirstN
+273       DictAdd ResultsDict, "MaxPFEByYear", MaxPFEByYear
+274       If Mode = "Solve1to5" Then
+275           DictAdd ResultsDict, "TradeSolveResult", TradeSolveResult
+276           DictAdd ResultsDict, "TradeHeadroom", TradeHeadroom
+277       ElseIf Mode = "Solve345" Then
+278           DictAdd ResultsDict, "TradeSolveResult", TradeSolveResult
+279           DictAdd ResultsDict, "TradeHeadroom345", TradeHeadroom345
+280       ElseIf Mode = "SolveFx" Then
+281           DictAdd ResultsDict, "FxSolveResult", FxSolveResult
+282           DictAdd ResultsDict, "FxRoot", FxRoot
+283       ElseIf Mode = "SolveFxVol" Then
+284           DictAdd ResultsDict, "FxVolSolveResult", FxVolSolveResult
+285           DictAdd ResultsDict, "FxVolRoot", FxVolRoot
+286       End If
+287       DictAdd ResultsDict, "MinHeadroomOverFirstNUSD", sArrayMultiply(MinHeadroomOverFirstN, BaseUSD)
 
-286       If Not RefreshSheet Then GoTo EarlyExit
+288       If Not RefreshSheet Then GoTo EarlyExit
 
           'Stuff needed only for chart
-287       If CreditLineInterp = "FlatToRight" Then
-288           CLFPLeftCol = sArrayStack(0, sGroupReshape(xArrayAscending, 2))
-289           CLFPRightCol = sArrayStack(sGroupReshape(yArray, 2), 0)
-290       Else
-291           CLFPLeftCol = sArrayStack(0, xArrayAscending)
-292           CLFPRightCol = sArrayStack(yArray(1, 1), yArray)
-293       End If
+289       If CreditLineInterp = "FlatToRight" Then
+290           CLFPLeftCol = sArrayStack(0, sGroupReshape(xArrayAscending, 2))
+291           CLFPRightCol = sArrayStack(sGroupReshape(yArray, 2), 0)
+292       Else
+293           CLFPLeftCol = sArrayStack(0, xArrayAscending)
+294           CLFPRightCol = sArrayStack(yArray(1, 1), yArray)
+295       End If
 
-294       If DoNotionalCap Then
-295           Select Case Mode
+296       If DoNotionalCap Then
+297           Select Case Mode
                   Case "Solve345"
-296                   CurrentNotional = CurrentNotional + FirstElementOf(sColumnSum(sArrayAbs(TradeHeadroom345)))
-297                   If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
-298               Case "Standard", "SolveFx"
-299                   If IncludeExtraTrades Then
-300                       CurrentNotional = CurrentNotional + FirstElementOf(sColumnSum(sArrayAbs(ExtraTradeAmounts)))
-301                       If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
-302                   End If
+298                   CurrentNotional = CurrentNotional + FirstElementOf(sColumnSum(sArrayAbs(TradeHeadroom345)))
+299                   If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
+300               Case "Standard", "SolveFx"
+301                   If IncludeExtraTrades Then
+302                       CurrentNotional = CurrentNotional + FirstElementOf(sColumnSum(sArrayAbs(ExtraTradeAmounts)))
+303                       If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
+304                   End If
 
-303               Case "Solve1to5"
-304                   CurrentNotional = CurrentNotional + Abs(TradeHeadroom(GetHedgeHorizon(), 1))        'we leave the sheet in the state as it would be after doing the last headroom calculation
-305                   If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
-306           End Select
-307       End If
+305               Case "Solve1to5"
+306                   CurrentNotional = CurrentNotional + Abs(TradeHeadroom(GetHedgeHorizon(), 1))        'we leave the sheet in the state as it would be after doing the last headroom calculation
+307                   If CurrentNotional >= NotionalCap Then NotionalCapApplies = True
+308           End Select
+309       End If
 
-308       CreditLimitsForPlotting = sArrayRange(CLFPLeftCol, CLFPRightCol)
+310       CreditLimitsForPlotting = sArrayRange(CLFPLeftCol, CLFPRightCol)
 
           Dim PorS As String
-309       If LCase(ShortfallOrQuantile) = "shortfall" Then
-310           PorS = "ES"
-311       Else
-312           PorS = "PFE"
-313       End If
+311       If LCase(ShortfallOrQuantile) = "shortfall" Then
+312           PorS = "ES"
+313       Else
+314           PorS = "PFE"
+315       End If
 
-314       Headers = sArrayRange("Date", "Time", _
+316       Headers = sArrayRange("Date", "Time", _
               IIf(IsNB, "Notional-based line usage", PorS & _
               "(" & Format(PFEPercentile, "0%") & ")"), _
               "Line", IIf(IsNB, "Line Headroom", "Headroom"))
 
           'We've calculated everything, so update the sheet...
-315       Set SPH = CreateSheetProtectionHandler(shCreditUsage)
-316       Set SUH = CreateScreenUpdateHandler()
-317       If TypeName(Selection) <> "Range" Then
+317       Set SPH = CreateSheetProtectionHandler(shCreditUsage)
+318       Set SUH = CreateScreenUpdateHandler()
+319       If TypeName(Selection) <> "Range" Then
               'Horrible possibility that user has selected the chart while the macro is running - possible because of the DoEvents call in RefreshScreen?
-318           shCreditUsage.Cells(1, 1).Select
-319       End If
+320           shCreditUsage.Cells(1, 1).Select
+321       End If
 
           Dim DataToPaste As Variant
-320       DataToPaste = sArrayRange(PFEToDisplay, InterpolatedLines, Headroom)
+322       DataToPaste = sArrayRange(PFEToDisplay, InterpolatedLines, Headroom)
 
           Dim DifNumRows As Boolean
-321       With RangeFromSheet(shCreditUsage, "TheData")
-322           DifNumRows = .Rows.Count <> sNRows(DataToPaste)
-323           .Rows(0).Value = Headers
-324           If DifNumRows Then
-325               .Clear
-326           Else
-327               .ClearContents
-328           End If
-329           With .Resize(sNRows(PFEToDisplay))
-330               .Value = DataToPaste
-331               If DifNumRows Then
-332                   shCreditUsage.Names.Add "TheData", .offset(0)
-333               End If
-334           End With
-335       End With
+323       With RangeFromSheet(shCreditUsage, "TheData")
+324           DifNumRows = .Rows.Count <> sNRows(DataToPaste)
+325           .Rows(0).Value = Headers
+326           If DifNumRows Then
+327               .Clear
+328           Else
+329               .ClearContents
+330           End If
+331           With .Resize(sNRows(PFEToDisplay))
+332               .Value = DataToPaste
+333               If DifNumRows Then
+334                   shCreditUsage.Names.Add "TheData", .offset(0)
+335               End If
+336           End With
+337       End With
 
-336       RangeFromSheet(shCreditUsage, "MaxPFEByYear").Value = MaxPFEByYear
-337       RangeFromSheet(shCreditUsage, "MinHeadroomOverFirstN").Value = MinHeadroomOverFirstN
-338       RangeFromSheet(shCreditUsage, "Methodology").Value = Methodology
-339       RangeFromSheet(shCreditUsage, "PFEPercentile").Value = PFEPercentile
-340       RangeFromSheet(shCreditUsage, "ShortfallOrQuantile").Value = ShortfallOrQuantile
-341       RangeFromSheet(shCreditUsage, "VolatilityInput").Value = VolatilityInput
-342       RangeFromSheet(shCreditUsage, "BaseCcy").Value = BaseCCY
-343       RangeFromSheet(shCreditUsage, "CreditLineInterp").Value = CreditLineInterp
-344       RangeFromSheet(shCreditUsage, "ProductCreditLimits").Value = ProductCreditLimits
-345       RangeFromSheet(shCreditUsage, "CreditLimits").Value = CreditLimits
-346       RangeFromSheet(shCreditUsage, "CreditLimitsForPlotting").Value = CreditLimitsForPlotting
-347       RangeFromSheet(shCreditUsage, "FxNotionalPercentages").Value = FxNotionalPercentages
-348       RangeFromSheet(shCreditUsage, "NotionalCap").Value = NotionalCap
-349       RangeFromSheet(shCreditUsage, "CurrentNotional").Value = CurrentNotional
-350       RangeFromSheet(shCreditUsage, "NumTrades").Value = TC.NumIncluded
-351       RangeFromSheet(shCreditUsage, "NumTradesValued").Value = TC.NumIncluded
-352       RangeFromSheet(shCreditUsage, "NumTradesExcluded").Value = TC.NumExcluded
-353       RangeFromSheet(shCreditUsage, "EURUSD").Value = EURUSD
-354       RangeFromSheet(shCreditUsage, "EURUSD3YVol").Value = EURUSD3YVol
-355       RangeFromSheet(shCreditUsage, "PVUSD").Value = PVUSD
-356       RangeFromSheet(shCreditUsage, "PVEUR").Value = PVEUR
+338       RangeFromSheet(shCreditUsage, "MaxPFEByYear").Value = MaxPFEByYear
+339       RangeFromSheet(shCreditUsage, "MinHeadroomOverFirstN").Value = MinHeadroomOverFirstN
+340       RangeFromSheet(shCreditUsage, "Methodology").Value = Methodology
+341       RangeFromSheet(shCreditUsage, "PFEPercentile").Value = PFEPercentile
+342       RangeFromSheet(shCreditUsage, "ShortfallOrQuantile").Value = ShortfallOrQuantile
+343       RangeFromSheet(shCreditUsage, "VolatilityInput").Value = VolatilityInput
+344       RangeFromSheet(shCreditUsage, "BaseCcy").Value = BaseCCY
+345       RangeFromSheet(shCreditUsage, "CreditLineInterp").Value = CreditLineInterp
+346       RangeFromSheet(shCreditUsage, "ProductCreditLimits").Value = ProductCreditLimits
+347       RangeFromSheet(shCreditUsage, "CreditLimits").Value = CreditLimits
+348       RangeFromSheet(shCreditUsage, "CreditLimitsForPlotting").Value = CreditLimitsForPlotting
+349       RangeFromSheet(shCreditUsage, "FxNotionalPercentages").Value = FxNotionalPercentages
+350       RangeFromSheet(shCreditUsage, "NotionalCap").Value = NotionalCap
+351       RangeFromSheet(shCreditUsage, "CurrentNotional").Value = CurrentNotional
+352       RangeFromSheet(shCreditUsage, "NumTrades").Value = TC.NumIncluded
+353       RangeFromSheet(shCreditUsage, "NumTradesValued").Value = TC.NumIncluded
+354       RangeFromSheet(shCreditUsage, "NumTradesExcluded").Value = TC.NumExcluded
+355       RangeFromSheet(shCreditUsage, "EURUSD").Value = EURUSD
+356       RangeFromSheet(shCreditUsage, "EURUSD3YVol").Value = EURUSD3YVol
+357       RangeFromSheet(shCreditUsage, "PVUSD").Value = PVUSD
+358       RangeFromSheet(shCreditUsage, "PVEUR").Value = PVEUR
 
-357       Select Case Mode
+359       Select Case Mode
               Case "Solve345"
-358               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = True
-359               RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = TradeHeadroom345
-360               RunCreditUsageSheetCore = TradeHeadroom345
-361               GreyOutHeadrooms True, True, True
-362           Case "Solve1to5"
-363               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = True
-364               RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = 0
-365               RangeFromSheet(shCreditUsage, "TradeHeadroom").Value = TradeHeadroom
-366               GreyOutHeadrooms False, True, True
-367               RunCreditUsageSheetCore = "OK"
-368           Case "Standard"
-369               GreyOutHeadrooms True, True, True
-370               RunCreditUsageSheetCore = "OK"
-371           Case "SolveFx"
-372               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
-373               RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 2).Value = Multiple
-374               RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 1).Value = FxRoot
-375               RangeFromSheet(shCreditUsage, "FxShock").Value = Multiple
-376               GreyOutHeadrooms True, False, True
-377           Case "SolveFxVol"
-378               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
-379               RangeFromSheet(shCreditUsage, "FxVolHeadroom").Cells(1, 2).Value = Multiple
-380               RangeFromSheet(shCreditUsage, "FxVolHeadroom").Cells(1, 1).Value = FxVolRoot
-381               RangeFromSheet(shCreditUsage, "FxVolShock").Value = Multiple
-382               GreyOutHeadrooms True, True, False
-383       End Select
+360               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = True
+361               RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = TradeHeadroom345
+362               RunCreditUsageSheetCore = TradeHeadroom345
+363               GreyOutHeadrooms True, True, True
+364           Case "Solve1to5"
+365               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = True
+366               RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value = 0
+367               RangeFromSheet(shCreditUsage, "TradeHeadroom").Value = TradeHeadroom
+368               GreyOutHeadrooms False, True, True
+369               RunCreditUsageSheetCore = "OK"
+370           Case "Standard"
+371               GreyOutHeadrooms True, True, True
+372               RunCreditUsageSheetCore = "OK"
+373           Case "SolveFx"
+374               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
+375               RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 2).Value = Multiple
+376               RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 1).Value = FxRoot
+377               RangeFromSheet(shCreditUsage, "FxShock").Value = Multiple
+378               GreyOutHeadrooms True, False, True
+379           Case "SolveFxVol"
+380               RangeFromSheet(shCreditUsage, "IncludeExtraTrades").Value = False
+381               RangeFromSheet(shCreditUsage, "FxVolHeadroom").Cells(1, 2).Value = Multiple
+382               RangeFromSheet(shCreditUsage, "FxVolHeadroom").Cells(1, 1).Value = FxVolRoot
+383               RangeFromSheet(shCreditUsage, "FxVolShock").Value = Multiple
+384               GreyOutHeadrooms True, True, False
+385       End Select
 
-384       ChartTitle = PFEChartTitle(FilterBy1, Filter1Value, FilterBy2, Filter2Value, IncludeExtraTrades, ExtraTradeAmounts, _
+386       ChartTitle = PFEChartTitle(FilterBy1, Filter1Value, FilterBy2, Filter2Value, IncludeExtraTrades, ExtraTradeAmounts, _
               PortfolioAgeing, IIf(Mode = "SolveFx", FxRoot, FxShock), FxVolShock, TradesScaleFactor, _
               LinesScaleFactor, TC.NumIncluded, BankIsGood, IncludeFxTrades, IncludeRatesTrades, _
               IIf(NotionalCapApplies, "Notional Cap Applies", ""))
-385       YAxisTitle = BaseCCY & " Millions"
+387       YAxisTitle = BaseCCY & " Millions"
 
-386       UpdateChartOnCreditUsageSheet ChartTitle, YAxisTitle, BankIsGood
+388       UpdateChartOnCreditUsageSheet ChartTitle, YAxisTitle, BankIsGood
 
-387       GoTo EarlyExit
+389       GoTo EarlyExit
           'NB this block of code must be in line with previous block where we populate the results collection
 CollectResultsFromSheet:        'This is the case where we have had to use one of the "old" methods of solving (for LnFx model) )that pre-dates our _
                                        use of HullWhite, R and R's powerful root-finders. In these cases we don't have the option of not updating the PFE sheet
 
-388       DictAdd ResultsDict, "Success", Success
-389       PVBase = FirstElementOf(PortfolioValueFromFilters(BaseCCY, FilterBy1, Filter1Value, FilterBy2, Filter2Value, _
+390       DictAdd ResultsDict, "Success", Success
+391       PVBase = FirstElementOf(PortfolioValueFromFilters(BaseCCY, FilterBy1, Filter1Value, FilterBy2, Filter2Value, _
               IncludeFutureTrades, IncludeAssetClasses, PortfolioAgeing, TradesScaleFactor, CurrenciesToInclude, _
-              ModelName, TC2, ProductCreditLimits, twb, AnchorDate))
+              ModelName, TC2, ProductCreditLimits, twb, AnchorDate, True))
               
-390       If IsNumber(PVBase) Then
-391           PVEUR = PVBase * BaseEUR
-392           PVUSD = PVBase * BaseUSD
-393       Else
-394           PVEUR = PVBase
-395           PVUSD = PVBase
-396       End If
-397       DictAdd ResultsDict, "PVBase", PVBase
-398       DictAdd ResultsDict, "PVEUR", PVEUR
-399       DictAdd ResultsDict, "PVUSD", PVUSD
-400       DictAdd ResultsDict, "NumTrades", RangeFromSheet(shCreditUsage, "NumTrades").Value
-401       DictAdd ResultsDict, "FxShock", RangeFromSheet(shCreditUsage, "FxShock").Value
-402       DictAdd ResultsDict, "FxVolShock", RangeFromSheet(shCreditUsage, "FxVolShock").Value
-403       DictAdd ResultsDict, "MinHeadroomOverFirstN", RangeFromSheet(shCreditUsage, "MinHeadroomOverFirstN").Value
-404       DictAdd ResultsDict, "MinHeadroomOverFirstNUSD", sArrayMultiply(ResultsDict("MinHeadroomOverFirstN"), BaseUSD)
-405       DictAdd ResultsDict, "MaxPFEByYear", RangeFromSheet(shCreditUsage, "MaxPFEByYear").Value
-406       If Mode = "Solve1to5" Then
-407           DictAdd ResultsDict, "TradeSolveResult", RangeFromSheet(shCreditUsage, "TradeSolveResult").Value
-408           DictAdd ResultsDict, "TradeHeadroom", RangeFromSheet(shCreditUsage, "TradeHeadroom").Value
-409       ElseIf Mode = "Solve345" Then
-410           DictAdd ResultsDict, "TradeSolveResult", RangeFromSheet(shCreditUsage, "TradeSolveResult").Value
-411           DictAdd ResultsDict, "TradeHeadroom345", RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value        'This statement looks strange, but that's where the method dumps the data
-412       ElseIf Mode = "SolveFx" Then
-413           DictAdd ResultsDict, "FxSolveResult", RangeFromSheet(shCreditUsage, "FxSolveResult").Value
-414           DictAdd ResultsDict, "FxRoot", RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 1).Value
-415       End If
+392       If IsNumber(PVBase) Then
+393           PVEUR = PVBase * BaseEUR
+394           PVUSD = PVBase * BaseUSD
+395       Else
+396           PVEUR = PVBase
+397           PVUSD = PVBase
+398       End If
+399       DictAdd ResultsDict, "PVBase", PVBase
+400       DictAdd ResultsDict, "PVEUR", PVEUR
+401       DictAdd ResultsDict, "PVUSD", PVUSD
+402       DictAdd ResultsDict, "NumTrades", RangeFromSheet(shCreditUsage, "NumTrades").Value
+403       DictAdd ResultsDict, "FxShock", RangeFromSheet(shCreditUsage, "FxShock").Value
+404       DictAdd ResultsDict, "FxVolShock", RangeFromSheet(shCreditUsage, "FxVolShock").Value
+405       DictAdd ResultsDict, "MinHeadroomOverFirstN", RangeFromSheet(shCreditUsage, "MinHeadroomOverFirstN").Value
+406       DictAdd ResultsDict, "MinHeadroomOverFirstNUSD", sArrayMultiply(ResultsDict("MinHeadroomOverFirstN"), BaseUSD)
+407       DictAdd ResultsDict, "MaxPFEByYear", RangeFromSheet(shCreditUsage, "MaxPFEByYear").Value
+408       If Mode = "Solve1to5" Then
+409           DictAdd ResultsDict, "TradeSolveResult", RangeFromSheet(shCreditUsage, "TradeSolveResult").Value
+410           DictAdd ResultsDict, "TradeHeadroom", RangeFromSheet(shCreditUsage, "TradeHeadroom").Value
+411       ElseIf Mode = "Solve345" Then
+412           DictAdd ResultsDict, "TradeSolveResult", RangeFromSheet(shCreditUsage, "TradeSolveResult").Value
+413           DictAdd ResultsDict, "TradeHeadroom345", RangeFromSheet(shCreditUsage, "ExtraTradeAmounts").Value        'This statement looks strange, but that's where the method dumps the data
+414       ElseIf Mode = "SolveFx" Then
+415           DictAdd ResultsDict, "FxSolveResult", RangeFromSheet(shCreditUsage, "FxSolveResult").Value
+416           DictAdd ResultsDict, "FxRoot", RangeFromSheet(shCreditUsage, "FxHeadroom").Cells(1, 1).Value
+417       End If
 
 EarlyExit:
-416       Set twb = Nothing
-417       gBlockChangeEvent = oldBlockChange
-418       Exit Function
+418       Set twb = Nothing
+419       gBlockChangeEvent = oldBlockChange
+420       Exit Function
 ErrHandler:
 
-419       ErrorMessage = "#RunCreditUsageSheetCore (line " & CStr(Erl) & "): " & Err.Description & "!"
-420       gBlockChangeEvent = oldBlockChange
-421       Set twb = Nothing
-422       If ThrowErrors Then Throw ErrorMessage
-423       DictAdd ResultsDict, "Success", False
-424       Select Case Mode
+421       ErrorMessage = "#RunCreditUsageSheetCore (line " & CStr(Erl) & "): " & Err.Description & "!"
+422       gBlockChangeEvent = oldBlockChange
+423       Set twb = Nothing
+424       If ThrowErrors Then Throw ErrorMessage
+425       DictAdd ResultsDict, "Success", False
+426       Select Case Mode
               Case "Solve1to5", "Solve345"
-425               DictAdd ResultsDict, "TradeSolveResult", ErrorMessage
-426           Case "SolveFx"
-427               DictAdd ResultsDict, "FxSolveResult", ErrorMessage
-428           Case Else
-429               DictAdd ResultsDict, "ProfileResult", ErrorMessage
-430       End Select
-431       RunCreditUsageSheetCore = ErrorMessage
+427               DictAdd ResultsDict, "TradeSolveResult", ErrorMessage
+428           Case "SolveFx"
+429               DictAdd ResultsDict, "FxSolveResult", ErrorMessage
+430           Case Else
+431               DictAdd ResultsDict, "ProfileResult", ErrorMessage
+432       End Select
+433       RunCreditUsageSheetCore = ErrorMessage
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1007,10 +1003,10 @@ Private Function GetAllocation()
 1         On Error GoTo ErrHandler
 2         HH = GetHedgeHorizon()
 
-3         PromptFirstPart = "Please enter trade allocation." + vbLf + vbLf + _
-              "To allocate to a single year enter text such as '4y'." + vbLf + _
-              "Otherwise, specify allocations with a colon-delimited" + vbLf + _
-              "string. For example, to allocate equally to years 2, 4" + vbLf + _
+3         PromptFirstPart = "Please enter trade allocation." & vbLf & vbLf & _
+              "To allocate to a single year enter text such as '4y'." & vbLf & _
+              "Otherwise, specify allocations with a colon-delimited" & vbLf & _
+              "string. For example, to allocate equally to years 2, 4" & vbLf & _
               "and 5 enter '0:1:0:1:1'"
 
 TryAgain:
@@ -1386,7 +1382,7 @@ Private Sub StretchRanges(NewHeight As Long)
 
 15        Exit Sub
 ErrHandler:
-16        Throw "#StretchRanges (line " & CStr(Erl) + "): " & Err.Description & "!"
+16        Throw "#StretchRanges (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1413,7 +1409,7 @@ Private Sub StretchRange(RangeName As String, NewHeight As Long)
 
 9         Exit Sub
 ErrHandler:
-10        Throw "#StretchRange (line " & CStr(Erl) + "): " & Err.Description & "!"
+10        Throw "#StretchRange (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1727,7 +1723,7 @@ Sub ShowHidePFEData(Optional Show)
 
 35        Exit Sub
 ErrHandler:
-36        SomethingWentWrong "#ShowHidePFEData (line " & CStr(Erl) + "): " & Err.Description & "!"
+36        SomethingWentWrong "#ShowHidePFEData (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1760,6 +1756,6 @@ Sub SetExtraTradesHeader()
 
 14        Exit Sub
 ErrHandler:
-15        Throw "#SetExtraTradesHeader (line " & CStr(Erl) + "): " & Err.Description & "!"
+15        Throw "#SetExtraTradesHeader (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 

@@ -31,7 +31,7 @@ End Sub
 ' Purpose   : Do as much updating from Bloomgberg as we can
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub FeedAllRatesAllSheets(Live As Boolean, AsOfDate As Long, CurrencyList As Variant, DoFx As Boolean, DoSwaps As Boolean, DoBasis As Boolean, _
-                          DoSwaptions As Boolean, DoCredit As Boolean, DoInflation As Boolean, DoInflationSets As Boolean)
+          DoSwaptions As Boolean, DoCredit As Boolean, DoInflation As Boolean, DoInflationSets As Boolean)
           Dim ws As Worksheet
 1         On Error GoTo ErrHandler
           Dim i As Long
@@ -59,15 +59,15 @@ Sub FeedAllRatesAllSheets(Live As Boolean, AsOfDate As Long, CurrencyList As Var
 19                Set ws = ThisWorkbook.Worksheets(CurrencyList(i, 1))
 20                ws.Calculate
 21                If DoSwaps Then
-22                    StatusBarWrap "Calling Bloomberg for " + Left(ws.Name, 3) + " swaps"
+22                    MessageLogWrite "Calling Bloomberg for " + Left(ws.Name, 3) + " swaps"
 23                    FeedSwapsOnSheet ws, Live, AsOfDate
 24                End If
 25                If DoBasis Then
-26                    StatusBarWrap "Calling Bloomberg for " + Left(ws.Name, 3) + " basis swaps"
+26                    MessageLogWrite "Calling Bloomberg for " + Left(ws.Name, 3) + " basis swaps"
 27                    FeedBasisSwapsOnSheet ws, Live, AsOfDate
 28                End If
 29                If DoSwaptions Then
-30                    StatusBarWrap "Calling Bloomberg for " + Left(ws.Name, 3) + " swaption vols"
+30                    MessageLogWrite "Calling Bloomberg for " + Left(ws.Name, 3) + " swaption vols"
 31                    FeedSwaptionsOnSheet ws, Live, AsOfDate
 32                End If
 33            Next
@@ -92,7 +92,7 @@ Sub FeedSwaptionsOnSheet(sh As Worksheet, Live As Boolean, AsOfDate As Long)
 
 1         On Error GoTo ErrHandler
 2         Ccy = Right(sh.Name, 3)
-3         Set VolRange = sexpandRightDown(RangeFromSheet(sh, "VolInit").Cells(0, 0))
+3         Set VolRange = sExpandRightDown(RangeFromSheet(sh, "VolInit").Cells(0, 0))
 4         Set VolRange = VolRange.Offset(1, 1).Resize(VolRange.Rows.Count - 1, VolRange.Columns.Count - 1)
 5         SwaptionVolParameters = RangeFromSheet(sh, "SwaptionVolParameters")
 6         QuoteType = sVLookup("QuoteType", SwaptionVolParameters)
@@ -193,9 +193,9 @@ End Sub
 ' -----------------------------------------------------------------------------------------------------------------------
 Function Avg(a, b)
 1         If Not IsNumber(a) Then
-2             Avg = "error: " + NonStringToString(a)
+2             Avg = "Error: " + NonStringToString(a)
 3         ElseIf Not IsNumber(b) Then
-4             Avg = "error: " + NonStringToString(b)
+4             Avg = "Error: " + NonStringToString(b)
 5         Else
 6             Avg = (a + b) / 2
 7         End If
@@ -210,9 +210,9 @@ End Function
 Function Divide(a, b)
 1         On Error GoTo ErrHandler
 2         If Not IsNumber(a) Then
-3             Divide = "error: " + NonStringToString(a)
+3             Divide = "Error: " + NonStringToString(a)
 4         ElseIf Not IsNumber(b) Then
-5             Divide = "error: " + NonStringToString(b)
+5             Divide = "Error: " + NonStringToString(b)
 6         Else
 7             Divide = (a / b)
 8         End If
@@ -274,7 +274,7 @@ End Function
 ' Purpose   : For the swap rates on one sheet pastes the necessary calls to BDP and BDH
 '             into the Hidden sheet. Used for both Swap rates and basis swap rates.
 ' -----------------------------------------------------------------------------------------------------------------------
-Sub FeedSwapRates(RatesRange As Range, Tenors As Variant, FixFreqs, FloatFreqs, Live As Boolean, AsOfDate As Long, extraInfo1 As String)
+Sub FeedSwapRates(RatesRange As Range, Tenors As Variant, FixFreqs, FloatFreqs, Live As Boolean, AsOfDate As Long, ExtraInfo1 As String)
 1         On Error GoTo ErrHandler
           Dim Ccy As String
           Dim DateString As String
@@ -285,17 +285,17 @@ Sub FeedSwapRates(RatesRange As Range, Tenors As Variant, FixFreqs, FloatFreqs, 
           Dim M As Long
           Dim N As Long
 
-2         If Not Live Then DateString = "DATe(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
+2         If Not Live Then DateString = "DATE(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
 3         Ccy = Left(RatesRange.Parent.Name, 3)
 
 4         N = RatesRange.Rows.Count: M = RatesRange.Columns.Count
 5         Formulas = sReshape("", N, M)
 6         For i = 1 To N
 7             For j = 1 To M
-8                 If extraInfo1 = "SwapRates" Then
+8                 If ExtraInfo1 = "SwapRates" Then
 9                     Formulas(i, j) = BloombergFormulaSwapRate(Ccy, CStr(Tenors(i, j)), CStr(FixFreqs(i, j)), CStr(FloatFreqs(i, j)), Live, AsOfDate)
 10                    Divisor = 100
-11                ElseIf extraInfo1 = "BasisSwapRates" Then
+11                ElseIf ExtraInfo1 = "BasisSwapRates" Then
 12                    If Ccy = RangeFromSheet(shConfig, "CollateralCcy").Value Then
 13                        Divisor = 100
 14                    Else
@@ -306,7 +306,7 @@ Sub FeedSwapRates(RatesRange As Range, Tenors As Variant, FixFreqs, FloatFreqs, 
 19            Next j
 20        Next i
 
-21        PasteToHiddenSheet RatesRange, Formulas, Divisor, extraInfo1, Ccy
+21        PasteToHiddenSheet RatesRange, Formulas, Divisor, ExtraInfo1, Ccy
 
 22        Exit Sub
 ErrHandler:
@@ -321,7 +321,7 @@ End Sub
 '             into the Hidden sheet.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub FeedSwaptionVols(VolRange As Range, Ccy As String, QuoteType As String, _
-                     Contributor As String, Live As Boolean, AsOfDate As Long)
+          Contributor As String, Live As Boolean, AsOfDate As Long)
 
 1         On Error GoTo ErrHandler
 
@@ -332,7 +332,7 @@ Sub FeedSwaptionVols(VolRange As Range, Ccy As String, QuoteType As String, _
 
 2         Formulas = sReshape("", VolRange.Rows.Count, VolRange.Columns.Count)
 
-3         If Not Live Then DateString = "DATe(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
+3         If Not Live Then DateString = "DATE(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
 
 4         For i = 1 To VolRange.Rows.Count
 5             For j = 1 To VolRange.Columns.Count
@@ -351,7 +351,7 @@ Sub FeedAllFxData(Live As Boolean, AsOfDate As Long)
           Dim ws As Worksheet
 1         On Error GoTo ErrHandler
 2         Set ws = ThisWorkbook.Worksheets("FX")
-3         Set VolRange = sexpandRightDown(RangeFromSheet(ws, "FxDataTopLeft"))
+3         Set VolRange = sExpandRightDown(RangeFromSheet(ws, "FxDataTopLeft"))
 4         Set VolRange = VolRange.Offset(1, 1).Resize(VolRange.Rows.Count - 1, VolRange.Columns.Count - 1)
 5         ClearHiddenSheet
 6         FeedFxSpotAndVols VolRange, Live, AsOfDate
@@ -378,7 +378,7 @@ Sub FeedFxSpotAndVols(VolRange As Range, Live As Boolean, AsOfDate As Long)
 2         If VolRange.Cells(0, 1).Value <> "Spot" Then Throw "Assertion failed. Cell above first column of VolRange must read 'Spot'"
 
 3         Formulas = sReshape("", VolRange.Rows.Count, 1)
-4         If Not Live Then DateString = "DATe(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
+4         If Not Live Then DateString = "DATE(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
 
 5         Set SpotRange = VolRange.Columns(1)
 6         For i = 1 To SpotRange.Rows.Count
@@ -462,7 +462,7 @@ Sub ClearHiddenSheet()
 4             N.Delete
 5         Next
 6         shHiddenSheet.UsedRange.EntireRow.Delete
-7         Res = shHiddenSheet.UsedRange.Rows.Count    'ReSeTS USeD RANGe
+7         Res = shHiddenSheet.UsedRange.Rows.Count    'RESETS USED RANGE
 8         Exit Sub
 ErrHandler:
 9         Throw "#ClearHiddenSheet (line " & CStr(Erl) + "): " & Err.Description & "!"
@@ -474,9 +474,9 @@ End Sub
 ' Date      : 09-Jun-2016
 ' Purpose   : Common code to be used by methods that feed SwaptionVols, Rates etc
 ' -----------------------------------------------------------------------------------------------------------------------
-Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Double, extraInfo1 As String, extraInfo2 As String)
+Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Double, ExtraInfo1 As String, ExtraInfo2 As String)
 1         On Error GoTo ErrHandler
-          Dim CopyOferr As String
+          Dim CopyOfErr As String
           Dim FirstCell As Range
           Dim i As Long
           Dim j As Long
@@ -493,14 +493,14 @@ Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Dou
 2         Set SPH = CreateSheetProtectionHandler(shHiddenSheet)
 3         Set SUH = CreateScreenUpdateHandler()
 
-4         Select Case extraInfo1
-          Case "CreditSpreads"
-5             WithTopLabels = True
-6         Case "FxVols", "SwaptionVols"
-7             WithTopLabels = True
-8             WithLeftLabels = True
-9         Case "FxSpots", "SwapRates", "BasisSwapRates"
-10            WithLeftLabels = True
+4         Select Case ExtraInfo1
+              Case "CreditSpreads"
+5                 WithTopLabels = True
+6             Case "FxVols", "SwaptionVols"
+7                 WithTopLabels = True
+8                 WithLeftLabels = True
+9             Case "FxSpots", "SwapRates", "BasisSwapRates"
+10                WithLeftLabels = True
 11        End Select
 
 12        Set FirstCell = FirstAvailableCell()
@@ -512,10 +512,10 @@ Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Dou
 18        Set TempRange2 = TempRange.Offset(0, TempRange.Columns.Count + 1)
 19        FirstCell.Cells(3, 1).Value = "Source"
 20        FirstCell.Cells(3, 2).Value = TempRange.Address
-21        FirstCell.Cells(4, 1).Value = "extraInfo1"
-22        FirstCell.Cells(4, 2).Value = extraInfo1
-23        FirstCell.Cells(5, 1).Value = "extraInfo2"
-24        FirstCell.Cells(5, 2).Value = extraInfo2
+21        FirstCell.Cells(4, 1).Value = "ExtraInfo1"
+22        FirstCell.Cells(4, 2).Value = ExtraInfo1
+23        FirstCell.Cells(5, 1).Value = "ExtraInfo2"
+24        FirstCell.Cells(5, 2).Value = ExtraInfo2
 25        FirstCell.Cells(6, 1).Value = "FormulasAsText"
 26        FirstCell.Cells(6, 2).Value = TempRange2.Address
 27        FirstCell.Cells(7, 1).Value = "Pasted"
@@ -525,7 +525,7 @@ Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Dou
 30            TempRange.Rows(0).Value = TargetRange.Rows(0).Value
 31        End If
 32        If WithLeftLabels Then
-33            If extraInfo1 = "FxVols" Then
+33            If ExtraInfo1 = "FxVols" Then
 34                TempRange.Columns(0).Value = TargetRange.Columns(-1).Value
 35            Else
 36                TempRange.Columns(0).Value = TargetRange.Columns(0).Value
@@ -547,9 +547,9 @@ Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Dou
 50                If i = 1 And j = 1 Then
 51                    With TempRange.Cells(i, j)
 52                        If IsError(.Value) Then
-53                            If .Text = "#NAMe?" Then
+53                            If .Text = "#NAME?" Then
 54                                .ClearContents
-                                  'We assume that the formula evaluating to #NAMe? is because Bloomberg is not installed
+                                  'We assume that the formula evaluating to #NAME? is because Bloomberg is not installed
                                   'To do -write stand-alone function to test for Bloomberg being both installed and working...
 55                                Throw "Feeding rates from Bloomberg is not possible because the Bloomberg addin not installed.", True
 56                            End If
@@ -560,13 +560,13 @@ Sub PasteToHiddenSheet(TargetRange As Range, Formulas As Variant, Divisor As Dou
 61        Next i
           'Paste the formulas as text to a range to the right - necessary since method PasteFinishedBlocksFromHiddenSheet _
            replaces formulas with their values once they "resolve" but for debugging we want to have easy access to what those formulas were...
-62        TempRange2.FormulaR1C1 = "=FORMULATeXT(RC[" & CStr(TempRange.Column - TempRange2.Column) & "])"
-63        TempRange2.Value = sArrayexcelString(TempRange2.Value)
+62        TempRange2.FormulaR1C1 = "=FORMULATEXT(RC[" & CStr(TempRange.Column - TempRange2.Column) & "])"
+63        TempRange2.Value = sArrayExcelString(TempRange2.Value)
 
 64        Exit Sub
 ErrHandler:
-65        CopyOferr = "#PasteToHiddenSheet (line " & CStr(Erl) & "): " & Err.Description & "!"
-66        Throw CopyOferr
+65        CopyOfErr = "#PasteToHiddenSheet (line " & CStr(Erl) & "): " & Err.Description & "!"
+66        Throw CopyOfErr
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -581,8 +581,8 @@ Sub PasteFromHiddenSheet(ControlBlock As Range, FormulasRange As Range)
           Dim ColorInterp
           Dim DataToPaste As Variant
           Dim DoInterp As Boolean
-          Dim extraInfo1
-          Dim extraInfo2
+          Dim ExtraInfo1
+          Dim ExtraInfo2
           Dim InterpolatedValues
           Dim SPH As clsSheetProtectionHandler
           Dim TargetAddress As String
@@ -593,12 +593,12 @@ Sub PasteFromHiddenSheet(ControlBlock As Range, FormulasRange As Range)
 3         ColorInterp = 11854022    'greenish
 
 4         TargetAddress = sVLookup("Target", ControlBlock.Value)
-5         If sIserrorString(TargetAddress) Then Throw "Unexpected error: Cannot find label 'Target' in ControlBlock"
+5         If sIsErrorString(TargetAddress) Then Throw "Unexpected error: Cannot find label 'Target' in ControlBlock"
 
-6         extraInfo1 = sVLookup("extraInfo1", ControlBlock)
-7         extraInfo2 = sVLookup("extraInfo2", ControlBlock)
+6         ExtraInfo1 = sVLookup("ExtraInfo1", ControlBlock)
+7         ExtraInfo2 = sVLookup("ExtraInfo2", ControlBlock)
 
-8         StatusBarWrap "Pasting Bloomberg results: " + CStr(extraInfo1) + " " + CStr(extraInfo2)
+8         MessageLogWrite "Pasting Bloomberg results: " + CStr(ExtraInfo1) + " " + CStr(ExtraInfo2)
 
 9         Set TargetRange = ThisWorkbook.Worksheets(sStringBetweenStrings(TargetAddress, , "!")).Range(sStringBetweenStrings(TargetAddress, "!"))
 
@@ -608,23 +608,23 @@ Sub PasteFromHiddenSheet(ControlBlock As Range, FormulasRange As Range)
 
 12        If FormulasRange.Columns.Count <> TargetRange.Columns.Count Then Throw "Assertion failed: FormulasRange and TargetRange have different number of columns"
 
-13        Select Case extraInfo1
-          Case "FxVols", "CreditSpreads"
-14            DoInterp = True
-15            InterpolatedValues = InterpolateFXVols(FormulasRange.Value, FormulasRange.Rows(0).Value)
-16        Case "SwapRates", "BasisSwapRates"
-17            DoInterp = True
-18            InterpolatedValues = InterpolateSwaps(FormulasRange.Value, FormulasRange.Columns(0).Value)
-19        Case "SwaptionVols"
-20            DoInterp = True
-21            InterpolatedValues = InterpolateSwaptions(FormulasRange.Value, sArrayTranspose(FormulasRange.Rows(0).Value), FormulasRange.Columns(0).Value)
+13        Select Case ExtraInfo1
+              Case "FxVols", "CreditSpreads"
+14                DoInterp = True
+15                InterpolatedValues = InterpolateFXVols(FormulasRange.Value, FormulasRange.Rows(0).Value)
+16            Case "SwapRates", "BasisSwapRates"
+17                DoInterp = True
+18                InterpolatedValues = InterpolateSwaps(FormulasRange.Value, FormulasRange.Columns(0).Value)
+19            Case "SwaptionVols"
+20                DoInterp = True
+21                InterpolatedValues = InterpolateSwaptions(FormulasRange.Value, sArrayTranspose(FormulasRange.Rows(0).Value), FormulasRange.Columns(0).Value)
 22        End Select
 
           Dim Formulas As Variant
 23        Formulas = FormulasRange.Formula
 24        DataToPaste = FormulasRange.Value
 
-25        PasteAndFormat TargetRange, DataToPaste, InterpolatedValues, DoInterp, False, Formulas, , CStr(extraInfo1), CStr(extraInfo2)
+25        PasteAndFormat TargetRange, DataToPaste, InterpolatedValues, DoInterp, False, Formulas, , CStr(ExtraInfo1), CStr(ExtraInfo2)
 
 26        Exit Sub
 ErrHandler:
@@ -653,16 +653,16 @@ Function TenureStringsToTime(TenureStrings)
 6             For j = 1 To M
 7                 Tmp = CDbl(Left(TenureStrings(i, j), Len(TenureStrings(i, j)) - 1))
 8                 Select Case UCase(Right(TenureStrings(i, j), 1))
-                  Case "W"
-9                     Res(i, j) = Tmp / 365.25 * 7
-10                Case "M"
-11                    Res(i, j) = Tmp / 12
-12                Case "D"
-13                    Res(i, j) = Tmp / 365.25
-14                Case "Y"
-15                    Res(i, j) = Tmp
-16                Case Else
-17                    Throw "Unrecognised Label"
+                      Case "W"
+9                         Res(i, j) = Tmp / 365.25 * 7
+10                    Case "M"
+11                        Res(i, j) = Tmp / 12
+12                    Case "D"
+13                        Res(i, j) = Tmp / 365.25
+14                    Case "Y"
+15                        Res(i, j) = Tmp
+16                    Case Else
+17                        Throw "Unrecognised Label"
 18                End Select
 19            Next j
 20        Next i
@@ -680,7 +680,7 @@ End Function
 ' Date      : 07-Jul-2016
 ' Purpose   : Fill in missing FxVols via interpolation and flat extrapolation on each row of the array
 ' -----------------------------------------------------------------------------------------------------------------------
-Function InterpolateFXVols(VolsWitherrors, Labels)
+Function InterpolateFXVols(VolsWithErrors, Labels)
           Dim ChooseVector
           Dim i As Long
           Dim InterpRes
@@ -695,7 +695,7 @@ Function InterpolateFXVols(VolsWitherrors, Labels)
           Dim yArray
 1         On Error GoTo ErrHandler
 2         Times = sArrayTranspose(TenureStringsToTime(Labels))
-3         Res = VolsWitherrors
+3         Res = VolsWithErrors
 4         Force2DArrayR Res
 5         NR = sNRows(Res): NC = sNCols(Res)
 
@@ -778,9 +778,9 @@ End Function
 ' Purpose   : Fill in missing swaption vols via interpolation and flat extrapolation on
 '             each column of the array followed by interpolation\flat extrapolation on each row
 ' -----------------------------------------------------------------------------------------------------------------------
-Function InterpolateSwaptions(VolsWitherrors, TopLabels, LeftLabels)
+Function InterpolateSwaptions(VolsWithErrors, TopLabels, LeftLabels)
           Dim ChooseVector
-          Dim exercises
+          Dim Exercises
           Dim i As Long
           Dim InterpRes
           Dim j As Long
@@ -795,9 +795,9 @@ Function InterpolateSwaptions(VolsWitherrors, TopLabels, LeftLabels)
           Dim yArray
 1         On Error GoTo ErrHandler
 2         Tenures = TenureStringsToTime(TopLabels)
-3         exercises = TenureStringsToTime(LeftLabels)
+3         Exercises = TenureStringsToTime(LeftLabels)
 
-4         Res = VolsWitherrors
+4         Res = VolsWithErrors
 5         Force2DArrayR Res
 
 6         NR = sNRows(Res): NC = sNCols(Res)
@@ -813,14 +813,14 @@ Function InterpolateSwaptions(VolsWitherrors, TopLabels, LeftLabels)
 14            ChooseVector = sArrayIsNumber(ThisColumn)
 15            NumGood = sArrayCount(ChooseVector)
 16            If NumGood < NR And NumGood > 0 Then
-17                xArrayAscending = sMChoose(exercises, ChooseVector)
+17                xArrayAscending = sMChoose(Exercises, ChooseVector)
 18                yArray = sMChoose(ThisColumn, ChooseVector)
 19                If NumGood = 1 Then
 20                    For j = 1 To NR
 21                        Res(j, i) = yArray(1, 1)
 22                    Next j
 23                Else
-24                    InterpRes = sInterp(xArrayAscending, yArray, exercises, "Linear", "FF")
+24                    InterpRes = sInterp(xArrayAscending, yArray, Exercises, "Linear", "FF")
 25                    For j = 1 To NR
 26                        Res(j, i) = InterpRes(j, 1)
 27                    Next j
@@ -892,9 +892,9 @@ Sub FeedCreditSpreads(Live As Boolean, AsOfDate As Long)
 
 1         On Error GoTo ErrHandler
 
-2         If Not Live Then DateString = "DATe(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
+2         If Not Live Then DateString = "DATE(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
 
-3         Set TickerTableRange = sexpandRightDown(shCredit.Range("CDSTickersTopLeft"))
+3         Set TickerTableRange = sExpandRightDown(shCredit.Range("CDSTickersTopLeft"))
 4         With TickerTableRange
 5             Set TickerTableRange = .Offset(1, 0).Resize(.Rows.Count - 1)
 6         End With
@@ -948,7 +948,7 @@ Sub FeedInflationSwaps(Live As Boolean, AsOfDate As Long)
 1         On Error GoTo ErrHandler
 2         For Each ws In ThisWorkbook.Worksheets
 3             If IsInflationSheet(ws) Then
-4                 If Not Live Then DateString = "DATe(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
+4                 If Not Live Then DateString = "DATE(" + Format(AsOfDate, "yyyy") + "," + Format(AsOfDate, "m") + "," + Format(AsOfDate, "d") + ")"
 5                 Set RatesRange = sExpandDown(RangeFromSheet(ws, "ZCSwapsInit")).Columns(2)
 6                 Tenors = sExpandDown(RangeFromSheet(ws, "ZCSwapsInit")).Columns(1).Value2
 7                 NR = sNRows(sExpandDown(RangeFromSheet(ws, "ZCSwapsInit")))
@@ -976,19 +976,19 @@ ErrHandler:
 ' PGS 21 March 2022, made into a function so that this method can be called from Cayley
 '            via Application.Run
 '
-' CHANGING THe SIGNATURe OF THIS FUNCTION? ReMeMBeR TO CHeCK THe CALL FROM CAYLeY2022.XLSM!!
+' CHANGING THE SIGNATURE OF THIS FUNCTION? REMEMBER TO CHECK THE CALL FROM CAYLEY2022.XLSM!!
 '
 ' -----------------------------------------------------------------------------------------------------------------------
 Function FeedRatesFromTextFile(FileName As String, Optional WhatToRefresh As String = "All", _
-          Optional ThrowOnerror As Boolean = True)
+          Optional ThrowOnError As Boolean = True)
           
           Dim AnchorDate As Long
+          Dim CCys As String
+          Dim ErrString As String
           Dim LookUpTable As Variant
           Dim SPH As clsSheetProtectionHandler
           Dim SUH As clsScreenUpdateHandler
           Dim ws As Worksheet
-          Dim ErrString As String
-          Dim CCys As String
 
 1         On Error GoTo ErrHandler
 
@@ -1005,14 +1005,14 @@ Function FeedRatesFromTextFile(FileName As String, Optional WhatToRefresh As Str
 
 10                If IsCurrencySheet(ws) Then
 11                    If InStr(CCys, ws.Name) > 0 Then
-12                        StatusBarWrap "Updating market data on worksheet " + ws.Name + " from file."    '+ FileName
+12                        MessageLogWrite "Updating market data on worksheet " + ws.Name + " from file."    '+ FileName
 13                        FeedSheetFromTextFile ws, LookUpTable, "SwapRatesInit"
 14                        FeedSheetFromTextFile ws, LookUpTable, "XccyBasisSpreadsInit"
 15                        FeedSheetFromTextFile ws, LookUpTable, "VolInit"
 16                        FormatCurrencySheet ws, False, Empty
 17                    End If
 18                ElseIf UCase(ws.Name) = "FX" Then
-19                    StatusBarWrap "Updating market data on worksheet " + ws.Name + " from file."    '+ FileName
+19                    MessageLogWrite "Updating market data on worksheet " + ws.Name + " from file."    '+ FileName
 20                    FeedSheetFromTextFile ws, LookUpTable, "FxDataTopLeft", "Spot"
 21                    FeedSheetFromTextFile ws, LookUpTable, "FxDataTopLeft", "Vols"
 22                    FormatFxVolSheet False
@@ -1024,7 +1024,7 @@ Function FeedRatesFromTextFile(FileName As String, Optional WhatToRefresh As Str
                   Case "All"
 27                    For Each ws In ThisWorkbook.Worksheets
 28                        Set SPH = CreateSheetProtectionHandler(ws)
-29                        StatusBarWrap "Updating market data on " + ws.Name + " from file."    '+ FileName
+29                        MessageLogWrite "Updating market data on " + ws.Name + " from file."    '+ FileName
 30                        If IsCurrencySheet(ws) Then
 31                            FeedSheetFromTextFile ws, LookUpTable, "SwapRatesInit"
 32                            FeedSheetFromTextFile ws, LookUpTable, "XccyBasisSpreadsInit"
@@ -1045,7 +1045,7 @@ Function FeedRatesFromTextFile(FileName As String, Optional WhatToRefresh As Str
 45                    For Each ws In ThisWorkbook.Worksheets
 46                        Set SPH = CreateSheetProtectionHandler(ws)
 47                        If IsCurrencySheet(ws) Then
-48                            StatusBarWrap "Updating market data on " + ws.Name + " from file."    '+ FileName
+48                            MessageLogWrite "Updating market data on " + ws.Name + " from file."    '+ FileName
 49                            FeedSheetFromTextFile ws, LookUpTable, "SwapRatesInit"
 50                            FeedSheetFromTextFile ws, LookUpTable, "XccyBasisSpreadsInit"
 51                            FeedSheetFromTextFile ws, LookUpTable, "VolInit"
@@ -1077,16 +1077,15 @@ Function FeedRatesFromTextFile(FileName As String, Optional WhatToRefresh As Str
 77                    Throw "Did not recognise what to refresh: Must be All, All Ccys, One Ccy, Fx Only, Inflation Only or Credit Only"
 78            End Select
 79        End If
-80        StatusBarWrap False
-81        Exit Function
+80        Exit Function
 
 ErrHandler:
-82        ErrString = "#FeedRatesFromTextFile (line " & CStr(Erl) + "): " & Err.Description & "!"
-83        If ThrowOnerror Then
-84            Throw ErrString
-85        Else
-86            FeedRatesFromTextFile = ErrString
-87        End If
+81        ErrString = "#FeedRatesFromTextFile (line " & CStr(Erl) + "): " & Err.Description & "!"
+82        If ThrowOnError Then
+83            Throw ErrString
+84        Else
+85            FeedRatesFromTextFile = ErrString
+86        End If
 End Function
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : FeedSheetFromTextFile
@@ -1094,13 +1093,13 @@ End Function
 ' Date      : 30-Sep-2016
 ' Purpose   : Takes in a range name from a currency or Fx sheet: "SwapRatesInit",
 '             "XccyBasisSpreadsInit", "VolInit" or "FxDataTopLeft". In the case of
-'             FX sheet, extraInfo is used to discern between "Spot" or "Vols".
+'             FX sheet, ExtraInfo is used to discern between "Spot" or "Vols".
 ' -----------------------------------------------------------------------------------------------------------------------
-Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As String, Optional extraInfo As String)
+Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As String, Optional ExtraInfo As String)
           Dim Ccy As String
           Dim Divisor As Long
           Dim DoInterp As Boolean
-          Dim exercise() As Variant
+          Dim Exercise() As Variant
           Dim FixFreq() As Variant
           Dim FloatFreq() As Variant
           Dim i As Long
@@ -1166,10 +1165,10 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
 
 44            Case "VolInit"
 45                Divisor = 10000
-46                Set TargetRange = sexpandRightDown(RangeFromSheet(ws, RateClass))
+46                Set TargetRange = sExpandRightDown(RangeFromSheet(ws, RateClass))
 47                NR = sNRows(TargetRange)
 48                ReDim Tenor(1 To NR): ReDim Tickers(1 To NR, 1 To sNCols(TargetRange)): ReDim RateNumber(1 To NR, 1 To sNCols(TargetRange)): ReDim SwapRates(1 To sNRows(TargetRange), 1 To sNCols(TargetRange))
-49                ReDim exercise(1 To sNCols(TargetRange))
+49                ReDim Exercise(1 To sNCols(TargetRange))
                   Dim Contributor As String
                   Dim QuoteType As String
 50                QuoteType = sVLookup("QuoteType", RangeFromSheet(ws, "SwaptionVolParameters"))
@@ -1178,8 +1177,8 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
 52                For i = 1 To NR
 53                    Tenor(i) = TargetRange.Cells(i, 0).Value
 54                    For j = 1 To TargetRange.Columns.Count
-55                        exercise(j) = TargetRange.Cells(0, j).Value
-56                        Tickers(i, j) = BloombergTickerSwaptionVol(Ccy, CStr(exercise(j)), CStr(Tenor(i)), QuoteType, Contributor)
+55                        Exercise(j) = TargetRange.Cells(0, j).Value
+56                        Tickers(i, j) = BloombergTickerSwaptionVol(Ccy, CStr(Exercise(j)), CStr(Tenor(i)), QuoteType, Contributor)
 57                        RateNumber(i, j) = Application.Match(Tickers(i, j), LookupTableLeftCol, 0)
 58                        If Not IsError(RateNumber(i, j)) Then
 59                            SwapRates(i, j) = LookUpTable(RateNumber(i, j), PX_LASTCol)
@@ -1189,8 +1188,8 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
 63                    Next j
 64                Next i
 65                Tenor = sArrayTranspose(Tenor)
-66                exercise = sArrayTranspose(exercise)
-67                InterpolatedValues = InterpolateSwaptions(SwapRates, exercise, Tenor)
+66                Exercise = sArrayTranspose(Exercise)
+67                InterpolatedValues = InterpolateSwaptions(SwapRates, Exercise, Tenor)
 
 68            Case "FxDataTopLeft"
 69                Divisor = 1
@@ -1198,8 +1197,8 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
                   Dim FxVols() As Variant
                   Dim Tenors As Range
 70                Set CcyPairs = sExpandDown(RangeFromSheet(shFx, "FxDataTopLeft").Offset(1, 0))
-71                Set Tenors = sexpandRight(RangeFromSheet(shFx, "FxDataTopLeft").Offset(0, 2))
-72                If extraInfo = "Spot" Then
+71                Set Tenors = sExpandRight(RangeFromSheet(shFx, "FxDataTopLeft").Offset(0, 2))
+72                If ExtraInfo = "Spot" Then
 73                    Set TargetRange = sExpandDown(RangeFromSheet(shFx, "FxDataTopLeft").Offset(1, 1))
 74                    NR = sNRows(TargetRange)
 75                    ReDim RateNumber(1 To NR): ReDim SwapRates(1 To NR)
@@ -1216,9 +1215,9 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
 86                    SwapRates = sArrayTranspose(SwapRates)
 87                    DoInterp = False
 
-88                ElseIf extraInfo = "Vols" Then
+88                ElseIf ExtraInfo = "Vols" Then
 89                    Divisor = 100
-90                    Set TargetRange = sexpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft").Offset(1, 2))
+90                    Set TargetRange = sExpandRightDown(RangeFromSheet(shFx, "FxDataTopLeft").Offset(1, 2))
 91                    NR = sNRows(TargetRange)
 92                    ReDim RateNumber(1 To NR, 1 To sNCols(TargetRange)): ReDim SwapRates(1 To sNRows(TargetRange), 1 To sNCols(TargetRange))
 93                    Tickers = sReshape("", sNRows(CcyPairs), sNCols(Tenors))
@@ -1243,7 +1242,7 @@ Sub FeedSheetFromTextFile(ws As Worksheet, LookUpTable As Variant, RateClass As 
                   Dim MatchTenorIDs() As Variant
                   Dim NC As Long
                   Dim TickerTableRange As Range
-108               Set TickerTableRange = sexpandRightDown(RangeFromSheet(shCredit, "CDSTickersTopLeft").Offset(1, 0))
+108               Set TickerTableRange = sExpandRightDown(RangeFromSheet(shCredit, "CDSTickersTopLeft").Offset(1, 0))
 109               Set TargetRange = CDSRange(shCredit).Offset(1, 3).Resize(TickerTableRange.Rows.Count, TickerTableRange.Columns.Count)
 110               NR = sNRows(TargetRange)
 111               NC = sNCols(TargetRange)
@@ -1284,15 +1283,15 @@ End Sub
 ' Date      : 04-Oct-2016
 ' Purpose   : Stolen from PasteFromHiddenSheet to share with FeedSheetFromTextFile.
 '             Deals with colours, inputs interpolated values and adds comments.
-'             extraCommentInfo can be Tickers if FromTextFile is True, should be
+'             ExtraCommentInfo can be Tickers if FromTextFile is True, should be
 '             Formulas if using Bloomberg.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedValues As Variant, DoInterp As Boolean, _
-          FromTextFile As Boolean, extraCommentInfo As Variant, Optional Divisor As Long = 1, Optional extraInfo1 As String, Optional extraInfo2 As String)
+          FromTextFile As Boolean, ExtraCommentInfo As Variant, Optional Divisor As Long = 1, Optional ExtraInfo1 As String, Optional ExtraInfo2 As String)
           Dim c As Range
           Dim ColourBad
           Dim ColourInterp
-          Dim extraCommentString As String
+          Dim ExtraCommentString As String
           Dim i As Long
           Dim j As Long
           Dim Failures, NumFailures As Long, uniqueFailures, FailureIndicators, uniqueFailuresLeftCol, MatchRes, _
@@ -1307,8 +1306,8 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 5         ColourBad = RGB(255, 221, 221)
 6         ColourInterp = 11854022    'greenish
 
-          'SPeCIAL HANDLING FOR INFLATION INDeX 1 OF 2
-7         If extraInfo1 = "InflationIndex" Then    'Avoid pasting non-numbers cauised by data not yet been published
+          'SPECIAL HANDLING FOR INFLATION INDEX 1 OF 2
+7         If ExtraInfo1 = "InflationIndex" Then    'Avoid pasting non-numbers cauised by data not yet been published
               Dim NumToPaste As Long
 8             Force2DArray DataToPaste
 9             For i = 1 To sNRows(DataToPaste)
@@ -1323,7 +1322,7 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 18            Else
 19                Set TargetRange = TargetRange.Resize(NumToPaste)
 20                DataToPaste = sSubArray(DataToPaste, 1, 1, NumToPaste)
-21                extraCommentInfo = sSubArray(extraCommentInfo, 1, 1, NumToPaste)
+21                ExtraCommentInfo = sSubArray(ExtraCommentInfo, 1, 1, NumToPaste)
 22            End If
 23        End If
 
@@ -1353,9 +1352,9 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 41            j = c.Column - TargetRange.Column + 1
 
 42            If FromTextFile Then
-43                extraCommentString = "Ticker: " + extraCommentInfo(i, j)
+43                ExtraCommentString = "Ticker: " + ExtraCommentInfo(i, j)
 44            Else
-45                extraCommentString = "Formula: " + extraCommentInfo(i, j)
+45                ExtraCommentString = "Formula: " + ExtraCommentInfo(i, j)
 46            End If
 47            If DoInterp Then
 48                ThisInterp = InterpolatedValues(i, j)
@@ -1364,7 +1363,7 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 50            If IsNumber(DataToPaste(i, j)) Then
 51                c.Value = Divide(DataToPaste(i, j), Divisor)
 52                If ShowCommentWhenSuccess And Not gApplyRandomAdjustments Then
-53                    SetCellComment c, "Feed success:" + vbLf + NonStringToString(DataToPaste(i, j)) + vbLf + extraCommentString + vbLf + "Time:" + vbLf + Format(Now, "d-mmm-yy hh:mm") + _
+53                    SetCellComment c, "Feed success:" + vbLf + NonStringToString(DataToPaste(i, j)) + vbLf + ExtraCommentString + vbLf + "Time:" + vbLf + Format(Now, "d-mmm-yy hh:mm") + _
                           vbLf + "In total there were " + CStr(NumSuccesses) + " successful feeds in this block of cells"
 54                    ShowCommentWhenSuccess = False
 55                End If
@@ -1377,7 +1376,7 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 62                End If
 63                MatchRes = sMatch(DataToPaste(i, j), uniqueFailuresLeftCol, True)
 64                If Not FailureIndicators(MatchRes, 1) Then
-65                    Comment = "Feed failure:" + vbLf + NonStringToString(DataToPaste(i, j)) + vbLf + extraCommentString + vbLf + "Time:" + vbLf + Format(Now, "d-mmm-yy hh:mm")
+65                    Comment = "Feed failure:" + vbLf + NonStringToString(DataToPaste(i, j)) + vbLf + ExtraCommentString + vbLf + "Time:" + vbLf + Format(Now, "d-mmm-yy hh:mm")
 66                    If uniqueFailures(MatchRes, 2) > 1 Then
 
 67                        Comment = Comment + vbLf + vbLf + _
@@ -1393,12 +1392,12 @@ Sub PasteAndFormat(TargetRange As Range, DataToPaste As Variant, InterpolatedVal
 75            End If
 76        Next c
 
-          'SPeCIAL HANDLING FOR INFLATION INDeX 2 OF 2
-77        If extraInfo1 = "InflationIndex" Then
+          'SPECIAL HANDLING FOR INFLATION INDEX 2 OF 2
+77        If ExtraInfo1 = "InflationIndex" Then
               Dim M As Long
               Dim Y As Long
-78            Y = sStringBetweenStrings(extraInfo2, , ",")
-79            M = sStringBetweenStrings(extraInfo2, ",")
+78            Y = sStringBetweenStrings(ExtraInfo2, , ",")
+79            M = sStringBetweenStrings(ExtraInfo2, ",")
 80            For i = 1 To NumToPaste
 81                TargetRange.Cells(i, -1).Value = Y
 82                TargetRange.Cells(i, 0).Value = M
@@ -1435,29 +1434,26 @@ End Sub
 ' Date      : 19-Sep-2017
 ' Purpose   : Calculates the hidden sheet and pastes the results for blocks that have resolved
 '             to the appropriate places in the other sheets. If not all blocks have resolved
-'             calls itself again in three seconds. Previously tried Doevents to get the BDH
+'             calls itself again in three seconds. Previously tried DoEvents to get the BDH
 '             calls to resolve but that did not work.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub CalcHiddenSheet()
 1         On Error GoTo ErrHandler
           Dim Res As Boolean
 2         mCalcCounter = mCalcCounter + 1
-3         StatusBarWrap "Calculate " + CStr(mCalcCounter)
+3         MessageLogWrite "Calculate " + CStr(mCalcCounter)
 4         shHiddenSheet.Calculate
 5         Res = PasteFinishedBlocksFromHiddenSheet()
 6         If Res Or mCalcCounter > 60 Then
-7             StatusBarWrap False
-8             If gApplyRandomAdjustments Then If gDoFx Then AlignFxSpotRates True, RangeFromSheet(shConfig, "Numeraire")
-9             Exit Sub
-10        Else
-11            DoEvents    'Not sure if this helps, but it might possibly...
-12            Application.OnTime Now + TimeValue("00:00:03"), ThisWorkbook.Name + "!CalcHiddenSheet"
-13        End If
-14        Exit Sub
+7             If gApplyRandomAdjustments Then If gDoFx Then AlignFxSpotRates True, RangeFromSheet(shConfig, "Numeraire")
+8             Exit Sub
+9         Else
+10            Application.OnTime Now + TimeValue("00:00:03"), ThisWorkbook.Name + "!CalcHiddenSheet"
+11        End If
+12        Exit Sub
 ErrHandler:
-15        SomethingWentWrong "#CalcHiddenSheet (line " & CStr(Erl) + "): " & Err.Description & "!"
-16        StatusBarWrap False
-17        Application.Cursor = xlDefault
+13        SomethingWentWrong "#CalcHiddenSheet (line " & CStr(Erl) + "): " & Err.Description & "!"
+14        Application.Cursor = xlDefault
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1465,7 +1461,7 @@ End Sub
 ' Author    : Philip Swannell
 ' Date      : 19-Sep-2017
 ' Purpose   : Sub of CalcHiddenSheet - pastes blocks to their appropriate place in the workbook
-'             sets the "Pasted" flag to TRUe after doing so. Once a block has been pasted back the
+'             sets the "Pasted" flag to TRUE after doing so. Once a block has been pasted back the
 '             calls to BDH are replaced by their values, based on a hunch that fewer calls to BDH
 '             on a sheet encourage the remaining calls to work.
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1490,29 +1486,28 @@ Private Function PasteFinishedBlocksFromHiddenSheet() As Boolean
 8                 If FlagCell.Value = False Then
 9                     SourceRangeAddress = sVLookup("Source", ControlBlock.Value)
 10                    Set SourceRange = shHiddenSheet.Range(SourceRangeAddress)
-11                    DoEvents    'Not sure if this helps, but it might possibly...
-12                    SourceRange.Calculate
-13                    IsCalculated = True
-14                    For Each c In SourceRange.Cells
-15                        If InStr(CStr(c.Value2), "Requesting") > 0 Then
-16                            IsCalculated = False
-17                            Exit For
-18                        End If
-19                    Next c
-20                    If IsCalculated Then
-21                        PasteFromHiddenSheet ControlBlock, SourceRange
-22                        SourceRange.Value = SourceRange.Value    'Get rid of formulas that have "served their purpose" and reduce the number of calls to BDH\BDP. May help other cells to calculate?
-23                        FlagCell.Value = True
-24                    Else
-25                        AllDone = False
-26                    End If
-27                End If
-28            End If
-29        Next N
-30        PasteFinishedBlocksFromHiddenSheet = AllDone
-31        Exit Function
+11                    SourceRange.Calculate
+12                    IsCalculated = True
+13                    For Each c In SourceRange.Cells
+14                        If InStr(CStr(c.Value2), "Requesting") > 0 Then
+15                            IsCalculated = False
+16                            Exit For
+17                        End If
+18                    Next c
+19                    If IsCalculated Then
+20                        PasteFromHiddenSheet ControlBlock, SourceRange
+21                        SourceRange.Value = SourceRange.Value    'Get rid of formulas that have "served their purpose" and reduce the number of calls to BDH\BDP. May help other cells to calculate?
+22                        FlagCell.Value = True
+23                    Else
+24                        AllDone = False
+25                    End If
+26                End If
+27            End If
+28        Next N
+29        PasteFinishedBlocksFromHiddenSheet = AllDone
+30        Exit Function
 ErrHandler:
-32        Throw "#PasteFinishedBlocksFromHiddenSheet (line " & CStr(Erl) + "): " & Err.Description & "!"
+31        Throw "#PasteFinishedBlocksFromHiddenSheet (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -1522,7 +1517,7 @@ End Function
 ' Purpose   : Pastes calls to the appropriate Bloomberg function from into the Hidden sheet
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub FeedInflationIndexes(Live As Boolean, ByVal AsOfDate As Long)
-          Dim existingData As Range
+          Dim ExistingData As Range
           Dim FirstMonth As Long
           Dim FirstYear As Long
           Dim Formulas() As String
@@ -1539,14 +1534,14 @@ Sub FeedInflationIndexes(Live As Boolean, ByVal AsOfDate As Long)
 
 3         For Each ws In ThisWorkbook.Worksheets
 4             If IsInflationSheet(ws) Then
-5                 Set existingData = sExpandDown(ws.Range("HistoricDataInit"))
-6                 For i = existingData.Rows.Count To 1 Step -1
-7                     If IsNumber(existingData.Cells(i, 3)) Then
-8                         FirstYear = existingData.Cells(i, 1).Value
-9                         FirstMonth = existingData.Cells(i, 2).Value
+5                 Set ExistingData = sExpandDown(ws.Range("HistoricDataInit"))
+6                 For i = ExistingData.Rows.Count To 1 Step -1
+7                     If IsNumber(ExistingData.Cells(i, 3)) Then
+8                         FirstYear = ExistingData.Cells(i, 1).Value
+9                         FirstMonth = ExistingData.Cells(i, 2).Value
 10                        FirstYear = FirstYear + IIf(FirstMonth = 12, 1, 0)
 11                        FirstMonth = IIf(FirstMonth = 12, 1, FirstMonth + 1)
-12                        Set TargetRange = existingData.Cells(i + 1, 3)
+12                        Set TargetRange = ExistingData.Cells(i + 1, 3)
 13                        Exit For
 14                    End If
 15                Next i
@@ -1573,4 +1568,5 @@ Sub FeedInflationIndexes(Live As Boolean, ByVal AsOfDate As Long)
 ErrHandler:
 33        Throw "#FeedInflationIndexes (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
+
 

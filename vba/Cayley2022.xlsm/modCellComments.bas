@@ -208,7 +208,7 @@ Sub ResizeComment(TheCell As Range)
 
 39        Exit Sub
 ErrHandler:
-40        Throw "#ResizeComment (line " & CStr(Erl) + "): " & Err.Description & "!"
+40        Throw "#ResizeComment (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------

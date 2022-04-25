@@ -131,8 +131,8 @@ TryAgain:
 
 21        If ShowSwitchOption Then
 22            Title = "Compare Scenarios"
-23            Prompt = "Is this the correct order for the scenarios?" + vbLf + _
-                  "Scenario1 =       " & sSplitPath(FileName1) + vbLf + _
+23            Prompt = "Is this the correct order for the scenarios?" & vbLf & _
+                  "Scenario1 =       " & sSplitPath(FileName1) & vbLf & _
                   "Scenario2 =       " & sSplitPath(FileName2)
 24            Select Case MsgBoxPlus(Prompt, vbYesNoCancel + vbQuestion, Title, _
                   "Yes, Compare them", "Flip 1 and 2, then Compare", "Quit")

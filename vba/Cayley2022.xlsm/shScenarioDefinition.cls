@@ -12,6 +12,7 @@ Option Explicit
 Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
           Dim Alternatives
           Dim CurrentChoice
+          Dim EnableFlags
           Dim HH As Long
           Dim Res
 
@@ -19,47 +20,55 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 
 2         RunThisAtTopOfCallStack
 
-3         Select Case Target.Address
+3         EnableFlags = createmissing()
 
-              Case RangeFromSheet(Me, "UseSpeedGrid").Address, _
-                  RangeFromSheet(Me, "VaryGridWidth").Address
-4                 Alternatives = sArrayStack("TRUE", "FALSE")
+4         Select Case Target.Address
+              Case RangeFromSheet(Me, "UseSpeedGrid").Address
 5                 CurrentChoice = UCase(CStr(Target.Value))
+6                 If RangeFromSheet(Me, "ShocksDerivedFrom").Value = "Custom" Then
+7                     Alternatives = sArrayStack("TRUE First set 'ShocksDerivedFrom' to 'History', not 'Custom'", "FALSE")
+8                     EnableFlags = sArrayStack(False, True)
+9                 Else
+10                    Alternatives = sArrayStack("TRUE", "FALSE")
+11                End If
 
-6             Case RangeFromSheet(Me, "ShocksDerivedFrom").Address
-7                 Alternatives = sArrayStack("History", "Custom")
-8                 CurrentChoice = Target.Value
-9             Case RangeFromSheet(Me, "HistoryStart").Address
-10                Alternatives = sArrayStack("01-Jan-2000", "01-Jan-2007", "01-Jan-2009", "15-Apr-2013")
-11                CurrentChoice = Format(Target.Value2, "dd-mmm-yyyy")
-12            Case RangeFromSheet(Me, "AllocationByYear").Address
-13                HH = GetHedgeHorizon()
+12            Case RangeFromSheet(Me, "VaryGridWidth").Address
+13                Alternatives = sArrayStack("TRUE", "FALSE")
+14                CurrentChoice = UCase(CStr(Target.Value))
+
+15            Case RangeFromSheet(Me, "ShocksDerivedFrom").Address
+16                Alternatives = sArrayStack("History", "Custom")
+17                CurrentChoice = Target.Value
+18            Case RangeFromSheet(Me, "HistoryStart").Address
+19                Alternatives = sArrayStack("01-Jan-2000", "01-Jan-2007", "01-Jan-2009", "15-Apr-2013")
+20                CurrentChoice = Format(Target.Value2, "dd-mmm-yyyy")
+21            Case RangeFromSheet(Me, "AllocationByYear").Address
+22                HH = GetHedgeHorizon()
                   Dim Extra As String
-14                If HH > 5 Then Extra = sConcatenateStrings(sReshape(":0", HH - 5, 1), "")
-15                Alternatives = sArrayStack("0:0:1:1:1" & Extra, "0:0:3:1:1" & Extra, "1:1:1:1:1" & Extra)
-16                CurrentChoice = Target.Value
-17        End Select
+23                If HH > 5 Then Extra = sConcatenateStrings(sReshape(":0", HH - 5, 1), "")
+24                Alternatives = sArrayStack("0:0:1:1:1" & Extra, "0:0:3:1:1" & Extra, "1:1:1:1:1" & Extra)
+25                CurrentChoice = Target.Value
+26        End Select
 
-18        If Not IsEmpty(Alternatives) Then
-19            Cancel = True
-20            If sNRows(Alternatives) < 20 Then
-21                Res = ShowCommandBarPopup(Alternatives, , , CurrentChoice, Target)
-22                If Res = "#Cancel!" Then Exit Sub
-23                Target.Value = Res
-24                Application.GoTo Target
-25            Else
-26                Alternatives = sArrayMakeText(Alternatives)
-27                Res = ShowSingleChoiceDialog(Alternatives, , , , , , , Target.offset(0, 1), , "Scenario Definition")
-28                If Not IsEmpty(Res) Then
-29                    Target.Value = Res
-30                End If
-31            End If
-32        End If
+27        If Not IsEmpty(Alternatives) Then
+28            Cancel = True
+29            If sNRows(Alternatives) < 20 Then
+30                Res = ShowCommandBarPopup(Alternatives, , EnableFlags, CurrentChoice)
+31                If Res = "#Cancel!" Then Exit Sub
+32                Target.Value = Res
+33                Application.GoTo Target
+34            Else
+35                Alternatives = sArrayMakeText(Alternatives)
+36                Res = ShowSingleChoiceDialog(Alternatives, , , , , , , Target.offset(0, 1), , "Scenario Definition")
+37                If Not IsEmpty(Res) Then
+38                    Target.Value = Res
+39                End If
+40            End If
+41        End If
 
-33        Exit Sub
+42        Exit Sub
 ErrHandler:
-34        SomethingWentWrong "#Worksheet_BeforeDoubleClick (line " & CStr(Erl) & "): " & Err.Description & "!"
-
+43        SomethingWentWrong "#Worksheet_BeforeDoubleClick (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Sub Worksheet_Change(ByVal Target As Range)
@@ -93,5 +102,4 @@ ErrHandler:
 12        InEvent = False
 13        SomethingWentWrong CopyOfErr
 End Sub
-
 

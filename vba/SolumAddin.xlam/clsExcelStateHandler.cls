@@ -80,7 +80,7 @@ Private Sub Class_Terminate()
                           Dim ws As Worksheet
 27                        Application.Windows(m_origActiveWindowName).Activate
 28                        Set ws = Application.Workbooks(m_origActiveWorkbookname).Worksheets(m_origActiveSheetName)
-29                        Application.GoTo ws.Range(m_origViewPortAddress)
+29                        Application.Goto ws.Range(m_origViewPortAddress)
 30                        ws.Range(m_origRangeSelectionAddress).Select
 31                        ws.Range(m_origActiveCellAddress).Activate
 32                        ActiveWindow.ScrollRow = m_origActiveWindowScrollRow

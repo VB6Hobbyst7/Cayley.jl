@@ -38,9 +38,9 @@ Sub MenuScenarioDefinitionSheet()
 
 3         OBAO = OtherBooksAreOpen(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen)
 4         If OBAO Then
-5             chOpenOtherBooks = CreateMissing()
-6             FidOpenOtherBooks = CreateMissing()
-7             enbOpenOtherBooks = CreateMissing()
+5             chOpenOtherBooks = createmissing()
+6             FidOpenOtherBooks = createmissing()
+7             enbOpenOtherBooks = createmissing()
 8         Else
 9             chOpenOtherBooks = NameForOpenOthers(MarketBookIsOpen, TradesBookIsOpen, LinesBookIsOpen, False)
 10            FidOpenOtherBooks = 23
@@ -895,7 +895,7 @@ End Sub
 ' Date      : 16-Jun-2015
 ' Purpose   : Run many scenarios, loading from file then writing results to file
 ' -----------------------------------------------------------------------------------------------------------------------
-Sub RunManyScenarios(FileList As Variant, SilentMode As Boolean, ModelName As String, ModelBareBones As Dictionary, OutputDirectory As String)
+Sub RunManyScenarios(ByVal FileList As Variant, SilentMode As Boolean, ModelName As String, ModelBareBones As Dictionary, OutputDirectory As String)
           Dim Failures As Variant
           Dim i As Long
           Dim InputDirectory As String
@@ -915,7 +915,9 @@ Sub RunManyScenarios(FileList As Variant, SilentMode As Boolean, ModelName As St
                   "Open the Scenario Definitions to Run", , True)
 4             If VarType(FileList) = vbBoolean Then Exit Sub
 5         End If
-6         Force2DArray FileList
+
+6         FileList = sReshape(FileList, 1)
+
 7         NumScenarios = sNCols(FileList)
 
 8         If Not SilentMode Then
@@ -945,8 +947,8 @@ Sub RunManyScenarios(FileList As Variant, SilentMode As Boolean, ModelName As St
 23            Res = RunScenario(True, StatusBarPrePrefix, ModelName, False, False, ModelBareBones)
 24            If Not Left(Res, 1) = "#" Then
 25                SaveScenarioResultsFile ResultsFile, ""
-26                ThrowIfError sFileCopy(ResultsFile, sJoinPath(InputDirectory, sSplitPath(ResultsFile)))
-27                ThrowIfError sFileCopy(ThisFileName, sJoinPath(OutputDirectory, sSplitPath(ThisFileName)))
+26                ThrowIfError sFileCopy(ResultsFile, sJoinPath(InputDirectory, sSplitPath(ResultsFile)), True)
+27                ThrowIfError sFileCopy(ThisFileName, sJoinPath(OutputDirectory, sSplitPath(ThisFileName)), True)
 28            Else
 29                If NumFailed = 0 Then
 30                    Failures = sArrayStack("Scenario " & CStr(i), sSplitPath(ThisFileName), Res)
@@ -960,13 +962,12 @@ Sub RunManyScenarios(FileList As Variant, SilentMode As Boolean, ModelName As St
 37        If NumFailed > 0 Then
 38            Prompt = CStr(NumFailed) & " of the " & CStr(NumScenarios) & " scenarios failed." & vbLf & _
                   sConcatenateStrings(Failures, vbLf)
-39            If gDebugMode Then Debug.Print Prompt
-40            MsgBoxPlus Prompt, vbCritical, "Run Many Scenarios", , , , , 600
-41        End If
+39            MsgBoxPlus Prompt, vbCritical, "Run Many Scenarios", , , , , 600
+40        End If
 
-42        Exit Sub
+41        Exit Sub
 ErrHandler:
-43        SomethingWentWrong "#RunManyScenarios (line " & CStr(Erl) & "): " & Err.Description & "!"
+42        SomethingWentWrong "#RunManyScenarios (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------

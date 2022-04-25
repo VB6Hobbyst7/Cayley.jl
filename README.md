@@ -9,17 +9,17 @@ Currently (17 March 2022) The Cayley 2022 software is a work in progress, with s
  * Bear in mind that installation of Cayley 2022 will uninstall the 2017 verison of Cayley as they cannot co-exist on the same PC. So for the time being don't install onto a PC on which you wish to continue using the 2017 version of Cayley.
  * Both Julia and Microsoft Office must be installed on your PC, with Excel not running.
  * [JuliaExcel](https://github.com/PGS62/JuliaExcel.jl) must be installed on the PC.
- * It's a good idea to install [Snaketail](http://snakenest.com/snaketail/) which (if installed) will be used to display progress in long-running operations.
+ * [Snaketail](http://snakenest.com/snaketail/) must be installed on the PC. It's used to display progress in long-running operations, such as scenario analysis.
  * Launch Julia, then copy and paste (via right-click) the following commands into the Julia REPL:
    ```julia
    using Pkg
    Pkg.add("Revise")
    Pkg.add(url="https://github.com/SolumCayley/XVA")
-   Pkg.add(url="https://github.com/SolumCayley/Cayley.jl",rev="v0.10")
+   Pkg.add(url="https://github.com/SolumCayley/Cayley.jl",rev="v0.17")
    using Cayley
    Cayley.create_system_image()
    Cayley.installme()
-   
+      
    ```
    
  * The process will take about 10 minutes to run, as it includes a step (`Cayley.make_system_image()`) that "pre-compiles" the Julia code. At the end of the process the command `Cayley.installme()` installs the Excel components (the workbooks and Excel addins) and at that stage you will need to click 'OK' in the two dialogs shown below.

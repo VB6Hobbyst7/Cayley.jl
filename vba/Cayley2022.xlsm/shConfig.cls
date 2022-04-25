@@ -32,7 +32,7 @@ Sub FormatConfig()
 
 7         Exit Sub
 ErrHandler:
-8         Throw "#FormatConfig (line " & CStr(Erl) + "): " & Err.Description & "!"
+8         Throw "#FormatConfig (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Sub FileNameDoubleClick(Target As Range, RegKey As String, Title As String, Optional FileFilter As String)
@@ -53,7 +53,7 @@ Private Sub FileNameDoubleClick(Target As Range, RegKey As String, Title As Stri
 
 9         Exit Sub
 ErrHandler:
-10        Throw "#FileNameDoubleClick (line " & CStr(Erl) + "): " & Err.Description & "!"
+10        Throw "#FileNameDoubleClick (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
@@ -124,7 +124,7 @@ Sub CurrenciesDoubleclick(Target As Range)
 
 11        Exit Sub
 ErrHandler:
-12        Throw "#CurrenciesDoubleclick (line " & CStr(Erl) + "): " & Err.Description & "!"
+12        Throw "#CurrenciesDoubleclick (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------

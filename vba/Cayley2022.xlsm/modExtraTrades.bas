@@ -36,7 +36,7 @@ Sub ShowExtraTrades()
 
 8         Exit Sub
 ErrHandler:
-9         SomethingWentWrong "#ShowExtraTrades (line " & CStr(Erl) + "): " & Err.Description & "!"
+9         SomethingWentWrong "#ShowExtraTrades (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Sub ParseExtraTradesAre(ExtraTradesAre As String, ByRef FxIncluded As Boolean, RatesIncluded As Boolean)
@@ -54,7 +54,7 @@ Sub ParseExtraTradesAre(ExtraTradesAre As String, ByRef FxIncluded As Boolean, R
 
 11        Exit Sub
 ErrHandler:
-12        Throw "#ParseExtraTradesAre (line " & CStr(Erl) + "): " & Err.Description & "!"
+12        Throw "#ParseExtraTradesAre (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ Function AllowedExtraTradesAre(MajorCurrenciesOnly As Boolean)
 
 28        Exit Function
 ErrHandler:
-29        Throw "#AllowedExtraTradesAre (line " & CStr(Erl) + "): " & Err.Description & "!"
+29        Throw "#AllowedExtraTradesAre (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ Function ConstructExtraTrades(ExtraTradesAre As String, ModelBareBones As Dictio
           
 2         If Not IsNumber(sMatch(ExtraTradesAre, AllowedExtraTradesAre(True))) Then
 3             Throw "'" & ExtraTradesAre & "' is not valid input to the 'ExtraTradesAre` cell on the CreditUsage" & _
-                  " worksheet. Valid values are:" + vbLf + sConcatenateStrings(AllowedExtraTradesAre(True), vbLf)
+                  " worksheet. Valid values are:" & vbLf & sConcatenateStrings(AllowedExtraTradesAre(True), vbLf)
 4         End If
 
 5         AnchorDate = DictGet(ModelBareBones, "AnchorDate")
@@ -193,12 +193,12 @@ Function ConstructExtraTrades(ExtraTradesAre As String, ModelBareBones As Dictio
 36            ConstructExtraTrades = ConstructExtraFxOptions(ModelBareBones, "USD", _
                   Amounts, MaturityDates, True, OnlyNonZeroTrades)
 37        Else
-38            Throw "String '" + ExtraTradesAre + "' is not recognised as valid input for ExtraTradesAre"
+38            Throw "String '" & ExtraTradesAre & "' is not recognised as valid input for ExtraTradesAre"
 39        End If
 
 40        Exit Function
 ErrHandler:
-41        Throw "#ConstructExtraTrades (line " & CStr(Erl) + "): " & Err.Description & "!"
+41        Throw "#ConstructExtraTrades (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -308,7 +308,7 @@ Function ConstructExtraInterestRateSwaps(ModelBareBones As Dictionary, Ccy As St
 
 59        Exit Function
 ErrHandler:
-60        Throw "#ConstructExtraInterestRateSwaps (line " & CStr(Erl) + "): " & Err.Description & "!"
+60        Throw "#ConstructExtraInterestRateSwaps (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 Sub testSwapRateFromMarketData()
@@ -318,7 +318,7 @@ Sub testSwapRateFromMarketData()
 3         Debug.Print SwapRateFromMarketData("EUR", 8)
 4         Exit Sub
 ErrHandler:
-5         SomethingWentWrong "#testSwapRateFromMarketData (line " & CStr(Erl) + "): " & Err.Description & "!"
+5         SomethingWentWrong "#testSwapRateFromMarketData (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Function SwapRateFromMarketData(Ccy As String, NYears As Long)
@@ -360,7 +360,7 @@ Private Function SwapRateFromMarketData(Ccy As String, NYears As Long)
 
 19        Exit Function
 ErrHandler:
-20        Throw "#SwapRateFromMarketData (line " & CStr(Erl) + "): " & Err.Description & "!"
+20        Throw "#SwapRateFromMarketData (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ Function CollectionToColumn(c As Collection)
 
 7         Exit Function
 ErrHandler:
-8         Throw "#CollectionToColumn (line " & CStr(Erl) + "): " & Err.Description & "!"
+8         Throw "#CollectionToColumn (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -398,7 +398,7 @@ Private Function LastElementOf(c As Collection)
 2         LastElementOf = c(c.Count)
 3         Exit Function
 ErrHandler:
-4         Throw "#LastElementOf (line " & CStr(Erl) + "): " & Err.Description & "!"
+4         Throw "#LastElementOf (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -490,7 +490,7 @@ Function ConstructExtraFxForwards(ModelBareBones As Dictionary, ReceiveCurrency 
 
 46        Exit Function
 ErrHandler:
-47        Throw "#ConstructExtraFxForwards (line " & CStr(Erl) + "): " & Err.Description & "!"
+47        Throw "#ConstructExtraFxForwards (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 Function ConstructExtraFxOptions(ModelBareBones As Dictionary, Ccy As String, _
@@ -572,7 +572,7 @@ Function ConstructExtraFxOptions(ModelBareBones As Dictionary, Ccy As String, _
 
 45        Exit Function
 ErrHandler:
-46        Throw "#ConstructExtraFxOptions (line " & CStr(Erl) + "): " & Err.Description & "!"
+46        Throw "#ConstructExtraFxOptions (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 

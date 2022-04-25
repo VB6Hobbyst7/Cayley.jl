@@ -1,4 +1,15 @@
 Version	Date	Time	Author	Comment
+2336	24-Apr-2022	13:39	Philip Swannell	sFileCopy has extra argument OverwriteReadOnlyFiles.
+2335	23-Apr-2022	10:05	Philip Swannell	Removed unwanted test code.
+2334	23-Apr-2022	10:03	Philip Swannell	res -> Res
+2333	23-Apr-2022	08:55	Philip Swannell	Added memoizing to method LocalWorkbookName.
+2332	22-Apr-2022	18:27	Philip Swannell	SomethingWentWrong no longer shows "Copy to clipboard" button if the call stack is suppressed.
+2331	22-Apr-2022	12:28	Philip Swannell	Reverted change 2326. sURLDownloadToFile is now back.
+2330	22-Apr-2022	12:11	Philip Swannell	Improved method LocalWorkbookName that gets the local address of OneDrive files.
+2329	20-Apr-2022	19:45	Philip Swannell	Improved error message from ShowFileInSnakeTail.
+2328	20-Apr-2022	11:47	Philip Swannell	Changed method StatusBarWrap to now never call DoEvents. Crazy, but was seeing the DoEvents call take up to 190 seconds - looking a lot like Excel hanging.
+2327	19-Apr-2022	12:58	Philip Swannell	Updated Help sheet for previous change.
+2326	19-Apr-2022	12:24	Philip Swannell	Removed all functionality that enabled downloading of files from the internet. So sCSVRead can no longer accept a file specified by URL and sFileCopy can no longer accept argument SourceFile that is a URL. Hope to reduce the "number of security vendors that flag this file as malicious" when testing file at www.virustotal.com. Seems to have reduced that from 6 to 5.
 2325	14-Apr-2022	19:13	Philip Swannell	Method SomethingWentWrong now shows a dialog with a "Copy to clipboard" option.
 2324	13-Apr-2022	16:13	Philip Swannell	Made more public functions private.
 2323	13-Apr-2022	15:59	Philip Swannell	Tweak to ribbon XML so that Alt S S is accelerator for switching workbook.

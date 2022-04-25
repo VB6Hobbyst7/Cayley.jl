@@ -27,13 +27,13 @@ Private Sub Workbook_BeforeClose(Cancel As Boolean)
            dialog by emulating that dialog ourselves and exiting early if the user hits cancel.
 1         On Error GoTo ErrHandler
 2         If Not ThisWorkbook.Saved Then
-3             Prompt = "Want to save your changes to '" + ThisWorkbook.Name + "'?"
+3             Prompt = "Want to save your changes to '" & ThisWorkbook.Name & "'?"
 4             Select Case MsgBoxPlus(Prompt, vbExclamation + vbYesNoCancel, "Cayley2022", "&Save", "Do&n't Save", "Cancel")
 
                   Case vbYes
 5                     On Error Resume Next
 6                     If ThisWorkbook.ReadOnly Then
-7                         Prompt = "We can't save '" + ThisWorkbook.Name + "' because the file is read-only." + vbLf + vbLf + _
+7                         Prompt = "We can't save '" & ThisWorkbook.Name & "' because the file is read-only." & vbLf & vbLf & _
                               "to keep your changes, you'll need to save the workbook with a new name or in a different location."
 8                         MsgBoxPlus Prompt, vbExclamation
 9                         Application.Dialogs(xlDialogSaveAs).Show
@@ -78,7 +78,7 @@ Private Sub Workbook_BeforeClose(Cancel As Boolean)
 
 41        Exit Sub
 ErrHandler:
-42        SomethingWentWrong "#Workbook_BeforeClose (line " & CStr(Erl) + "): " & Err.Description & "!"
+42        SomethingWentWrong "#Workbook_BeforeClose (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Sub Workbook_Deactivate()

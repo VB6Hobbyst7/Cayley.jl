@@ -19,16 +19,29 @@ Option Explicit
 Private Sub Worksheet_Calculate()
           Dim SPH As clsSheetProtectionHandler
 1         On Error GoTo ErrHandler
+          Dim ch As ChartObject
 
 2         If Me.ChartObjects.Count > 0 Then
-3             If Me.ChartObjects(1).Chart.ChartTitle.Caption <> Me.Range("ChartTitle").Value Then
-4                 Set SPH = CreateSheetProtectionHandler(Me)
-5                 Me.ChartObjects(1).Chart.ChartTitle.Caption = Me.Range("ChartTitle").Value
-6             End If
-7         End If
+3             Set ch = Me.ChartObjects(1)
+4             Set SPH = CreateSheetProtectionHandler(Me)
+5             If ch.Chart.ChartTitle.Caption <> Me.Range("ChartTitle").Value Then
+6                 ch.Chart.ChartTitle.Caption = Me.Range("ChartTitle").Value
+7             End If
+8             ch.Chart.Axes(xlCategory).MinimumScale = RangeFromSheet(Me, "FxBreakEvenFloor").Value
+9         End If
 
-8         Exit Sub
+10        Exit Sub
 ErrHandler:
-9         Throw "#Worksheet_Calculate (line " & CStr(Erl) & "): " & Err.Description & "!"
+11        SomethingWentWrong "#Worksheet_Calculate (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
+Private Sub Worksheet_Change(ByVal Target As Range)
+1         On Error GoTo ErrHandler
+2         If Target.Address = RangeFromSheet(Me, "FxBreakEvenFloor").Address Then
+3             Me.Calculate
+4         End If
+
+5         Exit Sub
+ErrHandler:
+6         SomethingWentWrong "#Worksheet_Change (line " & CStr(Erl) & "): " & Err.Description & "!"
+End Sub

@@ -10,7 +10,7 @@ Sub Test_LoadTradesFromTextFiles()
 5         toc "LoadTradesFromTextFiles"
 6         Exit Sub
 ErrHandler:
-7         SomethingWentWrong "#Test_LoadTradesFromTextFiles (line " & CStr(Erl) + "): " & Err.Description & "!"
+7         SomethingWentWrong "#Test_LoadTradesFromTextFiles (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -60,19 +60,25 @@ Function LoadTradesFromTextFiles(Optional ByVal FxFile As String, Optional ByVal
 10            AmortisationFile = FileFromConfig("AmortisationCSVFile")
 11        End If
 
-12        If Not sFileExists(FxFile) Then Throw "FxFile does not exist, we looked for it at '" + FxFile + "'"
-13        If Not sFileExists(RatesFile) Then Throw "ratesFile does not exist, we looked for it at '" + RatesFile + "'"
-14        If Not sFileExists(AmortisationFile) Then Throw "ratesFile does not exist, we looked for it at '" + AmortisationFile + "'"
+12        If Not sFileExists(FxFile) Then Throw "FxFile does not exist, we looked for it at" & vbLf & _
+              FxFile & vbLf & "which is the location specified as 'FxTradesCSVFile' on the Config worksheet." & vbLf & vbLf & _
+              "Perhaps the file locations specified on the Config worksheet need to be changed?", True
+13        If Not sFileExists(RatesFile) Then Throw "RatesFile does not exist, we looked for it at" & vbLf & _
+              RatesFile & vbLf & "which is the location specified as 'RatesTradesCSVFile' on the Config worksheet." & vbLf & vbLf & _
+              "Perhaps the file locations specified on the Config worksheet need to be changed?", True
+14        If Not sFileExists(AmortisationFile) Then Throw "Amortisation file does not exist, we looked for it at" & vbLf & _
+              AmortisationFile & vbLf & "which is the location specified as 'AmortisationCSVFile' on the Config worksheet." & vbLf & vbLf & _
+              "Perhaps the file locations specified on the Config worksheet need to be changed?", True
 
-15        StatusBarWrap "Parsing " + FxFile
+15        StatusBarWrap "Parsing " & FxFile
 16        FxContents = ThrowIfError(sCSVRead(FxFile, True, , , "d/m/y"))
 17        FxContents = ConvertAndCheckHeaders(FxContents, RangeFromSheet(shStaticData, "FxFileHeaderConversion").Value, FxFile)
 
-18        StatusBarWrap "Parsing " + RatesFile
+18        StatusBarWrap "Parsing " & RatesFile
 19        RatesContents = ThrowIfError(sCSVRead(RatesFile, True, , , "d/m/y"))
 20        RatesContents = ConvertAndCheckHeaders(RatesContents, RangeFromSheet(shStaticData, "RatesFileHeaderConversion").Value, RatesFile)
 
-21        StatusBarWrap "Parsing " + AmortisationFile
+21        StatusBarWrap "Parsing " & AmortisationFile
 22        AmortisationContents = ThrowIfError(sCSVRead(AmortisationFile, True, , , "d/m/y"))
 23        AmortisationContents = ConvertAndCheckHeaders(AmortisationContents, RangeFromSheet(shStaticData, "AmortisationFileHeaderConversion").Value, AmortisationFile)
 
@@ -84,14 +90,14 @@ Function LoadTradesFromTextFiles(Optional ByVal FxFile As String, Optional ByVal
 29        End If
 
 30        TemplateBookName = sJoinPath(ThisWorkbook.Path, TemplateFileName)
-31        If Not sFileExists(TemplateBookName) Then Throw "Cannot find file '" + TemplateBookName + "'"
+31        If Not sFileExists(TemplateBookName) Then Throw "Cannot find file '" & TemplateBookName & "'"
 
 32        ODA = Application.DisplayAlerts
 33        Application.DisplayAlerts = False
 
 34        If Not sFileExists(TemplateBookName) Then
 35            Throw "Sorry, we couldn't find '" & TemplateBookName & "'" & vbLf & _
-                  "That's a workbook that should always be located in the same folder as " + ThisWorkbook.Name + "." & vbLf & _
+                  "That's a workbook that should always be located in the same folder as " & ThisWorkbook.Name & "." & vbLf & _
                   "Is it possible it was moved, renamed or deleted?", True
 36        End If
 
@@ -186,7 +192,7 @@ Function LoadTradesFromTextFiles(Optional ByVal FxFile As String, Optional ByVal
 
 97        Exit Function
 ErrHandler:
-98        Throw "#LoadTradesFromTextFiles (line " & CStr(Erl) + "): " & Err.Description & "!"
+98        Throw "#LoadTradesFromTextFiles (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -207,7 +213,7 @@ Private Sub LoadFromOneTradesFile(ws As Worksheet, SheetName As String, Title As
 
 1         On Error GoTo ErrHandler
 2         ws.Name = SheetName
-3         StatusBarWrap "Pasting to worksheet " + ws.Name
+3         StatusBarWrap "Pasting to worksheet " & ws.Name
 
 4         With ws.Cells(1, 1)
 5             .Value = Title
@@ -243,8 +249,8 @@ Private Sub LoadFromOneTradesFile(ws As Worksheet, SheetName As String, Title As
 30                For i = 1 To .Columns.Count
 31                    If Not sIsErrorString(OrigHeaders(1, i)) Then
 32                        If .Cells(1, i).Value <> OrigHeaders(1, i) Then
-33                            CommentText = "In the source, this column is headed:" + vbLf + _
-                                  "'" + OrigHeaders(1, i) + "'"
+33                            CommentText = "In the source, this column is headed:" & vbLf & _
+                                  "'" & OrigHeaders(1, i) & "'"
 34                            SetCellComment .Cells(1, i), CommentText, False
 35                        End If
 36                    End If
@@ -277,7 +283,7 @@ Private Sub LoadFromOneTradesFile(ws As Worksheet, SheetName As String, Title As
 
 59        Exit Sub
 ErrHandler:
-60        Throw "#LoadFromOneTradesFile (line " & CStr(Erl) + "): " & Err.Description & "!"
+60        Throw "#LoadFromOneTradesFile (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 Private Function NumberFormatFromColumnHeader(ByVal Header As String)
@@ -297,7 +303,7 @@ Private Function NumberFormatFromColumnHeader(ByVal Header As String)
 
 10        Exit Function
 ErrHandler:
-11        Throw "#NumberFormatFromColumnHeader (line " & CStr(Erl) + "): " & Err.Description & "!"
+11        Throw "#NumberFormatFromColumnHeader (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -356,7 +362,7 @@ Function ConvertAndCheckHeaders(ByVal DataWithHeaders, ConversionTable, FileName
 
 24        Exit Function
 ErrHandler:
-25        Throw "#ConvertAndCheckHeaders (line " & CStr(Erl) + "): " & Err.Description & "!"
+25        Throw "#ConvertAndCheckHeaders (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -382,7 +388,7 @@ Function FileInfoWrapper(FileName As String, FriendlyName As String)
 
 7         Exit Function
 ErrHandler:
-8         Throw "#FileInfoWrapper (line " & CStr(Erl) + "): " & Err.Description & "!"
+8         Throw "#FileInfoWrapper (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -421,7 +427,7 @@ Sub SortColumns(RangeToSort As Range, PreferredOrder As Variant)
 
 15        Exit Sub
 ErrHandler:
-16        Throw "#SortColumns (line " & CStr(Erl) + "): " & Err.Description & "!"
+16        Throw "#SortColumns (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -474,8 +480,8 @@ Sub FillInMissingCounterpartyParents(RWH As Range)
 23                Next c
 24                If AnyFilledIn Then
 25                    With RWH.Cells(-3, 1)
-26                        .Value = "Values for '" + CopyToHeader + "' shown in RED are blank in the source file," & _
-                              " so the value for '" + CopyFromHeader + "' is substituted."
+26                        .Value = "Values for '" & CopyToHeader & "' shown in RED are blank in the source file," & _
+                              " so the value for '" & CopyFromHeader & "' is substituted."
 27                        .Font.ColorIndex = 16 'light grey
 28                        .Characters(Start:=InStr(.Value, "RED"), Length:=3).Font.ColorIndex = 3
 29                    End With
@@ -485,6 +491,6 @@ Sub FillInMissingCounterpartyParents(RWH As Range)
 
 33        Exit Sub
 ErrHandler:
-34        Throw "#FillInMissingCounterpartyParents (line " & CStr(Erl) + "): " & Err.Description & "!"
+34        Throw "#FillInMissingCounterpartyParents (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 

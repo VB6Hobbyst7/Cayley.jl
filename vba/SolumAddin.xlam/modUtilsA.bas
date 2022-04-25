@@ -184,12 +184,15 @@ Sub SomethingWentWrong(ByVal ErrorString As String, Optional Buttons As VbMsgBox
 36            TextWidth = 285
 37        End If
 
-38        Res = MsgBoxPlus(Prompt, Buttons + vbOKCancel + vbDefaultButton2, Title, "Copy to clipboard", , , , TextWidth)
-If Res = vbOK Then CopyStringToClipboard Prompt
-
-39        Exit Sub
+38        If SuppressDisplayOfCallStack Then
+39            MsgBoxPlus Prompt, Buttons + vbOK, Title, , , , , TextWidth
+40        Else
+41            Res = MsgBoxPlus(Prompt, Buttons + vbOKCancel + vbDefaultButton2, Title, "Copy to clipboard", , , , TextWidth)
+42            If Res = vbOK Then CopyStringToClipboard Prompt
+43        End If
+44        Exit Sub
 ErrHandler:
-40        MsgBoxPlus origErrorString, Buttons, Title
+45        MsgBoxPlus origErrorString, Buttons, Title
 End Sub
 
 Private Function LongestSubString(x As String) As Long
@@ -922,17 +925,21 @@ ErrHandler:
           'Example: R has a lock on the file when running the ISDA SIMM Correlation Generator
 20        Debug.Print "#MessageLogWrite (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
+
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : StatusBarWrap
 ' Author    : Philip Swannell
 ' Date      : 12-Jan-2017
 ' Purpose   : The Excel Application StatusBar seems somewhat flakey these days...
-'             This method also writes to the log file
+'             This method also writes to the log file.
+' PGS 20 April 2022
+' When working on the Airbus project, I discovered that the DoEvents call could take up to 190 seconds(!)
+' had various hypotheses for what was going on (anti-virus related?) but best to take the call to DoEvents out.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub StatusBarWrap(text As Variant)
-          Static LastDoEventsTime As Double
-          Static TimeNow As Double
-          Const WaitBetweenDoEvents = 5
+          '    Static LastDoEventsTime As Double
+          '    Static TimeNow As Double
+          '   Const WaitBetweenDoEvents = 5
 
 1         On Error GoTo ErrHandler
 2         If Not Application.DisplayStatusBar Then Application.DisplayStatusBar = True
@@ -944,15 +951,16 @@ Sub StatusBarWrap(text As Variant)
 7             MessageLogWrite "StatusBar message:" + vbLf + CStr(text)
 8         End If
 
-9         TimeNow = sElapsedTime()
-10        If TimeNow - LastDoEventsTime > WaitBetweenDoEvents Then
-11            DoEvents
-12        End If
+          '    TimeNow = sElapsedTime()
+          '    If TimeNow - LastDoEventsTime > WaitBetweenDoEvents Then
+          '        DoEvents
+          '    End If
 
-13        Exit Sub
+9         Exit Sub
 ErrHandler:
-14        Throw "#StatusBarWrap (line " & CStr(Erl) + "): " & Err.Description & "!"
+10        Throw "#StatusBarWrap (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Sub
+
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : ShowMessages
 ' Author    : Philip Swannell

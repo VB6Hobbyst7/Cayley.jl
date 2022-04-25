@@ -21,6 +21,11 @@ Const JuliaExcelWebsite = "https://github.com/PGS62/JuliaExcel.jl"
 Dim JuliaExcelFullName
 Dim JuliaExcelIsInstalled
 
+Const SnakeTail = "C:\Program Files\SnakeTail\SnakeTail.exe"
+Const SnakeTail_B = "C:\Program Files (x86)\SnakeTail\SnakeTail.exe"
+Dim SnakeTailIsInstalled
+Const SnakeTailWebsite = "http://snakenest.com/snaketail/"
+
 'Folders to delete. Cayley2017 files were installed here
 Const OldFolder1 = "C:\Program Files\Solum\Addins"
 Const OldFolder2 = "C:\Program Files\Solum\CSharp"
@@ -85,7 +90,7 @@ Function CheckProcess(TheProcessName)
         exc = IsProcessRunning(".", TheProcessName)
         If (exc = True) Then
             result = MsgBox(TheProcessName & " is still running. Please close the " & _
-                    "program and restart the installation." + vbLf + vbLf + _
+                    "program and restart the installation." & vbLf & vbLf & _
                     "Can't see " & TheProcessName & "?" & vbLf & "Use Windows Task " & _
                     "Manager to check for a ""ghost"" process." & vblf & vbLf & _
                     "Also check that no other user of this PC is logged in and using Excel.", _
@@ -113,9 +118,10 @@ Function FolderIsWritable(FolderPath)
          If Not fso.FolderExists(FolderPath) Then
              FolderIsWritable = False
          Else
-             Do
-                 FName = FolderPath & "TempFile" & Counter & ".tmp"
-                 Counter = Counter + 1
+            Counter = 0
+            Do
+                FName = FolderPath & "TempFile" & Counter & ".tmp"
+                Counter = Counter + 1
             Loop Until Not FileExists(FName)
             On Error Resume Next
             Set T = fso.OpenTextFile(FName, 2, True)
@@ -260,7 +266,7 @@ Function CreatePath(ByVal Path)
     Path = Replace(Path, "/", "\")
 
     If Right(Path, 1) <> "\" Then
-        Path = Path + "\"
+        Path = Path & "\"
     End If
 
     Set FSO = CreateObject("Scripting.FileSystemObject")
@@ -276,7 +282,7 @@ Function CreatePath(ByVal Path)
             End If
         Next
 
-        If F Is Nothing Then Err.Raise vbObjectError + 1, , "Cannot create folder " + Left(Path, 3)
+        If F Is Nothing Then Err.Raise vbObjectError + 1, , "Cannot create folder " & Left(Path, 3)
 
         'Add folders one level at a time
         For i = Len(ParentFolderName) + 1 To Len(Path)
@@ -441,7 +447,7 @@ Sub InstallExcelAddin(AddinFullName, WithSlashR)
     Else
         RegValue = AddinFullName
     End If
-    RegistryWrite RegKeyBranch + RegKeyLeaf, RegValue
+    RegistryWrite RegKeyBranch & RegKeyLeaf, RegValue
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -629,8 +635,8 @@ Else
         Prompt = "It seems that JuliaExcel is not installed on this PC. The Cayley software " & _
                 "will not work correctly until JuliaExcel is also installed." & _
                 vbLF & vbLF & _
-                "After installing the Cayley software, please install JuliaExcel." + _
-                vblf + vblf + JuliaExcelWebsite
+                "After installing the Cayley software, please install JuliaExcel." & _
+                vblf & vblf & JuliaExcelWebsite
         MsgBox Prompt,vbInformation,MsgBoxTitleBad
     End If    
 
@@ -743,6 +749,8 @@ Else
         End If
     End If
 
+    SnakeTailIsInstalled = FileExists(SnakeTail) or FileExists(SnakeTail_B)
+
     If gErrorsEncountered Then
         Prompt = "The install script has finished, but errors were encountered, " & _
                  "which may mean the software will not work correctly." & vblf & vblf & _
@@ -751,7 +759,17 @@ Else
     Else
         Prompt = "Cayley2022 installed correctly." & vblf & _
                  vblf & Website
-        MsgBox Prompt, vbOKOnly + vbInformation, MsgBoxTitle
+        if Not SnakeTailIsInstalled Then
+            Prompt = Prompt & vblf & vblf & _
+                "SnakeTail is not installed on this PC, but it needs to be." & vblf & vbLf & _
+                "Click OK to go to the SnakeTail website at" & vblf & _
+                SnakeTailWebsite
+            MsgBox Prompt, vbOKOnly + vbExclamation, MsgBoxTitle
+            myWS.run SnakeTailWebsite
+        Else
+            MsgBox Prompt, vbOKOnly + vbInformation, MsgBoxTitle
+        End If
+        
     End If
 
     'Don't record this bit. Have this warning after forgetting about the flag file!

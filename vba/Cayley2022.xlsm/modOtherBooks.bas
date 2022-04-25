@@ -22,20 +22,20 @@ Function NameForOpenOthers(MarketBookIsOpen As Boolean, TradesBookIsOpen As Bool
 7             Case 5
 8                 NameForOpenOthers = "&Open Trades and Lines workbooks"
 9             Case 4
-10                NameForOpenOthers = IIf(ForCreditUsageSheet, CreateMissing(), "&Open Trades workbook")
+10                NameForOpenOthers = IIf(ForCreditUsageSheet, createmissing(), "&Open Trades workbook")
 11            Case 3
 12                NameForOpenOthers = "&Open Market and Lines workbooks"
 13            Case 2
-14                NameForOpenOthers = IIf(ForCreditUsageSheet, CreateMissing(), "&Open Market workbook")
+14                NameForOpenOthers = IIf(ForCreditUsageSheet, createmissing(), "&Open Market workbook")
 15            Case 1
-16                NameForOpenOthers = IIf(ForCreditUsageSheet, CreateMissing(), "&Open Lines workbook")
+16                NameForOpenOthers = IIf(ForCreditUsageSheet, createmissing(), "&Open Lines workbook")
 17            Case 0
-18                NameForOpenOthers = CreateMissing()
+18                NameForOpenOthers = createmissing()
 19        End Select
 
 20        Exit Function
 ErrHandler:
-21        Throw "#NameForOpenOthers (line " & CStr(Erl) + "): " & Err.Description & "!"
+21        Throw "#NameForOpenOthers (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -49,29 +49,22 @@ Function OtherBooksAreOpen(ByRef MarketBookIsOpen As Boolean, ByRef TradesBookIs
           Dim MarketBookName As String
 
 1         On Error GoTo ErrHandler
+
 2         LinesBookName = FileFromConfig("LinesWorkbook")
 3         MarketBookName = FileFromConfig("MarketDataWorkbook")
 
 4         LinesBookName = ThrowIfError(sSplitPath(LinesBookName))
 5         MarketBookName = ThrowIfError(sSplitPath(MarketBookName))
 
-6         If IsInCollection(Application.Workbooks, MarketBookName) Then
-7             MarketBookIsOpen = True
-8         End If
+6         MarketBookIsOpen = IsInCollection(Application.Workbooks, MarketBookName)
+7         TradesBookIsOpen = IsInCollection(Application.Workbooks, gCayleyTradesWorkbookName)
+8         LinesBookIsOpen = IsInCollection(Application.Workbooks, LinesBookName)
 
-9         If IsInCollection(Application.Workbooks, gCayleyTradesWorkbookName) Then
-10            TradesBookIsOpen = True
-11        End If
+9         OtherBooksAreOpen = MarketBookIsOpen And TradesBookIsOpen And LinesBookIsOpen
 
-12        If IsInCollection(Application.Workbooks, LinesBookName) Then
-13            LinesBookIsOpen = True
-14        End If
-
-15        OtherBooksAreOpen = MarketBookIsOpen And TradesBookIsOpen And LinesBookIsOpen
-
-16        Exit Function
+10        Exit Function
 ErrHandler:
-17        Throw "#OtherBooksAreOpen (line " & CStr(Erl) + "): " & Err.Description & "!"
+11        Throw "#OtherBooksAreOpen (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 Sub OpenOtherBooks()
@@ -246,7 +239,7 @@ Private Function HasFileChanged(FileName, OldMD5 As String, oldSize As Long, old
 
 16        Exit Function
 ErrHandler:
-17        Throw "#HasFileChanged (line " & CStr(Erl) + "): " & Err.Description & "!"
+17        Throw "#HasFileChanged (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -301,7 +294,7 @@ Function TradesWorkbookIsOutOfDate() As Boolean
 
 27        Exit Function
 ErrHandler:
-28        Throw "#TradesWorkbookIsOutOfDate (line " & CStr(Erl) + "): " & Err.Description & "!"
+28        Throw "#TradesWorkbookIsOutOfDate (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------

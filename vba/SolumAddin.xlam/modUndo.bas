@@ -243,11 +243,11 @@ Sub RestoreRangeCore(SheetToRestoreFrom As Worksheet)
 43        End If
 
 44        If Not OrigSelection Is Nothing And Not origViewPort Is Nothing Then
-45            Application.GoTo origViewPort
-46            Application.GoTo OrigSelection
+45            Application.Goto origViewPort
+46            Application.Goto OrigSelection
 47        End If
 
-48        Application.GoTo wsTarget.Range(VisibleRangeAddress)
+48        Application.Goto wsTarget.Range(VisibleRangeAddress)
 49        wsTarget.Range(RangeToSelectAfterUndoAddress).Select
 50        Application.CutCopyMode = False
 

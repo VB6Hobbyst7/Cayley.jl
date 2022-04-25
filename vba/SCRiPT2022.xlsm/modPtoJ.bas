@@ -598,7 +598,7 @@ Function ValidateIRLegType(IRLegType As String, ThrowOnError As Boolean)
 5         End If
 
 6         Select Case IRLegType
-              Case "Fixed", "Libor", "OIS"
+              Case "Fixed", "IBOR", "RFR"
 7                 ValidateIRLegType = IRLegType
 8             Case Else
 9                 ErrString = "Invalid interest rate leg type type: '" + IRLegType + "' Valid types are " + sConcatenateStrings(SupportedIRLegTypes())

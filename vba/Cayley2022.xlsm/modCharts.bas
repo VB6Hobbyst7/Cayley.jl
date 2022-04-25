@@ -110,9 +110,8 @@ End Sub
 
 Sub PositionChartOnCreditUsageSheet()
 
-          Dim BR As Range
-          Dim TL As Range
           Dim Target As Range
+          Dim TL As Range
 
 1         On Error GoTo ErrHandler
 
@@ -410,7 +409,7 @@ Function PortfolioAgingToString(PA As Double) As String
 
 13        Exit Function
 ErrHandler:
-14        Throw "#PortfolioAgingToString (line " & CStr(Erl) + "): " & Err.Description & "!"
+14        Throw "#PortfolioAgingToString (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -434,32 +433,40 @@ End Sub
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : CopyChart
 ' Author    : Philip Swannell
-' Date      : 29-Sep-2015
-' Purpose   : Copies chart from PFE sheet to a new location.
-'             Take care - this does a break links so the target needs to be in a new workbook!
+' Date      : 29-Sep-2015, re-written 22-Apr-2022
+' Purpose   : Copy-pastes a chart from its current location to a new location.
+'             Previous approach using:
+'
+'          co.Chart.ChartArea.Copy
+'          Application.Goto Target
+'          Target.Parent.Paste
+'
+' was sometimes failing on Excel 2013 with error "Paste method of Worksheet class failed" (on Excel 2013)
+'So now exporting to JPG and importing. Sigh.
 ' -----------------------------------------------------------------------------------------------------------------------
 Sub CopyChart(co As ChartObject, Target As Range)
 1         On Error GoTo ErrHandler
 
-2         co.Chart.ChartArea.Copy
-3         Application.GoTo Target
+          Dim tmpFile
+2         tmpFile = LocalTemp() & "TempChart.jpg"
+3         If sFileExists(tmpFile) Then ThrowIfError sFileDelete(tmpFile)
+4         co.Chart.Export tmpFile
+5         Application.GoTo Target
+6         ActiveSheet.Pictures.Insert tmpFile
+7         sFileDelete tmpFile
 
-4         Target.Parent.Paste
-5         Target.Parent.Parent.BreakLink Name:=co.Parent.Parent.FullName, _
-              Type:=xlExcelLinks
-6         Target.Select
-7         Exit Sub
+8         Exit Sub
 ErrHandler:
-8         Throw "#CopyChart (line " & CStr(Erl) & "): " & Err.Description & "!"
-9     End Sub
+9         Throw "#CopyChart (line " & CStr(Erl) & "): " & Err.Description & "!"
+End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
-' Procedure : PrintCharts
+' Procedure : PasteCharts
 ' Author    : Philip Swannell
 ' Date      : 26-May-2015
-' Purpose   : Automate printing of many charts
+' Purpose   : Automate pasting of many charts
 ' -----------------------------------------------------------------------------------------------------------------------
-Sub PrintCharts(Optional ToPaper As Boolean = False, Optional BanksToProcess As Variant, Optional TargetFolder As String, _
+Sub PasteCharts(Optional BanksToProcess As Variant, Optional TargetFolder As String, _
           Optional ExportJPG As Boolean, Optional AnchorDate As Date, Optional SilentMode As Boolean = False)
           
           Dim Title As String
@@ -478,12 +485,8 @@ Sub PrintCharts(Optional ToPaper As Boolean = False, Optional BanksToProcess As 
           Dim JPGName As String
           Dim LinesBook As Workbook
           Dim LinesScaleFactor As Double
-          Dim NamesNotPrinted
-          Dim NamesPrinted As String
           Dim NumMCPaths As Long
-          Dim NumNotPrinted As Long
           Dim NumObservations As Long
-          Dim NumPrinted As Long
           Dim PortfolioAgeing As Double
           Dim Prompt As String
           Dim SPH As Object
@@ -493,63 +496,59 @@ Sub PrintCharts(Optional ToPaper As Boolean = False, Optional BanksToProcess As 
 
 1         On Error GoTo ErrHandler
 
-2         If ToPaper Then
-3             Title = "Print Charts"
-4         Else
-5             Title = "Paste Charts"
-6         End If
+2         Title = "Paste Charts"
 
-7         Set SPH = CreateSheetProtectionHandler(shCreditUsage)
+3         Set SPH = CreateSheetProtectionHandler(shCreditUsage)
 
-8         If IsEmpty(BanksToProcess) Or IsMissing(BanksToProcess) Then
-9             Set LinesBook = OpenLinesWorkbook(True, False)
-10            AllCounterparties = GetColumnFromLinesBook("CPTY_PARENT", LinesBook)
-11            AllCounterparties = sSortedArray(AllCounterparties)
-12            AllCounterparties = AnnotateBankNames(AllCounterparties, True, LinesBook)
-13            BanksToProcess = ShowMultipleChoiceDialog(AllCounterparties, , Title, _
-                  "Select Parent Counterparties for which to " & IIf(ToPaper, "print", "paste") & " charts.", False)
-14            If VarType(BanksToProcess) < vbArray Then GoTo EarlyExit
-15            BanksToProcess = AnnotateBankNames(BanksToProcess, False, LinesBook)
-16        End If
+4         If IsEmpty(BanksToProcess) Or IsMissing(BanksToProcess) Then
+5             Set LinesBook = OpenLinesWorkbook(True, False)
+6             AllCounterparties = GetColumnFromLinesBook("CPTY_PARENT", LinesBook)
+7             AllCounterparties = sSortedArray(AllCounterparties)
+8             AllCounterparties = AnnotateBankNames(AllCounterparties, True, LinesBook)
+9             BanksToProcess = ShowMultipleChoiceDialog(AllCounterparties, , Title, _
+                  "Select Parent Counterparties for which to paste charts.", False)
+10            If VarType(BanksToProcess) < vbArray Then GoTo EarlyExit
+11            BanksToProcess = AnnotateBankNames(BanksToProcess, False, LinesBook)
+12        End If
 
-17        FilterBy2 = RangeFromSheet(shCreditUsage, "FilterBy2", False, True, False, False, False)
-18        Filter2Value = RangeFromSheet(shCreditUsage, "Filter2Value", True, True, True, False, False)
-19        IncludeFutureTrades = RangeFromSheet(shCreditUsage, "IncludeFutureTrades", False, False, True, False, False)
-20        IncludeAssetClasses = RangeFromSheet(shCreditUsage, "IncludeAssetClasses", False, True, False, False, False)
-21        PortfolioAgeing = RangeFromSheet(shCreditUsage, "PortfolioAgeing", True, False, False, False, False)
-22        TradesScaleFactor = RangeFromSheet(shCreditUsage, "TradesScaleFactor", True, False, False, False, False)
-23        CurrenciesToInclude = RangeFromSheet(shConfig, "CurrenciesToInclude", False, True, False, False, False)
-24        NumMCPaths = RangeFromSheet(shCreditUsage, "NumMCPaths", True, False, False, False, False)
-25        NumObservations = RangeFromSheet(shCreditUsage, "NumObservations", True, False, False, False, False)
-26        FxShock = RangeFromSheet(shCreditUsage, "FxShock", True, False, False, False, False)
-27        FxVolShock = RangeFromSheet(shCreditUsage, "FxVolShock", True, False, False, False, False)
-28        LinesScaleFactor = RangeFromSheet(shCreditUsage, "LinesScaleFactor", True, False, False, False, False)
+13        FilterBy2 = RangeFromSheet(shCreditUsage, "FilterBy2", False, True, False, False, False)
+14        Filter2Value = RangeFromSheet(shCreditUsage, "Filter2Value", True, True, True, False, False)
+15        IncludeFutureTrades = RangeFromSheet(shCreditUsage, "IncludeFutureTrades", False, False, True, False, False)
+16        IncludeAssetClasses = RangeFromSheet(shCreditUsage, "IncludeAssetClasses", False, True, False, False, False)
+17        PortfolioAgeing = RangeFromSheet(shCreditUsage, "PortfolioAgeing", True, False, False, False, False)
+18        TradesScaleFactor = RangeFromSheet(shCreditUsage, "TradesScaleFactor", True, False, False, False, False)
+19        CurrenciesToInclude = RangeFromSheet(shConfig, "CurrenciesToInclude", False, True, False, False, False)
+20        NumMCPaths = RangeFromSheet(shCreditUsage, "NumMCPaths", True, False, False, False, False)
+21        NumObservations = RangeFromSheet(shCreditUsage, "NumObservations", True, False, False, False, False)
+22        FxShock = RangeFromSheet(shCreditUsage, "FxShock", True, False, False, False, False)
+23        FxVolShock = RangeFromSheet(shCreditUsage, "FxVolShock", True, False, False, False, False)
+24        LinesScaleFactor = RangeFromSheet(shCreditUsage, "LinesScaleFactor", True, False, False, False, False)
 
-29        TradesScaleFactor = RangeFromSheet(shCreditUsage, "TradesScaleFactor", True, False, False, False, False).Value
-30        LinesScaleFactor = RangeFromSheet(shCreditUsage, "LinesScaleFactor", True, False, False, False, False).Value
-31        shCreditUsage.Activate
+25        TradesScaleFactor = RangeFromSheet(shCreditUsage, "TradesScaleFactor", True, False, False, False, False).Value
+26        LinesScaleFactor = RangeFromSheet(shCreditUsage, "LinesScaleFactor", True, False, False, False, False).Value
+27        shCreditUsage.Activate
 
           Dim PromptArray
           Dim PromptArrayShort
 
-32        PortfolioAgeing = RangeFromSheet(shCreditUsage, "PortfolioAgeing", True, False, False, False, False).Value
+28        PortfolioAgeing = RangeFromSheet(shCreditUsage, "PortfolioAgeing", True, False, False, False, False).Value
 
-33        OpenOtherBooks
-34        JuliaLaunchForCayley
-35        BuildModelsInJulia False, FxShock, FxVolShock
+29        OpenOtherBooks
+30        JuliaLaunchForCayley
+31        BuildModelsInJulia False, FxShock, FxVolShock
 
-36        If Not SilentMode Then
-37            If PortfolioAgeing <> 0 Then
-38                PromptArray = sArrayStack("PortfolioAgeing", _
+32        If Not SilentMode Then
+33            If PortfolioAgeing <> 0 Then
+34                PromptArray = sArrayStack("PortfolioAgeing", _
                       RangeFromSheet(shCreditUsage, "PortfolioAgeing").Value, _
                       "Portfolio aged to", _
                       Format(gModel_CM("AnchorDate") + _
                       RangeFromSheet(shCreditUsage, "PortfolioAgeing") * 365, "dd-mmm-yyyy"))
 
-39            Else
-40                PromptArray = CreateMissing()
-41            End If
-42            PromptArray = sArrayStack(PromptArray, _
+35            Else
+36                PromptArray = createmissing()
+37            End If
+38            PromptArray = sArrayStack(PromptArray, _
                   "NumMCPaths", NumMCPaths, _
                   "NumObservations", NumObservations, _
                   "IncludeFutureTrades", IncludeFutureTrades, _
@@ -561,134 +560,105 @@ Sub PrintCharts(Optional ToPaper As Boolean = False, Optional BanksToProcess As 
                   "TradesScaleFactor", TradesScaleFactor, _
                   "LinesScaleFactor", LinesScaleFactor)
 
-43            PromptArray = sReshape(PromptArray, sNRows(PromptArray) / 2, 2)
-44            PromptArrayShort = CleanUpPromptArray(PromptArray, True)
+39            PromptArray = sReshape(PromptArray, sNRows(PromptArray) / 2, 2)
+40            PromptArrayShort = CleanUpPromptArray(PromptArray, True)
 
-45            Prompt = IIf(ToPaper, "Print ", "Paste ") & CStr(sNRows(BanksToProcess)) & " chart" & _
-                  IIf(sNRows(BanksToProcess) > 1, "s", "") & IIf(ToPaper, " to the printer", " to a new workbook") & "?" & _
+41            Prompt = "Paste " & CStr(sNRows(BanksToProcess)) & " chart" & _
+                  IIf(sNRows(BanksToProcess) > 1, "s", "") & " to a new workbook?" & _
                   vbLf & vbLf & _
-                  "Charts will be " & IIf(ToPaper, "printed", "pasted") & _
+                  "Charts will be pasted" & _
                   " only for banks for which we have good data in the lines workbook and other inputs are as follows:" _
                   & vbLf & sConcatenateStrings(sJustifyArrayOfStrings(PromptArrayShort, "Calibri", 11, vbTab), vbLf)
 
-46            If MsgBoxPlus(Prompt, vbYesNoCancel + vbQuestion + vbDefaultButton2, Title) <> vbYes Then GoTo EarlyExit
-47        End If
+42            If MsgBoxPlus(Prompt, vbYesNoCancel + vbQuestion + vbDefaultButton2, Title) <> vbYes Then GoTo EarlyExit
+43        End If
 
-48        g_StartRunCreditUsageSheet = sElapsedTime()
+44        g_StartRunCreditUsageSheet = sElapsedTime()
 
-49        Set SUH = CreateScreenUpdateHandler()
+45        Set SUH = CreateScreenUpdateHandler()
+46        ShowFileInSnakeTail , True
 
-50        If ToPaper Then 'In this case don't support exporting as JPG
-51            For Each c In BanksToProcess
-52                If PrintAChart(CStr(c)) Then
-53                    NumPrinted = NumPrinted + 1
-54                    NamesPrinted = IIf(NamesPrinted = "", CStr(c), NamesPrinted & ", " & CStr(c))
-55                Else
-56                    NumNotPrinted = NumNotPrinted + 1
-57                    NamesNotPrinted = IIf(NamesNotPrinted = "", CStr(c), NamesNotPrinted & ", " & CStr(c))
-58                End If
-59            Next
-60        Else
-              Dim RequiredOffset As Double
-              Dim Target As Range
-              Dim TargetBook As Workbook
-              Dim TargetSheet As Worksheet
-61            Set TargetBook = Application.Workbooks.Add
-62            Set TargetSheet = TargetBook.Worksheets(1)
+          Dim RequiredOffset As Double
+          Dim Target As Range
+          Dim TargetBook As Workbook
+          Dim TargetSheet As Worksheet
+47        Set TargetBook = Application.Workbooks.Add
+48        Set TargetSheet = TargetBook.Worksheets(1)
 
-63            Suffix = "_" & Format(AnchorDate, "yyyy-mm-dd") & ".jpg"
+49        Suffix = "_" & Format(AnchorDate, "yyyy-mm-dd") & ".jpg"
 
-              'Add headers here
-64            With TargetSheet.Cells(1, 1)
-65                .Value = "PFE Charts"
-66                .Font.Size = 22
-67            End With
-68            TargetSheet.Cells(2, 1).Value = "Time generated"
-69            With TargetSheet.Cells(2, 2)
-70                .Value = Now()
-71                .NumberFormat = "dd-mmm-yyyy hh:mm"
-72                .HorizontalAlignment = xlHAlignLeft
-73            End With
-74            With TargetSheet.Cells(3, 1).Resize(sNRows(PromptArray), 2)
-75                .Value = sArrayExcelString(PromptArray)
-76                .HorizontalAlignment = xlHAlignLeft
-77            End With
-78            TargetSheet.UsedRange.Columns.AutoFit
-79            TargetBook.Windows(1).DisplayGridlines = False
-80            TargetBook.Windows(1).DisplayHeadings = False
+          'Add headers here
+50        With TargetSheet.Cells(1, 1)
+51            .Value = "PFE Charts"
+52            .Font.Size = 22
+53        End With
+54        TargetSheet.Cells(2, 1).Value = "Time generated"
+55        With TargetSheet.Cells(2, 2)
+56            .Value = Now()
+57            .NumberFormat = "dd-mmm-yyyy hh:mm"
+58            .HorizontalAlignment = xlHAlignLeft
+59        End With
+60        With TargetSheet.Cells(3, 1).Resize(sNRows(PromptArray), 2)
+61            .Value = sArrayExcelString(PromptArray)
+62            .HorizontalAlignment = xlHAlignLeft
+63        End With
+64        TargetSheet.UsedRange.Columns.AutoFit
+65        TargetBook.Windows(1).DisplayGridlines = False
+66        TargetBook.Windows(1).DisplayHeadings = False
 
-81            Set Target = TargetSheet.Cells(TargetSheet.UsedRange.Rows.Count + 2, 1)
+67        Set Target = TargetSheet.Cells(TargetSheet.UsedRange.Rows.Count + 2, 1)
 
-              Dim i As Long
-              Dim NumBanks As Long
-82            NumBanks = sNRows(BanksToProcess)
-83            i = 0
-84            For Each c In BanksToProcess
-85                i = i + 1
-86                StatusBarWrap "Generating chart " & CStr(i) & " of " & CStr(NumBanks) & " " & CStr(c)
-87                PrepareForCalculation c, False, False, True
-88                RunCreditUsageSheet "Standard", True, False, True
-89                CopyChart shCreditUsage.ChartObjects(1), Target
-90                If ExportJPG Then
-91                    JPGName = sJoinPath(TargetFolder, c & Suffix)
-92                    shCreditUsage.ChartObjects(1).Chart.Export JPGName
-93                End If
+          Dim i As Long
+          Dim NumBanks As Long
+68        NumBanks = sNRows(BanksToProcess)
+69        i = 0
+70        For Each c In BanksToProcess
+71            i = i + 1
+72            MessageLogWrite "Generating chart " & CStr(i) & " of " & CStr(NumBanks) & " " & CStr(c)
+73            PrepareForCalculation c, False, False, True
+74            RunCreditUsageSheet "Standard", True, False, True
+75            CopyChart shCreditUsage.ChartObjects(1), Target
+76            If ExportJPG Then
+77                JPGName = sJoinPath(TargetFolder, c & Suffix)
+78                shCreditUsage.ChartObjects(1).Chart.Export JPGName
+79            End If
 
-94                If RequiredOffset = 0 Then
-                      'Need to calculate this quantity inside the loop. No guarantee that there is a chart on the sheet before the loop starts
-95                    RequiredOffset = CLng(shCreditUsage.ChartObjects(1).Height / 14.25) + 1
-96                End If
-97                Set Target = Target.offset(RequiredOffset)
-98            Next c
-99            StatusBarWrap False
-100       End If
-101       FormatCreditUsageSheet True
+80            If RequiredOffset = 0 Then
+                  'Need to calculate this quantity inside the loop. No guarantee that there is a chart on the sheet before the loop starts
+81                RequiredOffset = CLng(shCreditUsage.ChartObjects(1).Height / 14.25) + 1
+82            End If
+83            Set Target = Target.offset(RequiredOffset)
+84        Next c
+85        FormatCreditUsageSheet True
 
-102       If Not SilentMode Then
-103           If ToPaper Then
-104               Application.GoTo shCreditUsage.Cells(1, 1)
-105           Else
-106               Application.GoTo TargetSheet.Cells(1, 1)
-107           End If
-108       End If
+86        If Not SilentMode Then
+87            Application.GoTo TargetSheet.Cells(1, 1)
+88        End If
 
-109       If TargetFolder <> "" Then
-110           BookName = "AllPFECharts_" & Format(AnchorDate, "yyyy-mm-dd") & ".xlsx"
-111           BookFullName = sJoinPath(TargetFolder, BookName)
-112           If IsInCollection(Application.Workbooks, BookName) Then
-113               Application.Workbooks(BookName).Close False
-114           End If
-115           If sFileExists(BookFullName) Then
-116               ThrowIfError sFileDelete(BookFullName)
-117           End If
-118           TargetBook.SaveAs BookFullName, xlOpenXMLWorkbook
-119           TargetBook.Close False
-120           ThisWorkbook.Activate
-121       End If
-
-122       If Not SilentMode Then
-123           If NumNotPrinted > 0 Then
-124               Prompt = CStr(NumPrinted) & " of " & CStr(sNRows(BanksToProcess)) & " charts were printed." & vbLf & vbLf & _
-                      "The following charts were not printed because headroom could not be calculated, " & _
-                      "probably because of bad data in the lines workbook" & vbLf & NamesNotPrinted
-125               If gDebugMode Then Debug.Print Prompt
-126               MsgBoxPlus Prompt, vbOKOnly + vbExclamation, Title
-127           Else
-128               Prompt = "All " + CStr(sNRows(BanksToProcess)) & " chart(s) were printed."
-129               If ToPaper Then
-130                   MsgBoxPlus Prompt, vbOKOnly + vbInformation, Title
-131               End If
-132           End If
-133       End If
+89        If TargetFolder <> "" Then
+90            BookName = "AllPFECharts_" & Format(AnchorDate, "yyyy-mm-dd") & ".xlsx"
+91            BookFullName = sJoinPath(TargetFolder, BookName)
+92            If IsInCollection(Application.Workbooks, BookName) Then
+93                Application.Workbooks(BookName).Close False
+94            End If
+95            If sFileExists(BookFullName) Then
+96                ThrowIfError sFileDelete(BookFullName)
+97            End If
+98            TargetBook.SaveAs BookFullName, xlOpenXMLWorkbook
+99            TargetBook.Close False
+100           ThisWorkbook.Activate
+101       End If
 
 EarlyExit:
-134       Set TargetSheet = Nothing
-135       Set TargetBook = Nothing
-136       Set LinesBook = Nothing
+102       Set TargetSheet = Nothing
+103       Set TargetBook = Nothing
+104       Set LinesBook = Nothing
 
-137       Exit Sub
+105       SafeAppActivate shCreditUsage
+
+106       Exit Sub
 ErrHandler:
-138       SomethingWentWrong "#PrintCharts (line " & CStr(Erl) & "): " & Err.Description & "!", , Title
+107       SomethingWentWrong "#PasteCharts (line " & CStr(Erl) & "): " & Err.Description & "!", , Title
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -717,6 +687,4 @@ Function PrintAChart(Counterparty As String)
 ErrHandler:
 12        Throw "#PrintAChart (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
-
-
 

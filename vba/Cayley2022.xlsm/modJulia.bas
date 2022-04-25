@@ -41,7 +41,7 @@ Function JuliaEvalWrapper(EvaluateThis As String, ModelName As String)
 
 15        Exit Function
 ErrHandler:
-16        Throw "#JuliaEvalWrapper (line " & CStr(Erl) + "): " & Err.Description & "!"
+16        Throw "#JuliaEvalWrapper (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Function
 
 Sub LaunchJuliaWithoutSystemImage()
@@ -51,7 +51,7 @@ Sub LaunchJuliaWithoutSystemImage()
 2         If JuliaIsRunning Then
 3             JuliaEval "exit()"
 4         End If
-5         StatusBarWrap "Launching Julia with timeout of " & TimeOut
+5         StatusBarWrap "Launching Julia with timeout of " & CStr(TimeOut) & " seconds"
 6         ThrowIfError JuliaLaunch(UseLinux(), False, " --threads=auto", "XVA,Cayley", , TimeOut)
 7         StatusBarWrap False
 8         Exit Sub
@@ -82,10 +82,13 @@ Sub JuliaLaunchForCayley()
           Dim SystemImage As String
           Dim SystemImageX As String
           Dim XSH As clsExcelStateHandler
+          Const TimeOut As Long = 60
+          Dim SheetToActivate As Worksheet
 
 1         On Error GoTo ErrHandler
 
 2         If Not JuliaIsRunning() Then
+              Set SheetToActivate = ActiveSheet
 3             SystemImage = IIf(UseLinux(), gSysImageXVALinux, gSysImageXVAWindows)
 4             SystemImageX = MorphSlashes(SystemImage, UseLinux())
 
@@ -97,7 +100,7 @@ Sub JuliaLaunchForCayley()
 10                Prompt = "There is no ""system image"" available for Julia on " & OS & _
                       ". What would you like to do?" & vbLf & vbLf & _
                       "Recommended:" & vbLf & _
-                      "Create a system image now. This will take about 10 minutes and will save time " & _
+                      "Create a system image now. This will take about 15 minutes and will save time " & _
                       "in the future, by doing ""ahead-of-time"" compilation of the Julia code." & vbLf & vbLf & _
                       "Not recommended, except for developer use:" & vbLf & _
                       "Run Julia without a system image."
@@ -112,13 +115,15 @@ Sub JuliaLaunchForCayley()
 17                        Throw "User Cancelled", True
 18                End Select
 19            End If
-20            ThrowIfError JuliaLaunch(UseLinux(), True, CommandLineOptions, "XVA,Cayley")
-21            AppActivate Application.Caption
-22        End If
+20            StatusBarWrap "Launching Julia with a timeout of " & CStr(TimeOut) & " seconds"
+21            ThrowIfError JuliaLaunch(UseLinux(), True, CommandLineOptions, "XVA,Cayley")
+22            StatusBarWrap False
+23            SafeAppActivate SheetToActivate
+24        End If
 
-23        Exit Sub
+25        Exit Sub
 ErrHandler:
-24        Throw "#JuliaLaunchForCayley (line " & CStr(Erl) & "): " & Err.Description & "!"
+26        Throw "#JuliaLaunchForCayley (line " & CStr(Erl) & "): " & Err.Description & "!"
 End Sub
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -174,7 +179,7 @@ Sub JuliaCreateSystemImage(Ask As Boolean, UnderLinux As Boolean)
 6             If sFileExists(SystemImage) Then
 7                 Prompt = Prompt & vbLf & vbLf & "The new system image will replace the existing one at:" & vbLf & _
                       SystemImage & vbLf & _
-                      "that is dated " + Format(sFileInfo(SystemImage, "C"), "dd-mmm-yyyy hh:mm") & "."
+                      "that is dated " & Format(sFileInfo(SystemImage, "C"), "dd-mmm-yyyy hh:mm") & "."
 8             Else
 9                 Prompt = Prompt & vbLf & vbLf & "The system image will be at:" & vbLf & SystemImage
 10            End If

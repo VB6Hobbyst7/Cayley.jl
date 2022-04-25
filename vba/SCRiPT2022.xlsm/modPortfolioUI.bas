@@ -1236,7 +1236,7 @@ Function ProcessSTFFile(wb As Workbook, Optional Overwrite As Variant)
 65                For Each c In RangeFromSheet(ws, "TradesNoHeaders").Columns(ColNo).Cells
 66                    Select Case c.Value
                           Case "Floating"
-67                            c.Value = "Libor"
+67                            c.Value = "IBOR"
 68                    End Select
 69                Next c
 70            End If

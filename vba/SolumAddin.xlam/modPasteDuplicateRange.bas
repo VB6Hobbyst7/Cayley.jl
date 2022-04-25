@@ -42,7 +42,7 @@ Sub PasteDuplicateRange()
 8         If SourceRange Is Nothing Then Throw "You must first copy a range (Ctrl C or Shift Insert) before you can paste it as a duplicate range.", True
 
 9         If SourceRange.Areas.Count > 1 Then
-10            Application.GoTo SourceRange
+10            Application.Goto SourceRange
 11            Throw "That command cannot be used on multiple selections.", True
 12        End If
 

@@ -129,7 +129,7 @@ TryAgain:
 43            Next c
 44        End If
           
-45        Application.GoTo RangeForButtons.Cells(1, 1)
+45        Application.Goto RangeForButtons.Cells(1, 1)
 46        m_LastNumHeaderRows = NumHeaderRows
           Dim RepeatText As String
 47        RepeatText = "Repeat Add Sort Buttons ("
@@ -145,7 +145,7 @@ TryAgain:
 55        If withUndo Then
 56            m_UndoAddList = STK.Report
 57            Set m_WsUndoAdd = RangeForButtons.Parent
-58            Application.GoTo RangeForButtons
+58            Application.Goto RangeForButtons
 59            Application.OnUndo "Undo Add Sort Buttons to " & AddressND(RangeForButtons), "UndoAddSortButtons"
 60        End If
 61        Application.OnRepeat RepeatText, "RepeatAddSortButtons"
@@ -465,7 +465,7 @@ End Function
 ' Purpose   : Ad hoc test harness
 ' -----------------------------------------------------------------------------------------------------------------------
 Private Sub TestSortButtonGetSortableRange()
-1         Application.GoTo SortButtonGetSortableRange(ActiveSheet.Buttons("Button 19"), 1)
+1         Application.Goto SortButtonGetSortableRange(ActiveSheet.Buttons("Button 19"), 1)
 End Sub
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : SAISortButtonOnAction
@@ -948,7 +948,7 @@ End Function
 ' Purpose   : Ad hoc test harness
 ' -----------------------------------------------------------------------------------------------------------------------
 Private Sub Test_RangeContainingAdjacentSortButtons()
-1         Application.GoTo RangeContainingAdjacentSortButtons(ActiveSheet.Buttons("Button 35"))
+1         Application.Goto RangeContainingAdjacentSortButtons(ActiveSheet.Buttons("Button 35"))
 End Sub
 ' -----------------------------------------------------------------------------------------------------------------------
 ' Procedure : TestSortButton
@@ -964,7 +964,7 @@ Private Sub TestSortButton()
           Dim t3 As Double
           Dim t4 As Double
 1         For i = 100 To 500 Step 100
-2             Application.GoTo ActiveSheet.Cells(1, 1).Resize(1, i)
+2             Application.Goto ActiveSheet.Cells(1, 1).Resize(1, i)
 3             t1 = sElapsedTime()
 4             AddSortButtons , 1
 5             t2 = sElapsedTime()

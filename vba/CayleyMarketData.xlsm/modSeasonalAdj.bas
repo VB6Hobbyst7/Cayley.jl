@@ -2,7 +2,7 @@ Attribute VB_Name = "modSeasonalAdj"
 Option Explicit
 
 ' -----------------------------------------------------------------------------------------------------------------------
-' Procedure : estimateSeasonalAdjustments
+' Procedure : EstimateSeasonalAdjustments
 ' Author    : Philip Swannell
 ' Date      : 25-Apr-2017
 ' Purpose   : Philip's patented method from estimating seasonal adjustments from historic time series.
@@ -13,7 +13,7 @@ Option Explicit
 ' Sum of the 12 elements in the return must be 0
 ' See also companion function RemoveSeasonality
 ' -----------------------------------------------------------------------------------------------------------------------
-Function estimateSeasonalAdjustments(ByVal InputData As Variant, Optional UseThisManyMonths As Long, Optional ByRef DataUsed, Optional ByRef FirstMonthUsed)
+Function EstimateSeasonalAdjustments(ByVal InputData As Variant, Optional UseThisManyMonths As Long, Optional ByRef DataUsed, Optional ByRef FirstMonthUsed)
           Dim i As Long
           Dim j As Long
           Dim NR As Long
@@ -36,13 +36,13 @@ Function estimateSeasonalAdjustments(ByVal InputData As Variant, Optional UseThi
 9             Next
 10        Next
 
-11        If InputData(1, 1) <> CLng(InputData(1, 1)) Then Throw ErrString + ". element 1, 1 is not a whole number"
-12        If InputData(1, 2) <> CLng(InputData(1, 2)) Then Throw ErrString + ". element 1, 2 is not a whole number in the range 1 to 12"
-13        If InputData(1, 2) < 1 Or InputData(1, 2) > 12 Then Throw ErrString + ". element 1, 2 is not a whole number in the range 1 to 12"
+11        If InputData(1, 1) <> CLng(InputData(1, 1)) Then Throw ErrString + ". Element 1, 1 is not a whole number"
+12        If InputData(1, 2) <> CLng(InputData(1, 2)) Then Throw ErrString + ". Element 1, 2 is not a whole number in the range 1 to 12"
+13        If InputData(1, 2) < 1 Or InputData(1, 2) > 12 Then Throw ErrString + ". Element 1, 2 is not a whole number in the range 1 to 12"
 
 14        For i = 2 To NR
-15            If InputData(i, 1) <> InputData(i - 1, 1) + IIf(InputData(i - 1, 2) = 12, 1, 0) Then Throw "error in InputData: Out-of-sequence Year found at row " + CStr(i)
-16            If InputData(i, 2) <> InputData(i - 1, 2) + IIf(InputData(i - 1, 2) = 12, -11, 1) Then Throw "error in InputData: Out-of-sequence Month found at row " + CStr(i)
+15            If InputData(i, 1) <> InputData(i - 1, 1) + IIf(InputData(i - 1, 2) = 12, 1, 0) Then Throw "Error in InputData: Out-of-sequence Year found at row " + CStr(i)
+16            If InputData(i, 2) <> InputData(i - 1, 2) + IIf(InputData(i - 1, 2) = 12, -11, 1) Then Throw "Error in InputData: Out-of-sequence Month found at row " + CStr(i)
 17        Next i
 
 18        StartRow = 1
@@ -71,11 +71,11 @@ Function estimateSeasonalAdjustments(ByVal InputData As Variant, Optional UseThi
           Dim Sum As Double
 36        Sum = AMI(1, 1) + AMI(2, 1) + AMI(3, 1) + AMI(4, 1) + AMI(5, 1) + AMI(6, 1) + AMI(7, 1) + AMI(8, 1) + AMI(9, 1) + AMI(10, 1) + AMI(11, 1) + AMI(12, 1)
 37        If Abs(Sum) > 0.000000001 Then Throw "Assertion failed. Sum of 12 elements to return should be 0 but instead it is " + CStr(Sum)
-38        estimateSeasonalAdjustments = AMI
+38        EstimateSeasonalAdjustments = AMI
 
 39        Exit Function
 ErrHandler:
-40        estimateSeasonalAdjustments = "#estimateSeasonalAdjustments (line " & CStr(Erl) + "): " & Err.Description & "!"
+40        EstimateSeasonalAdjustments = "#EstimateSeasonalAdjustments (line " & CStr(Erl) + "): " & Err.Description & "!"
 End Function
 
 ' -----------------------------------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ Function RemoveSeasonality(ByVal Data, MonthOfFirstData As Long, ByVal SeasonalA
           Dim j As Long
           Dim NR As Long
           Dim Sum As Double
-          Const SAerr = "SeasonalAdjustments must be a 12-row 1-column array of numbers whose sum is 0"
+          Const SAErr = "SeasonalAdjustments must be a 12-row 1-column array of numbers whose sum is 0"
 
 1         On Error GoTo ErrHandler
 2         Force2DArrayRMulti Data, SeasonalAdjustments
@@ -101,8 +101,8 @@ Function RemoveSeasonality(ByVal Data, MonthOfFirstData As Long, ByVal SeasonalA
 4         If sNCols(Data) <> 1 Then Throw "Data must have one column"
 5         If MonthOfFirstData < 1 Or MonthOfFirstData > 12 Then Throw "MonthOfFirstData must be in the range 1 to 12"
 
-6         If sNRows(SeasonalAdjustments) <> 12 Then Throw SAerr + ", but it has " + CStr(sNRows(SeasonalAdjustments)) + " rows"
-7         If sNCols(SeasonalAdjustments) <> 1 Then Throw SAerr + ", but it has " + CStr(sNCols(SeasonalAdjustments)) + " columns"
+6         If sNRows(SeasonalAdjustments) <> 12 Then Throw SAErr + ", but it has " + CStr(sNRows(SeasonalAdjustments)) + " rows"
+7         If sNCols(SeasonalAdjustments) <> 1 Then Throw SAErr + ", but it has " + CStr(sNCols(SeasonalAdjustments)) + " columns"
 
 8         For i = 1 To NR
 9             If Not IsNumberOrDate(Data(i, 1)) Then Throw "Non number in Data at row " + CStr(i)
@@ -110,11 +110,11 @@ Function RemoveSeasonality(ByVal Data, MonthOfFirstData As Long, ByVal SeasonalA
 
 11        Sum = 0
 12        For i = 1 To 12
-13            If Not IsNumberOrDate(SeasonalAdjustments(i, 1)) Then Throw SAerr + ", but element " + CStr(i) + " is not a number"
+13            If Not IsNumberOrDate(SeasonalAdjustments(i, 1)) Then Throw SAErr + ", but element " + CStr(i) + " is not a number"
 14            Sum = Sum + SeasonalAdjustments(i, 1)
 15        Next i
 
-16        If Abs(Sum) > 0.000000001 Then Throw SAerr + ", but their sum is " + CStr(Sum)
+16        If Abs(Sum) > 0.000000001 Then Throw SAErr + ", but their sum is " + CStr(Sum)
 
 17        Adjustments = sReshape(1, NR, 1)
 
@@ -150,7 +150,7 @@ Function HistoricalInflationVol(ByVal InputData As Variant, Optional UseThisMany
           Dim UnadjustedData
           Dim UnAdjVol
 1         On Error GoTo ErrHandler
-2         SeasonalAdjustments = ThrowIferror(estimateSeasonalAdjustments(InputData, UseThisManyMonths, UnadjustedData, FirstMonthUsed))
+2         SeasonalAdjustments = ThrowIfError(EstimateSeasonalAdjustments(InputData, UseThisManyMonths, UnadjustedData, FirstMonthUsed))
 3         AdjustedData = RemoveSeasonality(UnadjustedData, FirstMonthUsed, SeasonalAdjustments)
 4         AdjustedData = sArrayDivide(sDrop(AdjustedData, 1), sDrop(AdjustedData, -1))
 5         UnadjustedData = sArrayDivide(sDrop(UnadjustedData, 1), sDrop(UnadjustedData, -1))

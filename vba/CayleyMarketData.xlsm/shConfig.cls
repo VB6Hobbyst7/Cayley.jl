@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 Private Const BookNameForRegistry = "CayleyMarketData"
-Private gBlockChangeevent As Boolean
+Private gBlockChangeEvent As Boolean
 
 Private Function ConfigRange() As Range
 1         On Error GoTo ErrHandler
@@ -20,8 +20,8 @@ ErrHandler:
 End Function
 
 Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
-          Dim Res
           Dim FullPath As String
+          Dim Res
 
 1         On Error GoTo ErrHandler
 2         Select Case Target.Cells(1, 1).Address    'Need the .Cells(1,1) to cope with merged cells
@@ -29,7 +29,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 3                 Cancel = True
 
 4                 FullPath = FileFromConfig("SCRiPTWorkbook")
-5                 If sFileexists(FullPath) Then AddFileToMRU "SCRiPTWorkbooks", FullPath
+5                 If sFileExists(FullPath) Then AddFileToMRU "SCRiPTWorkbooks", FullPath
 6                 Res = GetOpenFilenameWrap("SCRiPTWorkbooks", "SCRiPTWorkbooks (*SCRiPT*.xlsm),*SCRiPT*.xlsm", , "Choose SCRiPT Workbook", , , True, Target)
 7                 If Res <> False Then
 8                     Res = sRelativePath(Res, ThisWorkbook.Path)
@@ -39,7 +39,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 12            Case Me.Range("MarketDataFile").Address
 13                Cancel = True
 14                FullPath = FileFromConfig("MarketDataFile")
-15                If sFileexists(FullPath) Then AddFileToMRU "AirbusMarketDataFiles", FullPath
+15                If sFileExists(FullPath) Then AddFileToMRU "AirbusMarketDataFiles", FullPath
 16                Res = GetOpenFilenameWrap("AirbusMarketDataFiles", ".out files,*.out", , , , False, True, Target)
 17                If Res <> False Then
 18                    Res = sRelativePath(Res, ThisWorkbook.Path)
@@ -75,7 +75,7 @@ ErrHandler:
 End Function
 
 Private Sub Worksheet_Deactivate()
-      'We may have changed the numeraire currency in which case the FxVol sheet should be reformatted since we grey out currency pairs that don't involve the numeraire
+          'We may have changed the numeraire currency in which case the FxVol sheet should be reformatted since we grey out currency pairs that don't involve the numeraire
 1         On Error GoTo ErrHandler
 2         FormatFxVolSheet False
 3         Exit Sub
@@ -90,15 +90,15 @@ End Sub
 ' Purpose   : When user changes an item on the Config sheet, write it immediately to the Registry
 ' -----------------------------------------------------------------------------------------------------------------------
 Private Sub Worksheet_Change(ByVal Target As Range)
-          Static Inevent As Boolean
+          Static InEvent As Boolean
 1         On Error GoTo ErrHandler
-2         If Not gBlockChangeevent Then
-3             If Not Inevent Then
-4                 Inevent = True
+2         If Not gBlockChangeEvent Then
+3             If Not InEvent Then
+4                 InEvent = True
 5                 If Not Application.Intersect(ConfigRange, Target) Is Nothing Then
 6                     SaveToRegistry
 7                 End If
-8                 Inevent = False
+8                 InEvent = False
 9             End If
 10        End If
 11        Exit Sub
@@ -107,18 +107,18 @@ ErrHandler:
 End Sub
 
 Sub GetFromRegistry()
-          Dim CopyOferr As String
+          Dim CopyOfErr As String
           Dim oldBlockChange
 1         On Error GoTo ErrHandler
-2         oldBlockChange = gBlockChangeevent
-3         gBlockChangeevent = True
+2         oldBlockChange = gBlockChangeEvent
+3         gBlockChangeEvent = True
 4         GetConfigFromRegistry ConfigRange(), BookNameForRegistry
-5         gBlockChangeevent = oldBlockChange
+5         gBlockChangeEvent = oldBlockChange
 6         Exit Sub
 ErrHandler:
-7         CopyOferr = "#GetFromRegistry (line " & CStr(Erl) + "): " & Err.Description & "!"
-8         gBlockChangeevent = oldBlockChange
-9         Throw CopyOferr
+7         CopyOfErr = "#GetFromRegistry (line " & CStr(Erl) + "): " & Err.Description & "!"
+8         gBlockChangeEvent = oldBlockChange
+9         Throw CopyOfErr
 End Sub
 
 Sub SaveToRegistry()
